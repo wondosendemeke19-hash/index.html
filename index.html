@@ -3,222 +3,565 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spin & Win Game</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Birr Spin & Win Game</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-</head>
-<body class="bg-slate-900 text-white min-h-screen flex flex-col">
-
-    <!-- Header / Balance Bar -->
-    <header class="bg-slate-800 p-4 shadow-md flex justify-between items-center">
-        <h1 class="font-bold text-lg text-amber-400">🎰 SpinApp</h1>
-        <div class="bg-slate-700 px-3 py-1 rounded-full text-sm">
-            Balance: <span id="user-balance" class="font-bold text-emerald-400">$100.00</span>
-        </div>
-    </header>
-
-    <!-- Navigation Tabs -->
-    <nav class="flex justify-around bg-slate-800 border-t border-slate-700">
-        <button onclick="switchTab('game')" id="tab-game" class="flex-1 py-3 text-center font-medium text-amber-400 border-b-2 border-amber-400">Game</button>
-        <button onclick="switchTab('deposit')" id="tab-deposit" class="flex-1 py-3 text-center font-medium text-slate-400">Deposit</button>
-        <button onclick="switchTab('withdraw')" id="tab-withdraw" class="flex-1 py-3 text-center font-medium text-slate-400">Withdraw</button>
-    </nav>
-
-    <!-- Main Content Area -->
-    <main class="flex-1 p-4 flex flex-col justify-center items-center">
-
-        <!-- GAME TAB -->
-        <section id="section-game" class="w-full max-w-sm flex flex-col items-center">
-            <div class="relative w-64 h-64 mb-6">
-                <!-- Wheel Pointer -->
-                <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[20px] border-t-amber-400 z-10"></div>
-                <canvas id="wheelCanvas" width="256" height="256" class="w-full h-full rounded-full border-4 border-slate-700 shadow-xl"></canvas>
-            </div>
-            <p id="game-message" class="mb-4 text-sm text-slate-300 h-6">Spin to win prizes!</p>
-            <button onclick="spinWheel()" id="spin-btn" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl shadow-lg transition">SPIN ($10)</button>
-        </section>
-
-        <!-- DEPOSIT TAB -->
-        <section id="section-deposit" class="w-full max-w-sm hidden flex flex-col space-y-4">
-            <h2 class="text-xl font-bold text-amber-400">Deposit Funds</h2>
-            <p class="text-xs text-slate-400">Select an amount to add to your balance.</p>
-            <div class="grid grid-cols-3 gap-2">
-                <button onclick="setDepositAmount(10)" class="bg-slate-800 hover:bg-slate-700 py-3 rounded-lg border border-slate-700 font-bold">$10</button>
-                <button onclick="setDepositAmount(50)" class="bg-slate-800 hover:bg-slate-700 py-3 rounded-lg border border-slate-700 font-bold">$50</button>
-                <button onclick="setDepositAmount(100)" class="bg-slate-800 hover:bg-slate-700 py-3 rounded-lg border border-slate-700 font-bold">$100</button>
-            </div>
-            <div>
-                <label class="block text-xs text-slate-400 mb-1">Custom Amount ($)</label>
-                <input type="number" id="deposit-input" placeholder="Enter amount" class="w-full p-3 bg-slate-800 rounded-lg border border-slate-700 text-white focus:outline-none focus:border-amber-400">
-            </div>
-            <button onclick="processDeposit()" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl shadow-lg transition">Proceed to Deposit</button>
-        </section>
-
-        <!-- WITHDRAW TAB -->
-        <section id="section-withdraw" class="w-full max-w-sm hidden flex flex-col space-y-4">
-            <h2 class="text-xl font-bold text-amber-400">Withdraw Funds</h2>
-            <p class="text-xs text-slate-400">Minimum withdrawal is $20.00.</p>
-            <div>
-                <label class="block text-xs text-slate-400 mb-1">Withdrawal Address / Account</label>
-                <input type="text" id="withdraw-account" placeholder="Enter Wallet or Crypto Address" class="w-full p-3 bg-slate-800 rounded-lg border border-slate-700 text-white focus:outline-none focus:border-amber-400 mb-3">
-                <label class="block text-xs text-slate-400 mb-1">Amount ($)</label>
-                <input type="number" id="withdraw-input" placeholder="0.00" class="w-full p-3 bg-slate-800 rounded-lg border border-slate-700 text-white focus:outline-none focus:border-amber-400">
-            </div>
-            <button onclick="processWithdraw()" class="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow-lg transition">Request Withdrawal</button>
-        </section>
-
-    </main>
-
-    <script>
-        // Initialize Telegram WebApp
-        let tg = window.Telegram.WebApp;
-        tg.expand();
-
-        let balance = 100.00;
-        const sectors = [
-            { color: "#f59e0b", label: "$0" },
-            { color: "#10b981", label: "$5" },
-            { color: "#3b82f6", label: "$20" },
-            { color: "#ef4444", label: "$0" },
-            { color: "#8b5cf6", label: "$10" },
-            { color: "#ec4899", label: "$50" }
-        ];
-        
-        let currentAngle = 0;
-        let isSpinning = false;
-        const canvas = document.getElementById("wheelCanvas");
-        const ctx = canvas.getContext("2d");
-
-        function drawWheel() {
-            const arc = Math.PI / (sectors.length / 2);
-            const radius = canvas.width / 2;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.save();
-            ctx.translate(radius, radius);
-            ctx.rotate(currentAngle);
-
-            sectors.forEach((sector, i) => {
-                const angle = i * arc;
-                ctx.beginPath();
-                ctx.fillStyle = sector.color;
-                ctx.moveTo(0, 0);
-                ctx.arc(0, 0, radius, angle, angle + arc, false);
-                ctx.lineTo(0, 0);
-                ctx.fill();
-
-                // Draw text labels
-                ctx.save();
-                ctx.rotate(angle + arc / 2);
-                ctx.textAlign = "right";
-                ctx.fillStyle = "#ffffff";
-                ctx.font = "bold 14px sans-serif";
-                ctx.fillText(sector.label, radius - 15, 5);
-                ctx.restore();
-            });
-
-            ctx.restore();
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #22c55e;
+            --accent-hover: #16a34a;
+            --text-color: #f8fafc;
+            --text-secondary: #94a3b8;
+            --danger: #ef4444;
         }
 
-        drawWheel();
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
 
-        function spinWheel() {
-            if (isSpinning) return;
-            if (balance < 10) {
-                alert("Insufficient balance! Please deposit funds.");
-                return;
-            }
+        .container {
+            width: 100%;
+            max-width: 400px;
+        }
 
-            balance -= 10;
-            updateUI();
-            isSpinning = true;
-            document.getElementById("spin-btn").disabled = true;
-            document.getElementById("game-message").innerText = "Spinning...";
+        /* Auth Screen Styling */
+        .auth-container {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            width: 100%;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
 
-            const randomSpin = Math.floor(Math.random() * 3600) + 1800;
-            const targetAngle = currentAngle + randomSpin;
-            const duration = 3000;
-            const start = performance.now();
+        .auth-tabs {
+            display: flex;
+            background: var(--bg-color);
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 20px;
+        }
 
-            function animate(time) {
-                const elapsed = time - start;
-                const progress = Math.min(elapsed / duration, 1);
-                // Ease out cubic
-                const ease = 1 - Math.pow(1 - progress, 3);
+        .auth-tab {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 8px;
+            font-weight: bold;
+            font-size: 13px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .auth-tab.active {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .balance-title {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .balance-amount {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            background: var(--card-bg);
+            border: 1px solid var(--accent);
+            color: var(--text-color);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-small:hover {
+            background: var(--accent);
+            color: #000;
+        }
+
+        .logout-btn {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .logout-btn:hover {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        /* Game Section */
+        .game-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .wheel-container {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin: 0 auto 20px auto;
+        }
+
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 6px solid var(--accent);
+            position: relative;
+            transition: transform 4s cubic-bezier(0.15, 0.95, 0.15, 1);
+            background: conic-gradient(
+                #3b82f6 0deg 60deg,
+                #8b5cf6 60deg 120deg,
+                #ec4899 120deg 180deg,
+                #f59e0b 180deg 240deg,
+                #10b981 240deg 300deg,
+                #6366f1 300deg 360deg
+            );
+        }
+
+        .pointer {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 20px solid #fff;
+            z-index: 10;
+        }
+
+        .spin-btn {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .spin-btn:active {
+            transform: scale(0.98);
+        }
+
+        .spin-btn:disabled {
+            background: var(--text-secondary);
+            cursor: not-allowed;
+        }
+
+        /* Modals / Menus */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 16px;
+            width: 85%;
+            max-width: 320px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-content h3 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            color: var(--text-color);
+        }
+
+        .instruction-box {
+            background: var(--bg-color);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 14px;
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        .instruction-box b {
+            color: var(--text-color);
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--text-secondary);
+            background: var(--bg-color);
+            color: var(--text-color);
+            box-sizing: border-box;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            flex: 1;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--text-secondary);
+            color: var(--text-secondary);
+            padding: 10px;
+            border-radius: 8px;
+            flex: 1;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #message {
+            margin-top: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            min-height: 20px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- ================= AUTHENTICATION CONTAINER ================= -->
+        <div id="authContainer" class="auth-container">
+            <h2 style="margin-top: 0; color: var(--accent);">Birr Spin & Win</h2>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="loginTabBtn" onclick="switchAuthMode('login')">Login</button>
+                <button class="auth-tab" id="signupTabBtn" onclick="switchAuthMode('signup')">Sign Up</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Phone / Username</label>
+                    <input type="text" id="loginUser" placeholder="09xxxxxxxx" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPass" placeholder="********" required>
+                </div>
+                <button type="submit" class="spin-btn" style="padding: 10px; font-size: 14px;">Login</button>
+            </form>
+
+            <!-- Sign Up Form -->
+            <form id="signupForm" class="hidden" onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="signupName" placeholder="Abebe Kebede" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number (Telebirr)</label>
+                    <input type="text" id="signupPhone" placeholder="09xxxxxxxx" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signupPass" placeholder="********" required>
+                </div>
+                <button type="submit" class="spin-btn" style="padding: 10px; font-size: 14px; background: #3b82f6;">Create Account</button>
+            </form>
+        </div>
+
+        <!-- ================= MAIN GAME DASHBOARD ================= -->
+        <div id="mainDashboard" class="hidden">
+            <!-- Header with Balance & Action Nav -->
+            <header>
+                <div>
+                    <div class="balance-title">Balance</div>
+                    <div class="balance-amount"><span id="balance">50.00</span> ETB</div>
+                </div>
+                <div class="nav-buttons">
+                    <button class="btn-small" onclick="openModal('depositModal')">Deposit</button>
+                    <button class="btn-small" onclick="openModal('withdrawModal')">Withdraw</button>
+                    <button class="btn-small logout-btn" onclick="handleLogout()">Logout</button>
+                </div>
+            </header>
+
+            <!-- Game Box -->
+            <div class="game-card">
+                <h3>Spin & Win Birr</h3>
+                <p style="font-size: 12px; color: var(--text-secondary); margin-top: 0;">Cost per spin: 5 ETB</p>
                 
-                currentAngle = targetAngle * ease * (Math.PI / 180);
-                drawWheel();
+                <div class="wheel-container">
+                    <div class="pointer"></div>
+                    <div class="wheel" id="wheel"></div>
+                </div>
 
-                if (progress < 1) {
-                    requestAnimationFrame(animate);
-                } else {
-                    isSpinning = false;
-                    document.getElementById("spin-btn").disabled = false;
-                    
-                    // Simple reward logic placeholder
-                    const winnings = 15; // Set dynamic or randomized based on pointer
-                    balance += winnings;
-                    updateUI();
-                    document.getElementById("game-message").innerText = `You won $${winnings}! 🎉`;
-                }
+                <button class="spin-btn" id="spinBtn" onclick="spinWheel()">SPIN NOW (5 ETB)</button>
+                <div id="message"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Deposit Modal -->
+    <div class="modal" id="depositModal">
+        <div class="modal-content">
+            <h3>Deposit Birr</h3>
+            <div class="instruction-box">
+                <b>Payment Account:</b><br>
+                • <b>Telebirr:</b> 0963052077<br><br>
+                Transfer funds to the account above and submit your Transaction ID / Receipt info below for verification.
+            </div>
+            <div class="form-group">
+                <label>Payment Method</label>
+                <select id="depositMethod">
+                    <option value="telebirr">Telebirr (0963052077)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Amount Sent (ETB)</label>
+                <input type="number" id="depositAmount" placeholder="e.g. 50" min="10">
+            </div>
+            <div class="form-group">
+                <label>Transaction ID / Receipt No</label>
+                <input type="text" id="depositTxId" placeholder="e.g. TXN12345678">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeModal('depositModal')">Cancel</button>
+                <button class="btn-primary" onclick="handleDeposit()">Submit Request</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Withdraw Modal -->
+    <div class="modal" id="withdrawModal">
+        <div class="modal-content">
+            <h3>Withdraw Birr</h3>
+            <div class="form-group">
+                <label>Payout Method</label>
+                <select id="withdrawMethod">
+                    <option value="telebirr">Telebirr</option>
+                    <option value="sinqee">Sinqee Bank</option>
+                    <option value="oromia">Oromia Cooperative Bank</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Account / Phone Number</label>
+                <input type="text" id="withdrawAccount" placeholder="09xxxxxxxx or Account No">
+            </div>
+            <div class="form-group">
+                <label>Amount (ETB)</label>
+                <input type="number" id="withdrawAmount" placeholder="e.g. 50" min="20">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeModal('withdrawModal')">Cancel</button>
+                <button class="btn-primary" onclick="handleWithdraw()">Request</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Telegram WebApp hooks if available
+        let tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.expand();
+        }
+
+        let balance = 50.00;
+        let currentRotation = 0;
+        let isSpinning = false;
+        const rewards = [0, 5, 10, 20, 50, 100];
+
+        // Auth Tab Switcher
+        function switchAuthMode(mode) {
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            const loginTabBtn = document.getElementById('loginTabBtn');
+            const signupTabBtn = document.getElementById('signupTabBtn');
+
+            if (mode === 'login') {
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+                loginTabBtn.classList.add('active');
+                signupTabBtn.classList.remove('active');
+            } else {
+                signupForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+                signupTabBtn.classList.add('active');
+                loginTabBtn.classList.remove('active');
             }
+        }
 
-            requestAnimationFrame(animate);
+        function handleLogin(event) {
+            event.preventDefault();
+            document.getElementById('authContainer').classList.add('hidden');
+            document.getElementById('mainDashboard').classList.remove('hidden');
+            updateUI();
+        }
+
+        function handleSignup(event) {
+            event.preventDefault();
+            alert('Account created successfully! Please login.');
+            switchAuthMode('login');
+        }
+
+        function handleLogout() {
+            document.getElementById('mainDashboard').classList.add('hidden');
+            document.getElementById('authContainer').classList.remove('hidden');
         }
 
         function updateUI() {
-            document.getElementById("user-balance").innerText = `$${balance.toFixed(2)}`;
+            document.getElementById('balance').innerText = balance.toFixed(2);
         }
 
-        // Tab Switching Logic
-        function switchTab(tab) {
-            ['game', 'deposit', 'withdraw'].forEach(t => {
-                document.getElementById(`section-${t}`).classList.add('hidden');
-                document.getElementById(`tab-${t}`).className = "flex-1 py-3 text-center font-medium text-slate-400 border-b-0";
-            });
-            document.getElementById(`section-${tab}`).classList.remove('hidden');
-            document.getElementById(`tab-${tab}`).className = "flex-1 py-3 text-center font-medium text-amber-400 border-b-2 border-amber-400";
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
         }
 
-        function setDepositAmount(amount) {
-            document.getElementById('deposit-input').value = amount;
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
         }
 
-        function processDeposit() {
-            const amount = parseFloat(document.getElementById('deposit-input').value);
-            if (!amount || amount <= 0) {
-                alert('Please enter a valid deposit amount.');
+        function spinWheel() {
+            const spinCost = 5;
+            const messageEl = document.getElementById('message');
+
+            if (isSpinning) return;
+
+            if (balance < spinCost) {
+                messageEl.style.color = 'var(--danger)';
+                messageEl.innerText = 'Insufficient balance! Please deposit.';
                 return;
             }
-            // Trigger Telegram native popup or payment API hook here
-            alert(`Deposit request for $${amount} submitted successfully!`);
-            balance += amount;
+
+            balance -= spinCost;
             updateUI();
-            switchTab('game');
+            isSpinning = true;
+            document.getElementById('spinBtn').disabled = true;
+            messageEl.style.color = 'var(--text-color)';
+            messageEl.innerText = 'Spinning... Good luck!';
+
+            const prizeIndex = Math.floor(Math.random() * rewards.length);
+            const degreesPerSegment = 360 / rewards.length;
+            const extraRounds = 360 * 6;
+            const targetDegree = prizeIndex * degreesPerSegment;
+            const randomOffset = degreesPerSegment / 2; 
+            
+            currentRotation += extraRounds + (360 - (currentRotation % 360)) + (360 - (targetDegree + randomOffset));
+
+            const wheel = document.getElementById('wheel');
+            wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+            setTimeout(() => {
+                isSpinning = false;
+                document.getElementById('spinBtn').disabled = false;
+                const wonAmount = rewards[prizeIndex];
+                balance += wonAmount;
+                updateUI();
+
+                if (wonAmount > 0) {
+                    messageEl.style.color = 'var(--accent)';
+                    messageEl.innerText = `Congratulations! You won ${wonAmount} ETB! 🎉`;
+                } else {
+                    messageEl.style.color = 'var(--danger)';
+                    messageEl.innerText = 'Oops! Better luck next time.';
+                }
+            }, 4000);
         }
 
-        function processWithdraw() {
-            const amount = parseFloat(document.getElementById('withdraw-input').value);
-            const account = document.getElementById('withdraw-account').value;
-            if (!account || !amount || amount < 20) {
-                alert('Minimum withdrawal is $20 and account info is required.');
+        function handleDeposit() {
+            const amount = parseFloat(document.getElementById('depositAmount').value);
+            const txId = document.getElementById('depositTxId').value;
+
+            if (!amount || amount <= 0 || !txId) {
+                alert('Please enter a valid amount and transaction reference ID.');
                 return;
             }
-            if (amount > balance) {
-                alert('Insufficient balance.');
-                return;
-            }
-            balance -= amount;
-            updateUI();
-            alert(`Withdrawal request of $${amount} processed successfully!`);
-            switchTab('game');
+
+            closeModal('depositModal');
+            document.getElementById('depositAmount').value = '';
+            document.getElementById('depositTxId').value = '';
+            
+            const messageEl = document.getElementById('message');
+            messageEl.style.color = 'var(--accent)';
+            messageEl.innerText = 'Deposit submitted! Pending verification.';
         }
-        
-        // Handle URL parameters if opened from inline keyboard tabs
-        const urlParams = new URLSearchParams(window.location.search);
-        if(urlParams.get('tab')) {
-            switchTab(urlParams.get('tab'));
-        }
-    </script>
-</body>
-</html>
+
+        function handleWithdraw() {
+            const amount = parseFloat(document.getElementById('withdrawAmount').value);
+            const account = document.getElementById('withdrawAccount').value;
+            const method = document.getElementById('withdrawMethod').value;
+
+            if (!
