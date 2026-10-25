@@ -1,344 +1,399 @@
-import logging
-import re
-import requests
-from bs4 import BeautifulSoup
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import (
-    ApplicationBuilder,
-    CommandHandler,
-    CallbackQueryHandler,
-    ContextTypes,
-    ConversationHandler,
-    MessageHandler,
-    filters
-)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethio Spin & Win Reward Bot</title>
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --danger: #ef4444;
+            --border: #334155;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        .container {
+            width: 100%;
+            max-width: 440px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .header {
+            background: linear-gradient(135deg, #047857, #10b981);
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 1.4rem;
+            margin-bottom: 0.25rem;
+        }
+        .header p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+        .balance-card {
+            background: rgba(15, 23, 42, 0.6);
+            margin: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--border);
+        }
+        .balance-card .amount {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        .nav-tabs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            padding: 0 1rem;
+        }
+        .nav-btn {
+            background: #334155;
+            border: none;
+            color: var(--text);
+            padding: 0.6rem 0.2rem;
+            font-size: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .nav-btn.active, .nav-btn:hover {
+            background: var(--primary);
+            font-weight: bold;
+        }
+        .content-section {
+            padding: 1.25rem 1rem 1.5rem 1rem;
+            min-height: 280px;
+        }
+        .hidden {
+            display: none;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            margin-bottom: 0.4rem;
+            color: var(--text-muted);
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        textarea.form-control {
+            resize: vertical;
+            min-height: 90px;
+        }
+        .btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn:hover {
+            background: var(--primary-dark);
+        }
+        .stakes-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        .stake-btn {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .stake-btn.selected {
+            border-color: var(--primary);
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary);
+        }
+        .history-list {
+            max-height: 240px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+        }
+        .history-item {
+            background: #0f172a;
+            padding: 0.6rem 0.8rem;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            border-left: 3px solid var(--primary);
+        }
+        .info-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+            color: #93c5fd;
+            line-height: 1.4;
+        }
+        .alert {
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-top: 0.75rem;
+            text-align: center;
+        }
+        .alert-success { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .alert-error { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+        .footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            padding: 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
 
-# Enable logging
-logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
-logger = logging.getLogger(__name__)
+<div class="container">
+    <div class="header">
+        <h1>🎉 Ethio Spin & Win Bot</h1>
+        <p>Min Spin: 5 ETB | Max Spin: 100 ETB</p>
+    </div>
 
-# States for Conversation Handlers
-CHOOSING, DEPOSIT_INPUT, WITHDRAW_BANK, WITHDRAW_ACCOUNT, WITHDRAW_AMOUNT = range(5)
+    <div class="balance-card">
+        <div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Available Balance</div>
+            <div class="amount" id="userBalance">ETB 0.00</div>
+        </div>
+        <div style="font-size: 1.5rem;">💰</div>
+    </div>
 
-# In-memory database mock (Use PostgreSQL/MongoDB for permanent production storage)
-users_db = {}
+    <div class="nav-tabs">
+        <button class="nav-btn active" onclick="switchTab('spin')">🎮 Spin</button>
+        <button class="nav-btn" onclick="switchTab('deposit')">💳 Deposit</button>
+        <button class="nav-btn" onclick="switchTab('withdraw')">🏦 Withdraw</button>
+        <button class="nav-btn" onclick="switchTab('history')">📜 History</button>
+    </div>
 
-# Constants
-MIN_SPIN = 5.0
-MAX_SPIN = 100.0
-OWNER_TELEBIRR = "+251963052077"
-OWNER_NAME = "tahir shetamam"
+    <!-- SPIN SECTION -->
+    <div id="section-spin" class="content-section">
+        <div class="info-box">
+            Select your stake amount between <strong>5.00 ETB</strong> and <strong>100.00 ETB</strong> to play the multiplier spin game!
+        </div>
+        <div class="stakes-grid">
+            <button class="stake-btn selected" onclick="setStake(5)">5 ETB</button>
+            <button class="stake-btn" onclick="setStake(20)">20 ETB</button>
+            <button class="stake-btn" onclick="setStake(50)">50 ETB</button>
+            <button class="stake-btn" onclick="setStake(100)">100 ETB</button>
+        </div>
+        <div class="form-group">
+            <label>Custom Stake (ETB)</label>
+            <input type="number" id="customStake" class="form-control" value="5" min="5" max="100" oninput="updateCustomStake(this.value)">
+        </div>
+        <button class="btn" onclick="playSpin()">🎲 SPIN NOW</button>
+        <div id="spinResult"></div>
+    </div>
 
-def get_user(user_id):
-    if user_id not in users_db:
-        users_db[user_id] = {"balance": 0.0, "history": []}
-    return users_db[user_id]
+    <!-- DEPOSIT SECTION -->
+    <div id="section-deposit" class="content-section hidden">
+        <div class="info-box">
+            1. Transfer funds to Telebirr Account: <strong>+251963052077</strong> (tahir shetamam)<br>
+            2. Paste your confirmation SMS text or transaction receipt link below.
+        </div>
+        <div class="form-group">
+            <label>Paste Telebirr SMS / Receipt Text</label>
+            <textarea id="depositText" class="form-control" placeholder="e.g. You have transferred ETB 100.00 to tahir shetamam (+251963052077)..."></textarea>
+        </div>
+        <button class="btn" onclick="verifyDeposit()">✅ Verify & Credited Deposit</button>
+        <div id="depositAlert"></div>
+    </div>
 
-# --- MAIN MENU ---
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-    get_user(user_id)
-    
-    keyboard = [
-        [InlineKeyboardButton("🎮 Play Spin Game", callback_data="menu_spin")],
-        [InlineKeyboardButton("💳 Deposit", callback_data="menu_deposit"), InlineKeyboardButton("🏦 Withdraw", callback_data="menu_withdraw")],
-        [InlineKeyboardButton("📜 History", callback_data="menu_history"), InlineKeyboardButton("💰 Balance", callback_data="menu_balance")]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    
-    text = (
-        "🎉 *Welcome to the Ethio Spin & Win Reward Bot!*\n\n"
-        f"• Minimum Spin/Deposit: *{MIN_SPIN} ETB*\n"
-        f"• Maximum Spin: *{MAX_SPIN} ETB*\n\n"
-        "Choose an option below:"
-    )
-    
-    if update.callback_query:
-        await update.callback_query.answer()
-        await update.callback_query.edit_message_text(text, reply_markup=reply_markup, parse_mode="Markdown")
-    else:
-        await update.message.reply_text(text, reply_markup=reply_markup, parse_mode="Markdown")
+    <!-- WITHDRAW SECTION -->
+    <div id="section-withdraw" class="content-section hidden">
+        <div class="form-group">
+            <label>Select Bank / Payout Method</label>
+            <select id="withdrawBank" class="form-control">
+                <option value="Telebirr">Telebirr Wallet</option>
+                <option value="Oromia Cooperative Bank">Oromia Cooperative Bank</option>
+                <option value="Sinqee Bank">Sinqee Bank</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Account Number / Phone Number</label>
+            <input type="text" id="withdrawAccount" class="form-control" placeholder="Enter phone or account number">
+        </div>
+        <div class="form-group">
+            <label>Withdrawal Amount (ETB)</label>
+            <input type="number" id="withdrawAmount" class="form-control" min="5" placeholder="Min 5 ETB">
+        </div>
+        <button class="btn" onclick="requestWithdrawal()">📤 Submit Withdrawal Request</button>
+        <div id="withdrawAlert"></div>
+    </div>
 
-# --- BALANCE & HISTORY ---
-async def balance_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    user_id = query.from_user.id
-    user = get_user(user_id)
-    
-    keyboard = [[InlineKeyboardButton("🔙 Back to Menu", callback_data="menu_main")]]
-    await query.edit_message_text(
-        f"💰 *Your Current Balance:* `ETB {user['balance']:.2f}`",
-        reply_markup=InlineKeyboardMarkup(keyboard),
-        parse_mode="Markdown"
-    )
+    <!-- HISTORY SECTION -->
+    <div id="section-history" class="content-section hidden">
+        <div class="history-list" id="historyList">
+            <div class="history-item" style="color: var(--text-muted); text-align: center;">No history logs yet.</div>
+        </div>
+    </div>
 
-async def history_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    user_id = query.from_user.id
-    user = get_user(user_id)
-    
-    history_text = "\n".join(user["history"][-10:]) if user["history"] else "No transaction history yet."
-    keyboard = [[InlineKeyboardButton("🔙 Back to Menu", callback_data="menu_main")]]
-    
-    await query.edit_message_text(
-        f"📜 *Your Recent History (Last 10):*\n\n{history_text}",
-        reply_markup=InlineKeyboardMarkup(keyboard),
-        parse_mode="Markdown"
-    )
+    <div class="footer">
+        Verified Telebirr Merchant System • +251963052077
+    </div>
+</div>
 
-# --- DEPOSIT FLOW ---
-async def deposit_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    
-    text = (
-        f"💳 *Deposit via Telebirr*\n\n"
-        f"1. Transfer funds to Telebirr Account: `{OWNER_TELEBIRR}` ({OWNER_NAME})\n"
-        f"2. Copy and paste your confirmation SMS text or receipt link here.\n\n"
-        "Example format expected:\n"
-        "`Dear Wandu You have transferred ETB 100.00 to tahir shetamam...`"
-    )
-    keyboard = [[InlineKeyboardButton("🔙 Cancel", callback_data="menu_main")]]
-    await query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="Markdown")
-    return DEPOSIT_INPUT
+<script>
+    let state = {
+        balance: 10.0, // Starting bonus for testing
+        selectedStake: 5.0,
+        history: []
+    };
 
-async def deposit_verify(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-    user = get_user(user_id)
-    text_input = update.message.text
-    
-    amount_match = re.search(r'ETB\s+([0-9]+\.[0-9]{2})', text_input)
-    name_match = re.search(r'tahir\s+shetamam', text_input, re.IGNORECASE)
-    link_match = re.search(r'(https://transactioninfo\.ethiotelecom\.et/receipt/[A-Za-z0-9]+)', text_input)
-    
-    valid = False
-    deposited_amount = 0.0
-    
-    if link_match:
-        receipt_url = link_match.group(1)
-        try:
-            response = requests.get(receipt_url, timeout=10)
-            if response.status_code == 200:
-                soup = BeautifulSoup(response.text, 'html.parser')
-                page_text = soup.get_text()
-                if OWNER_TELEBIRR.replace("+", "") in page_text or "tahir" in page_text.lower():
-                    valid = True
-        except Exception as e:
-            logger.error(f"Receipt parsing error: {e}")
-
-    if amount_match and name_match:
-        deposited_amount = float(amount_match.group(1))
-        if deposited_amount >= MIN_SPIN:
-            valid = True
-
-    keyboard = [[InlineKeyboardButton("🔙 Main Menu", callback_data="menu_main")]]
-    
-    if valid and deposited_amount >= MIN_SPIN:
-        user["balance"] += deposited_amount
-        user["history"].append(f"➕ Deposited: +ETB {deposited_amount:.2f}")
-        await update.message.reply_text(
-            f"✅ *Deposit Successful!*\n\nCredited `ETB {deposited_amount:.2f}` to your account.",
-            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🎮 Play Now", callback_data="menu_spin")]]),
-            parse_mode="Markdown"
-        )
-    else:
-        await update.message.reply_text(
-            "❌ *Verification Failed.*\n\nCould not verify the transaction details. Ensure you sent it to `+251963052077` and pasted the complete SMS/Receipt text.",
-            reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode="Markdown"
-        )
+    function updateUI() {
+        document.getElementById('userBalance').innerText = `ETB ${state.balance.toFixed(2)}`;
         
-    return ConversationHandler.END
+        const historyContainer = document.getElementById('historyList');
+        if (state.history.length === 0) {
+            historyContainer.innerHTML = `<div class="history-item" style="color: var(--text-muted); text-align: center;">No transaction history yet.</div>`;
+        } else {
+            historyContainer.innerHTML = state.history.map(item => `<div class="history-item">${item}</div>`).join('');
+        }
+    }
 
-# --- SPIN GAME FLOW ---
-async def spin_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    user_id = query.from_user.id
-    user = get_user(user_id)
-    
-    keyboard = [
-        [InlineKeyboardButton("🎲 Spin 5 ETB", callback_data="spin_5"), InlineKeyboardButton("🎲 Spin 20 ETB", callback_data="spin_20")],
-        [InlineKeyboardButton("🎲 Spin 50 ETB", callback_data="spin_50"), InlineKeyboardButton("🎲 Spin 100 ETB", callback_data="spin_100")],
-        [InlineKeyboardButton("🔙 Back to Menu", callback_data="menu_main")]
-    ]
-    
-    await query.edit_message_text(
-        f"🎰 *Spin Money Reward Game*\n\n"
-        f"Your Balance: `ETB {user['balance']:.2f}`\n"
-        f"Select your stake amount (Min: {MIN_SPIN} ETB, Max: {MAX_SPIN} ETB):",
-        reply_markup=InlineKeyboardMarkup(keyboard),
-        parse_mode="Markdown"
-    )
-
-async def play_spin(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    user_id = query.from_user.id
-    user = get_user(user_id)
-    
-    stake = float(query.data.split("_")[1])
-    
-    if user["balance"] < stake:
-        await query.answer("❌ Insufficient balance! Please deposit first.", show_alert=True)
-        return
-
-    import random
-    user["balance"] -= stake
-    
-    multipliers = [0.0, 0.0, 0.5, 1.0, 1.5, 2.0]
-    multiplier = random.choice(multipliers)
-    payout = stake * multiplier
-    
-    user["balance"] += payout
-    profit = payout - stake
-    
-    if profit > 0:
-        result_msg = f"🎉 *YOU WON!* `+ETB {profit:.2f}`"
-    elif profit == 0:
-        result_msg = f"😐 *DRAW!* Stake returned."
-    else:
-        result_msg = f"😢 *YOU LOST!* `-ETB {stake:.2f}`"
+    function switchTab(tabName) {
+        document.querySelectorAll('.content-section').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
         
-    user["history"].append(f"🎰 Spin ({stake} ETB) -> Result: {multiplier}x")
-    
-    keyboard = [
-        [InlineKeyboardButton("🔄 Spin Again", callback_data="menu_spin")],
-        [InlineKeyboardButton("🔙 Main Menu", callback_data="menu_main")]
-    ]
-    
-    await query.edit_message_text(
-        f"🎰 *Spin Result*\n\n"
-        f"Stake: `ETB {stake}`\n"
-        f"Multiplier: `{multiplier}x`\n"
-        f"{result_msg}\n\n"
-        f"💰 New Balance: `ETB {user['balance']:.2f}`",
-        reply_markup=InlineKeyboardMarkup(keyboard),
-        parse_mode="Markdown"
-    )
+        document.getElementById(`section-${tabName}`).classList.remove('hidden');
+        event.currentTarget.classList.add('active');
+    }
 
-# --- WITHDRAWAL FLOW ---
-async def withdraw_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    
-    keyboard = [
-        [InlineKeyboardButton("Telebirr", callback_data="bank_Telebirr")],
-        [InlineKeyboardButton("Oromia Cooperative Bank", callback_data="bank_OromiaCoop")],
-        [InlineKeyboardButton("Sinqee Bank", callback_data="bank_Sinqee")],
-        [InlineKeyboardButton("🔙 Cancel", callback_data="menu_main")]
-    ]
-    await query.edit_message_text(
-        "🏦 *Select Payout Bank/Wallet:*",
-        reply_markup=InlineKeyboardMarkup(keyboard),
-        parse_mode="Markdown"
-    )
-    return WITHDRAW_BANK
+    function setStake(amount) {
+        state.selectedStake = amount;
+        document.getElementById('customStake').value = amount;
+        document.querySelectorAll('.stake-btn').forEach(btn => {
+            btn.classList.remove('selected');
+            if(btn.innerText.includes(amount)) btn.classList.add('selected');
+        });
+    }
 
-async def withdraw_bank_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    bank_name = query.data.split("_")[1]
-    context.user_data["withdraw_bank"] = bank_name
-    
-    keyboard = [[InlineKeyboardButton("🔙 Cancel", callback_data="menu_main")]]
-    await query.edit_message_text(
-        f"🏦 Selected: *{bank_name}*\n\nPlease enter your Account Number or Phone Number:",
-        reply_markup=InlineKeyboardMarkup(keyboard),
-        parse_mode="Markdown"
-    )
-    return WITHDRAW_ACCOUNT
+    function updateCustomStake(val) {
+        let amt = parseFloat(val);
+        if(!isNaN(amt)) state.selectedStake = amt;
+    }
 
-async def withdraw_account_entered(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data["withdraw_account"] = update.message.text
-    user_id = update.effective_user.id
-    user = get_user(user_id)
-    
-    keyboard = [[InlineKeyboardButton("🔙 Cancel", callback_data="menu_main")]]
-    await update.message.reply_text(
-        f"💸 Enter amount to withdraw (Available Balance: `ETB {user['balance']:.2f}`):",
-        reply_markup=InlineKeyboardMarkup(keyboard),
-        parse_mode="Markdown"
-    )
-    return WITHDRAW_AMOUNT
+    function playSpin() {
+        let stake = state.selectedStake;
+        if (stake < 5 || stake > 100) {
+            showSpinAlert('❌ Spin amount must be between 5 ETB and 100 ETB.', 'error');
+            return;
+        }
+        if (state.balance < stake) {
+            showSpinAlert('❌ Insufficient balance! Please deposit funds first.', 'error');
+            return;
+        }
 
-async def withdraw_amount_entered(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-    user = get_user(user_id)
-    try:
-        amount = float(update.message.text)
-    except ValueError:
-        await update.message.reply_text("❌ Please enter a valid number.")
-        return WITHDRAW_AMOUNT
+        state.balance -= stake;
         
-    if amount < MIN_SPIN:
-        await update.message.reply_text(f"❌ Minimum withdrawal amount is {MIN_SPIN} ETB.")
-        return WITHDRAW_AMOUNT
+        // Multiplier probabilities (0x, 0.5x, 1x, 1.5x, 2x)
+        const multipliers = [0.0, 0.5, 1.0, 1.5, 2.0];
+        const mult = multipliers[Math.floor(Math.random() * multipliers.length)];
+        const payout = stake * mult;
+        state.balance += payout;
+
+        let profit = payout - stake;
+        let msg = '';
+        if (profit > 0) {
+            msg = `🎉 YOU WON! +ETB ${profit.toFixed(2)} (${mult}x)`;
+            showSpinAlert(msg, 'success');
+        } else if (profit === 0) {
+            msg = `😐 DRAW! Stake returned (1x)`;
+            showSpinAlert(msg, 'success');
+        } else {
+            msg = `😢 YOU LOST! -ETB ${stake.toFixed(2)}`;
+            showSpinAlert(msg, 'error');
+        }
+
+        state.history.unshift(`🎰 Spin: Stake ETB ${stake} | Multiplier: ${mult}x | Result: ${msg}`);
+        updateUI();
+    }
+
+    function showSpinAlert(text, type) {
+        document.getElementById('spinResult').innerHTML = `<div class="alert alert-${type}">${text}</div>`;
+    }
+
+    function verifyDeposit() {
+        let textInput = document.getElementById('depositText').value;
         
-    if amount > user["balance"]:
-        await update.message.reply_text("❌ Insufficient balance.")
-        return WITHDRAW_AMOUNT
-        
-    user["balance"] -= amount
-    bank = context.user_data.get("withdraw_bank")
-    acc = context.user_data.get("withdraw_account")
-    
-    user["history"].append(f"📤 Withdrawal Requested: -ETB {amount} to {bank} ({acc})")
-    
-    keyboard = [[InlineKeyboardButton("🔙 Main Menu", callback_data="menu_main")]]
-    await update.message.reply_text(
-        f"✅ *Withdrawal Request Submitted!*\n\n"
-        f"Amount: `ETB {amount:.2f}`\n"
-        f"Bank: `{bank}`\n"
-        f"Account/Phone: `{acc}`\n\n"
-        "Your payout will be reviewed and sent shortly.",
-        reply_markup=InlineKeyboardMarkup(keyboard),
-        parse_mode="Markdown"
-    )
-    return ConversationHandler.END
+        // Check amount and target name/number
+        let amountMatch = textInput.match(/ETB\s+([0-9]+\.[0-9]{2})/i);
+        let nameMatch = textInput.match(/tahir\s+shetamam/i);
+        let numberMatch = textInput.includes('251963052077') || textInput.includes('2519');
+        let linkMatch = textInput.match(/https:\/\/transactioninfo\.ethiotelecom\.et\/receipt\/[A-Za-z0-9]+/i);
 
-async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Action cancelled.")
-    return ConversationHandler.END
+        if ((amountMatch && nameMatch) || linkMatch) {
+            let amount = amountMatch ? parseFloat(amountMatch[1]) : 100.00; // Default parse backup if link
+            if (amount < 5) {
+                showDepositAlert('❌ Minimum deposit amount is 5 ETB.', 'error');
+                return;
+            }
+            state.balance += amount;
+            state.history.unshift(`➕ Deposited: +ETB ${amount.toFixed(2)} via Telebirr`);
+            showDepositAlert(`✅ Deposit Successful! Credited ETB ${amount.toFixed(2)} to your account.`, 'success');
+            document.getElementById('depositText').value = '';
+            updateUI();
+        } else {
+            showDepositAlert('❌ Verification Failed. Ensure text contains correct receiver "tahir shetamam" or valid receipt URL.', 'error');
+        }
+    }
 
-# --- MAIN SETUP ---
-def main():
-    TOKEN = "YOUR_TELEGRAM_BOT_TOKEN_HERE"
-    
-    app = ApplicationBuilder().token(TOKEN).build()
-    
-    deposit_handler = ConversationHandler(
-        entry_points=[CallbackQueryHandler(deposit_start, pattern="^menu_deposit$")],
-        states={
-            DEPOSIT_INPUT: [MessageHandler(filters.TEXT & ~filters.COMMAND, deposit_verify)]
-        },
-        fallbacks=[CommandHandler("cancel", cancel)]
-    )
-    
-    withdraw_handler = ConversationHandler(
-        entry_points=[CallbackQueryHandler(withdraw_start, pattern="^menu_withdraw$")],
-        states={
-            WITHDRAW_BANK: [CallbackQueryHandler(withdraw_bank_selected, pattern="^bank_")],
-            WITHDRAW_ACCOUNT: [MessageHandler(filters.TEXT & ~filters.COMMAND, withdraw_account_entered)],
-            WITHDRAW_AMOUNT: [MessageHandler(filters.TEXT & ~filters.COMMAND, withdraw_amount_entered)]
-        },
-        fallbacks=[CommandHandler("cancel", cancel)]
-    )
-    
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CallbackQueryHandler(start, pattern="^menu_main$"))
-    app.add_handler(CallbackQueryHandler(balance_menu, pattern="^menu_balance$"))
-    app.add_handler(CallbackQueryHandler(history_menu, pattern="^menu_history$"))
-    app.add_handler(CallbackQueryHandler(spin_menu, pattern="^menu_spin$"))
-    app.add_handler(CallbackQueryHandler(play_spin, pattern="^spin_"))
-    
-    app.add_handler(deposit_handler)
-    app.add_handler(withdraw_handler)
-    
-    print("Bot is running...")
-    app.run_polling()
+    function showDepositAlert(text, type) {
+        document.getElementById('depositAlert').innerHTML = `<div class="alert alert-${type}">${text}</div>`;
+    }
 
-if __name__ == "__main__":
-    main()
+    function requestWithdrawal() {
+        let bank = document.getElementById('withdrawBank').value;
+        let account = document.getElementById('withdrawAccount').value;
+        let amount = parseFloat(document.getElementById('
