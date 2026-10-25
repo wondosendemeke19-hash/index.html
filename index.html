@@ -34,7 +34,7 @@
             max-width: 400px;
         }
 
-        /* Auth Screen Styling */
+        /* Register Screen Styling */
         .auth-container {
             background: var(--card-bg);
             border-radius: 16px;
@@ -43,33 +43,6 @@
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
             text-align: center;
             box-sizing: border-box;
-        }
-
-        .auth-tabs {
-            display: flex;
-            background: var(--bg-color);
-            border-radius: 8px;
-            padding: 4px;
-            margin-bottom: 20px;
-            gap: 4px;
-        }
-
-        .auth-tab {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            padding: 10px;
-            font-weight: bold;
-            font-size: 13px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .auth-tab.active {
-            background: var(--accent);
-            color: #fff;
         }
 
         header {
@@ -306,31 +279,13 @@
 
     <div class="container">
         
-        <!-- ================= AUTHENTICATION CONTAINER ================= -->
+        <!-- ================= DIRECT REGISTRATION CONTAINER ================= -->
         <div id="authContainer" class="auth-container">
             <h2 style="margin-top: 0; color: var(--accent);">Birr Spin & Win</h2>
-            
-            <!-- Tabs for Login / Sign Up -->
-            <div class="auth-tabs">
-                <button class="auth-tab active" id="loginTabBtn" onclick="switchAuthMode('login')">Login</button>
-                <button class="auth-tab" id="signupTabBtn" onclick="switchAuthMode('signup')">Sign Up</button>
-            </div>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 20px;">Register your account to start playing and winning!</p>
 
-            <!-- Login Form -->
-            <form id="loginForm" onsubmit="handleLogin(event)">
-                <div class="form-group">
-                    <label>Phone / Username</label>
-                    <input type="text" id="loginUser" placeholder="09xxxxxxxx" required>
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="loginPass" placeholder="********" required>
-                </div>
-                <button type="submit" class="spin-btn" style="padding: 10px; font-size: 14px;">Login to Game</button>
-            </form>
-
-            <!-- Sign Up Form -->
-            <form id="signupForm" class="hidden" onsubmit="handleSignup(event)">
+            <!-- Registration Form -->
+            <form id="signupForm" onsubmit="handleSignup(event)">
                 <div class="form-group">
                     <label>Full Name</label>
                     <input type="text" id="signupName" placeholder="Abebe Kebede" required>
@@ -343,7 +298,7 @@
                     <label>Create Password</label>
                     <input type="password" id="signupPass" placeholder="********" required>
                 </div>
-                <button type="submit" class="spin-btn" style="padding: 10px; font-size: 14px; background: #3b82f6;">Register Account</button>
+                <button type="submit" class="spin-btn" style="padding: 12px; font-size: 14px; background: #3b82f6; margin-top: 10px;">Register Account</button>
             </form>
         </div>
 
@@ -352,7 +307,7 @@
             <!-- Header with Balance & Action Nav -->
             <header>
                 <div>
-                    <div class="balance-title">Balance</div>
+                    <div class="balance-title">Welcome, <span id="userNameDisplay" style="color: var(--text-color);">User</span></div>
                     <div class="balance-amount"><span id="balance">50.00</span> ETB</div>
                 </div>
                 <div class="nav-buttons">
@@ -452,74 +407,162 @@
         
         // Storage to prevent duplicate transaction ID usage
         const usedTransactions = new Set();
-        
-        // Mock user database storage in browser localStorage
-        function getUsers() {
-            return JSON.parse(localStorage.getItem('users') || '{}');
-        }
-
-        // Auth Tab Switcher
-        function switchAuthMode(mode) {
-            const loginForm = document.getElementById('loginForm');
-            const signupForm = document.getElementById('signupForm');
-            const loginTabBtn = document.getElementById('loginTabBtn');
-            const signupTabBtn = document.getElementById('signupTabBtn');
-
-            if (mode === 'login') {
-                loginForm.classList.remove('hidden');
-                signupForm.classList.add('hidden');
-                loginTabBtn.classList.add('active');
-                signupTabBtn.classList.remove('active');
-            } else {
-                signupForm.classList.remove('hidden');
-                loginForm.classList.add('hidden');
-                signupTabBtn.classList.add('active');
-                loginTabBtn.classList.remove('active');
-            }
-        }
 
         function handleSignup(event) {
             event.preventDefault();
             const name = document.getElementById('signupName').value;
             const phone = document.getElementById('signupPhone').value;
-            const pass = document.getElementById('signupPass').value;
 
-            let users = getUsers();
-            if (users[phone]) {
-                alert('An account with this phone number already exists! Please login.');
-                switchAuthMode('login');
+            if (!name || !phone) {
+                alert('Please enter all required fields.');
                 return;
             }
 
-            // Save user
-            users[phone] = { name, pass, balance: 50.00 };
-            localStorage.setItem('users', JSON.stringify(users));
-
-            alert('Account registered successfully! Please login with your phone number and password.');
-            document.getElementById('signupForm').reset();
-            switchAuthMode('login');
-        }
-
-        function handleLogin(event) {
-            event.preventDefault();
-            const userPhone = document.getElementById('loginUser').value;
-            const userPass = document.getElementById('loginPass').value;
-
-            let users = getUsers();
-            if (users[userPhone] && users[userPhone].pass === userPass) {
-                balance = users[userPhone].balance || 50.00;
-                document.getElementById('authContainer').classList.add('hidden');
-                document.getElementById('mainDashboard').classList.remove('hidden');
-                updateUI();
-            } else {
-                alert('Invalid phone number or password. Please check or sign up first.');
-            }
+            // Set user greeting and transition to dashboard with 50 ETB bonus
+            document.getElementById('userNameDisplay').innerText = name;
+            document.getElementById('authContainer').classList.add('hidden');
+            document.getElementById('mainDashboard').classList.remove('hidden');
+            updateUI();
         }
 
         function handleLogout() {
             document.getElementById('mainDashboard').classList.add('hidden');
             document.getElementById('authContainer').classList.remove('hidden');
-            document.getElementById('loginForm').reset();
+            document.getElementById('signupForm').reset();
         }
 
-        function updateUI()
+        function updateUI() {
+            document.getElementById('balance').innerText = balance.toFixed(2);
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Automatic Telebirr SMS Receipt Parser
+        function parseReceipt() {
+            const text = document.getElementById('receiptText').value;
+            
+            // Extract Amount (Matches "ETB 100.00" or similar variants)
+            const amountMatch = text.match(/ETB\s+([0-9]+\.[0-9]{2})/i);
+            
+            // Extract Transaction Number
+            const txMatch = text.match(/transaction number is\s+([A-Z0-9]+)/i) || text.match(/receipt\/([A-Z0-9]+)/i);
+
+            if (amountMatch && txMatch) {
+                document.getElementById('depositAmount').value = amountMatch[1];
+                document.getElementById('depositTxId').value = txMatch[1];
+                alert('Receipt successfully verified and parsed!');
+            } else {
+                alert('Could not parse receipt. Please make sure you paste the complete SMS text correctly.');
+            }
+        }
+
+        function spinWheel() {
+            const spinCost = 5;
+            const messageEl = document.getElementById('message');
+
+            if (isSpinning) return;
+
+            if (balance < spinCost) {
+                messageEl.style.color = 'var(--danger)';
+                messageEl.innerText = 'Insufficient balance! Please deposit.';
+                return;
+            }
+
+            balance -= spinCost;
+            updateUI();
+            isSpinning = true;
+            document.getElementById('spinBtn').disabled = true;
+            messageEl.style.color = 'var(--text-color)';
+            messageEl.innerText = 'Spinning... Good luck!';
+
+            const prizeIndex = Math.floor(Math.random() * rewards.length);
+            const degreesPerSegment = 360 / rewards.length;
+            const extraRounds = 360 * 6;
+            const targetDegree = prizeIndex * degreesPerSegment;
+            const randomOffset = degreesPerSegment / 2; 
+            
+            currentRotation += extraRounds + (360 - (currentRotation % 360)) + (360 - (targetDegree + randomOffset));
+
+            const wheel = document.getElementById('wheel');
+            wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+            setTimeout(() => {
+                isSpinning = false;
+                document.getElementById('spinBtn').disabled = false;
+                const wonAmount = rewards[prizeIndex];
+                balance += wonAmount;
+                updateUI();
+
+                if (wonAmount > 0) {
+                    messageEl.style.color = 'var(--accent)';
+                    messageEl.innerText = `Congratulations! You won ${wonAmount} ETB! 🎉`;
+                } else {
+                    messageEl.style.color = 'var(--danger)';
+                    messageEl.innerText = 'Oops! Better luck next time.';
+                }
+            }, 4000);
+        }
+
+        function handleDeposit() {
+            const amount = parseFloat(document.getElementById('depositAmount').value);
+            const txId = document.getElementById('depositTxId').value;
+
+            if (!amount || amount <= 0 || !txId) {
+                alert('Please paste and auto-fill your receipt first.');
+                return;
+            }
+
+            if (usedTransactions.has(txId)) {
+                alert('This transaction reference ID has already been used!');
+                return;
+            }
+
+            usedTransactions.add(txId);
+            balance += amount;
+            updateUI();
+            closeModal('depositModal');
+
+            // Reset fields
+            document.getElementById('receiptText').value = '';
+            document.getElementById('depositAmount').value = '';
+            document.getElementById('depositTxId').value = '';
+            
+            const messageEl = document.getElementById('message');
+            messageEl.style.color = 'var(--accent)';
+            messageEl.innerText = `Deposit of ${amount.toFixed(2)} ETB approved successfully! 🎉`;
+        }
+
+        function handleWithdraw() {
+            const amount = parseFloat(document.getElementById('withdrawAmount').value);
+            const account = document.getElementById('withdrawAccount').value;
+            const method = document.getElementById('withdrawMethod').value;
+
+            if (!amount || amount <= 0 || !account) {
+                alert('Please fill in all withdrawal details properly.');
+                return;
+            }
+
+            if (amount > balance) {
+                alert('Withdrawal amount exceeds your current balance.');
+                return;
+            }
+
+            balance -= amount;
+            updateUI();
+            closeModal('withdrawModal');
+            document.getElementById('withdrawAmount').value = '';
+            document.getElementById('withdrawAccount').value = '';
+            
+            const messageEl = document.getElementById('message');
+            messageEl.style.color = 'var(--accent)';
+            messageEl.innerText = `Withdrawal request of ${amount} ETB via ${method} submitted!`;
+        }
+    </script>
+</body>
+</html>
