@@ -14,6 +14,7 @@
             --text-color: #f8fafc;
             --text-secondary: #94a3b8;
             --danger: #ef4444;
+            --primary: #3b82f6;
         }
 
         body {
@@ -34,50 +35,49 @@
             max-width: 400px;
         }
 
-        .auth-container {
+        .auth-container, .game-card, header, .referral-card {
             background: var(--card-bg);
             border-radius: 16px;
-            padding: 24px;
-            width: 100%;
+            padding: 20px;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
-            text-align: center;
+            margin-bottom: 16px;
             box-sizing: border-box;
+            text-align: center;
         }
 
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--card-bg);
             padding: 12px 16px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 16px;
         }
 
         .balance-title {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-secondary);
+            text-align: left;
         }
 
         .balance-amount {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             color: var(--accent);
+            text-align: left;
         }
 
         .nav-buttons {
             display: flex;
-            gap: 8px;
+            gap: 6px;
         }
 
         .btn-small {
             background: var(--card-bg);
             border: 1px solid var(--accent);
             color: var(--text-color);
-            padding: 6px 12px;
+            padding: 6px 10px;
             border-radius: 8px;
-            font-size: 12px;
+            font-size: 11px;
             cursor: pointer;
             font-weight: bold;
         }
@@ -97,19 +97,10 @@
             color: #fff;
         }
 
-        .game-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
-            margin-bottom: 20px;
-        }
-
         .wheel-container {
             position: relative;
-            width: 220px;
-            height: 220px;
+            width: 240px;
+            height: 240px;
             margin: 0 auto 20px auto;
         }
 
@@ -128,7 +119,32 @@
                 #10b981 240deg 300deg,
                 #6366f1 300deg 360deg
             );
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
         }
+
+        .wheel-label {
+            position: absolute;
+            width: 50%;
+            height: 30px;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0% 50%;
+            text-align: right;
+            padding-right: 15px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            pointer-events: none;
+        }
+
+        /* Positioning segment text labels */
+        .wheel-label:nth-child(1) { transform: rotate(30deg); }
+        .wheel-label:nth-child(2) { transform: rotate(90deg); }
+        .wheel-label:nth-child(3) { transform: rotate(150deg); }
+        .wheel-label:nth-child(4) { transform: rotate(210deg); }
+        .wheel-label:nth-child(5) { transform: rotate(270deg); }
+        .wheel-label:nth-child(6) { transform: rotate(330deg); }
 
         .pointer {
             position: absolute;
@@ -141,6 +157,7 @@
             border-right: 10px solid transparent;
             border-top: 20px solid #fff;
             z-index: 10;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));
         }
 
         .spin-btn {
@@ -206,10 +223,6 @@
             line-height: 1.4;
         }
 
-        .instruction-box b {
-            color: var(--text-color);
-        }
-
         .form-group {
             margin-bottom: 14px;
             text-align: left;
@@ -260,6 +273,12 @@
             cursor: pointer;
         }
 
+        .referral-input-group {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
         #message {
             margin-top: 12px;
             font-size: 14px;
@@ -294,7 +313,7 @@
                     <label>Create Password</label>
                     <input type="password" id="signupPass" placeholder="********" required>
                 </div>
-                <button type="submit" class="spin-btn" style="padding: 12px; font-size: 14px; background: #3b82f6; margin-top: 10px;">Register Account</button>
+                <button type="submit" class="spin-btn" style="padding: 12px; font-size: 14px; background: var(--primary); margin-top: 10px;">Register Account</button>
             </form>
         </div>
 
@@ -318,11 +337,29 @@
                 
                 <div class="wheel-container">
                     <div class="pointer"></div>
-                    <div class="wheel" id="wheel"></div>
+                    <div class="wheel" id="wheel">
+                        <div class="wheel-label">0 ETB</div>
+                        <div class="wheel-label">5 ETB</div>
+                        <div class="wheel-label">10 ETB</div>
+                        <div class="wheel-label">20 ETB</div>
+                        <div class="wheel-label">50 ETB</div>
+                        <div class="wheel-label">100 ETB</div>
+                    </div>
                 </div>
 
                 <button class="spin-btn" id="spinBtn" onclick="spinWheel()">SPIN NOW (5 ETB)</button>
                 <div id="message"></div>
+            </div>
+
+            <!-- Referral Card -->
+            <div class="referral-card">
+                <h4 style="margin-top: 0; margin-bottom: 8px; color: var(--accent);">Invite & Earn 🎁</h4>
+                <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 12px;">Share your referral link with friends to earn bonus spins!</p>
+                <div class="referral-input-group">
+                    <input type="text" id="refLinkInput" readonly style="background: var(--bg-color); border: 1px solid var(--text-secondary); color: var(--text-color); padding: 8px; border-radius: 8px; font-size: 11px; flex: 1;">
+                    <button class="btn-small" onclick="copyRefLink()" style="background: var(--primary); border: none; color: #fff;">Copy</button>
+                    <button class="btn-small" onclick="shareToTelegram()" style="background: #229ED9; border: none; color: #fff;">Share</button>
+                </div>
             </div>
         </div>
 
@@ -395,8 +432,57 @@
         let loggedInUserName = "User";
         let currentRotation = 0;
         let isSpinning = false;
+        
+        // Payout slices corresponding to wheel segments: 0, 5, 10, 20, 50, 100
         const rewards = [0, 5, 10, 20, 50, 100];
         const usedTransactions = new Set();
+
+        // Web Audio API Sound Generator
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            if (type === 'tick') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.05);
+            } else if (type === 'win') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+                osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+            } else if (type === 'bonus') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1760, audioCtx.currentTime + 0.3);
+                gainNode.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.5);
+            } else if (type === 'lose') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(80, audioCtx.currentTime + 0.3);
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            }
+        }
 
         function handleSignup(event) {
             event.preventDefault();
@@ -412,6 +498,11 @@
             document.getElementById('userNameDisplay').innerText = name;
             document.getElementById('authContainer').classList.add('hidden');
             document.getElementById('mainDashboard').classList.remove('hidden');
+            
+            // Set unique referral link
+            const botUsername = "Qarshigame_bot";
+            const refCode = btoa(phone).substring(0, 8);
+            document.getElementById('refLinkInput').value = `https://t.me/${botUsername}?start=ref_${refCode}`;
             updateUI();
         }
 
@@ -431,6 +522,19 @@
 
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
+        }
+
+        function copyRefLink() {
+            const input = document.getElementById('refLinkInput');
+            input.select();
+            navigator.clipboard.writeText(input.value);
+            alert('Referral link copied to clipboard!');
+        }
+
+        function shareToTelegram() {
+            const link = document.getElementById('refLinkInput').value;
+            const text = encodeURIComponent(`Play Birr Spin & Win and earn real cash via Telebirr! Join using my link: ${link}`);
+            window.open(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${text}`, '_blank');
         }
 
         function parseReceipt() {
@@ -465,7 +569,24 @@
             messageEl.style.color = 'var(--text-color)';
             messageEl.innerText = 'Spinning... Good luck!';
 
-            const prizeIndex = Math.floor(Math.random() * rewards.length);
+            // Adjusted odds: Reduced overall win probability with occasional bonus triggers
+            let prizeIndex;
+            const randRoll = Math.random();
+            
+            if (randRoll < 0.65) {
+                // 65% chance for 0 (loss)
+                prizeIndex = 0;
+            } else if (randRoll < 0.90) {
+                // 25% chance for modest wins (5 or 10 ETB)
+                prizeIndex = Math.random() < 0.7 ? 1 : 2;
+            } else if (randRoll < 0.98) {
+                // 8% chance for medium wins (20 or 50 ETB)
+                prizeIndex = Math.random() < 0.6 ? 3 : 4;
+            } else {
+                // 2% Bonus Win trigger for high reward (100 ETB)
+                prizeIndex = 5;
+            }
+
             const degreesPerSegment = 360 / rewards.length;
             const extraRounds = 360 * 6;
             const targetDegree = prizeIndex * degreesPerSegment;
@@ -476,6 +597,17 @@
             const wheel = document.getElementById('wheel');
             wheel.style.transform = `rotate(${currentRotation}deg)`;
 
+            // Simulated ticking sound intervals during spin rotation
+            let tickCount = 0;
+            const tickInterval = setInterval(() => {
+                if(tickCount < 16) {
+                    playSound('tick');
+                    tickCount++;
+                } else {
+                    clearInterval(tickInterval);
+                }
+            }, 200);
+
             setTimeout(() => {
                 isSpinning = false;
                 document.getElementById('spinBtn').disabled = false;
@@ -484,9 +616,17 @@
                 updateUI();
 
                 if (wonAmount > 0) {
-                    messageEl.style.color = 'var(--accent)';
-                    messageEl.innerText = `Congratulations! You won ${wonAmount} ETB! 🎉`;
+                    if (wonAmount >= 50) {
+                        playSound('bonus');
+                        messageEl.style.color = 'var(--primary)';
+                        messageEl.innerText = `🔥 BONUS WIN! You won ${wonAmount} ETB! 🎉`;
+                    } else {
+                        playSound('win');
+                        messageEl.style.color = 'var(--accent)';
+                        messageEl.innerText = `Congratulations! You won ${wonAmount} ETB! 🎉`;
+                    }
                 } else {
+                    playSound('lose');
                     messageEl.style.color = 'var(--danger)';
                     messageEl.innerText = 'Oops! Better luck next time.';
                 }
@@ -507,7 +647,6 @@
                 return;
             }
 
-            // Send notification to backend to post to @qarsho12
             try {
                 await fetch('/api/deposit', {
                     method: 'POST',
@@ -552,7 +691,6 @@
                 return;
             }
 
-            // Send withdrawal request to backend to post to @qarsho12
             try {
                 await fetch('/api/withdraw', {
                     method: 'POST',
