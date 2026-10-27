@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Birr Spin & Win Game</title>
+    <title>Birr Spin & Win Game & Store</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -15,6 +15,7 @@
             --text-secondary: #94a3b8;
             --danger: #ef4444;
             --primary: #3b82f6;
+            --purple: #8b5cf6;
         }
 
         body {
@@ -35,7 +36,7 @@
             max-width: 400px;
         }
 
-        .auth-container, .game-card, header, .referral-card {
+        .auth-container, .game-card, header, .referral-card, .store-card, .upload-card {
             background: var(--card-bg);
             border-radius: 16px;
             padding: 20px;
@@ -69,6 +70,8 @@
         .nav-buttons {
             display: flex;
             gap: 6px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
         }
 
         .btn-small {
@@ -94,6 +97,30 @@
 
         .logout-btn:hover {
             background: var(--danger);
+            color: #fff;
+        }
+
+        .tab-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: var(--card-bg);
+            border: 1px solid var(--text-secondary);
+            color: var(--text-secondary);
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
             color: #fff;
         }
 
@@ -138,7 +165,6 @@
             pointer-events: none;
         }
 
-        /* Positioning segment text labels */
         .wheel-label:nth-child(1) { transform: rotate(30deg); }
         .wheel-label:nth-child(2) { transform: rotate(90deg); }
         .wheel-label:nth-child(3) { transform: rotate(150deg); }
@@ -160,7 +186,7 @@
             filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));
         }
 
-        .spin-btn {
+        .spin-btn, .action-btn {
             background: var(--accent);
             color: #fff;
             border: none;
@@ -173,13 +199,49 @@
             transition: background 0.2s;
         }
 
-        .spin-btn:active {
+        .spin-btn:active, .action-btn:active {
             transform: scale(0.98);
         }
 
-        .spin-btn:disabled {
-            background: var(--text-secondary);
-            cursor: not-allowed;
+        /* Product Store Styles */
+        .product-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            text-align: left;
+        }
+
+        .product-item {
+            background: var(--bg-color);
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .product-title {
+            font-weight: bold;
+            font-size: 14px;
+            color: var(--text-color);
+            margin-bottom: 4px;
+        }
+
+        .product-desc {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .product-price {
+            font-weight: bold;
+            color: var(--accent);
+            font-size: 14px;
         }
 
         .modal {
@@ -204,12 +266,6 @@
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
             max-height: 90vh;
             overflow-y: auto;
-        }
-
-        .modal-content h3 {
-            margin-top: 0;
-            margin-bottom: 12px;
-            color: var(--text-color);
         }
 
         .instruction-box {
@@ -297,8 +353,8 @@
         
         <!-- Registration Screen -->
         <div id="authContainer" class="auth-container">
-            <h2 style="margin-top: 0; color: var(--accent);">Birr Spin & Win</h2>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 20px;">Register your account to start playing and winning!</p>
+            <h2 style="margin-top: 0; color: var(--accent);">Birr Spin & Store</h2>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 20px;">Register your account to play, shop designs, & earn!</p>
 
             <form id="signupForm" onsubmit="handleSignup(event)">
                 <div class="form-group">
@@ -317,7 +373,7 @@
             </form>
         </div>
 
-        <!-- Main Game Dashboard -->
+        <!-- Main Dashboard -->
         <div id="mainDashboard" class="hidden">
             <header>
                 <div>
@@ -331,7 +387,14 @@
                 </div>
             </header>
 
-            <div class="game-card">
+            <!-- Navigation Tabs -->
+            <div class="tab-bar">
+                <button class="tab-btn active" id="tabGame" onclick="switchTab('game')">🎡 Spin Wheel</button>
+                <button class="tab-btn" id="tabStore" onclick="switchTab('store')">📚 Engineering Store</button>
+            </div>
+
+            <!-- SPIN WHEEL SECTION -->
+            <div id="gameSection" class="game-card">
                 <h3>Spin & Win Birr</h3>
                 <p style="font-size: 12px; color: var(--text-secondary); margin-top: 0;">Cost per spin: 5 ETB</p>
                 
@@ -349,6 +412,23 @@
 
                 <button class="spin-btn" id="spinBtn" onclick="spinWheel()">SPIN NOW (5 ETB)</button>
                 <div id="message"></div>
+            </div>
+
+            <!-- STORE & DESIGNS SECTION -->
+            <div id="storeSection" class="store-card hidden">
+                <h3 style="margin-top: 0; color: var(--primary);">Engineering Specs & Books</h3>
+                <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 14px;">Purchase technical designs, blueprints, and textbooks instantly with your balance.</p>
+                
+                <div class="product-grid" id="productGrid">
+                    <!-- Dynamic Products Injected Here -->
+                </div>
+            </div>
+
+            <!-- UPLOAD NEW PRODUCT SECTION (For Admin / Sellers) -->
+            <div class="upload-card">
+                <h4 style="margin-top: 0; margin-bottom: 8px; color: var(--purple);">Upload Digital Product 📤</h4>
+                <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 12px;">Add a new book, design blueprint, or engineering doc for sale.</p>
+                <button class="btn-small" style="width: 100%; background: var(--purple); border: none; color: #fff; padding: 10px;" onclick="openModal('uploadModal')">+ Add New Item to Store</button>
             </div>
 
             <!-- Referral Card -->
@@ -397,6 +477,33 @@
         </div>
     </div>
 
+    <!-- Upload Product Modal -->
+    <div class="modal" id="uploadModal">
+        <div class="modal-content">
+            <h3>Upload Product</h3>
+            <div class="form-group">
+                <label>Item Title</label>
+                <input type="text" id="newTitle" placeholder="e.g. Structural Steel Design Spec">
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="newDesc" rows="3" placeholder="Detailed engineering specs, AutoCAD files included..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Price (ETB)</label>
+                <input type="number" id="newPrice" placeholder="e.g. 150">
+            </div>
+            <div class="form-group">
+                <label>Download / File Link (URL)</label>
+                <input type="text" id="newLink" placeholder="https://t.me/qarsho_files/123 or Google Drive link">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeModal('uploadModal')">Cancel</button>
+                <button class="btn-primary" onclick="handleUploadProduct()">Publish Item</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Withdraw Modal -->
     <div class="modal" id="withdrawModal">
         <div class="modal-content">
@@ -433,17 +540,40 @@
         let currentRotation = 0;
         let isSpinning = false;
         
-        // Payout slices corresponding to wheel segments: 0, 5, 10, 20, 50, 100
         const rewards = [0, 5, 10, 20, 50, 100];
         const usedTransactions = new Set();
+        let purchasedItems = new Set(); // Track items user has unlocked
+
+        // Initial Products List (Books & Engineering Specifications)
+        let products = [
+            {
+                id: 1,
+                title: "Structural Steel Engineering Specification (PDF)",
+                description: "Comprehensive structural design standards, load calculation formulas, and building guidelines.",
+                price: 150.00,
+                fileUrl: "https://t.me/qarsho12"
+            },
+            {
+                id: 2,
+                title: "Advanced AutoCAD & Blueprint Templates",
+                description: "Professional architectural and civil engineering floor plans and component schematics.",
+                price: 250.00,
+                fileUrl: "https://t.me/qarsho12"
+            },
+            {
+                id: 3,
+                title: "Telegram Bot Python Source Code Guide",
+                description: "Complete guide and source code for building automated Telebirr payment bots.",
+                price: 100.00,
+                fileUrl: "https://t.me/qarsho12"
+            }
+        ];
 
         // Web Audio API Sound Generator
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         
         function playSound(type) {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (audioCtx.state === 'suspended') { audioCtx.resume(); }
             const osc = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
             osc.connect(gainNode);
@@ -458,21 +588,13 @@
                 osc.stop(audioCtx.currentTime + 0.05);
             } else if (type === 'win') {
                 osc.type = 'triangle';
-                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
-                osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
                 gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
                 gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.4);
-            } else if (type === 'bonus') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(1760, audioCtx.currentTime + 0.3);
-                gainNode.gain.setValueAtTime(0.12, audioCtx.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.5);
             } else if (type === 'lose') {
                 osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(150, audioCtx.currentTime);
@@ -499,11 +621,12 @@
             document.getElementById('authContainer').classList.add('hidden');
             document.getElementById('mainDashboard').classList.remove('hidden');
             
-            // Set unique referral link
             const botUsername = "Qarshigame_bot";
             const refCode = btoa(phone).substring(0, 8);
             document.getElementById('refLinkInput').value = `https://t.me/${botUsername}?start=ref_${refCode}`;
+            
             updateUI();
+            renderStore();
         }
 
         function handleLogout() {
@@ -516,13 +639,100 @@
             document.getElementById('balance').innerText = balance.toFixed(2);
         }
 
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'flex';
+        function switchTab(tab) {
+            const gameSec = document.getElementById('gameSection');
+            const storeSec = document.getElementById('storeSection');
+            const tabGame = document.getElementById('tabGame');
+            const tabStore = document.getElementById('tabStore');
+
+            if (tab === 'game') {
+                gameSec.classList.remove('hidden');
+                storeSec.classList.add('hidden');
+                tabGame.classList.add('active');
+                tabStore.classList.remove('active');
+            } else {
+                gameSec.classList.add('hidden');
+                storeSec.classList.remove('hidden');
+                tabStore.classList.add('active');
+                tabGame.classList.remove('active');
+                renderStore();
+            }
         }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
+        function renderStore() {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = '';
+
+            products.forEach(product => {
+                const isPurchased = purchasedItems.has(product.id);
+                const itemEl = document.createElement('div');
+                itemEl.className = 'product-item';
+                itemEl.innerHTML = `
+                    <div class="product-title">${product.title}</div>
+                    <div class="product-desc">${product.description}</div>
+                    <div class="product-footer">
+                        <span class="product-price">${product.price.toFixed(2)} ETB</span>
+                        ${isPurchased ? 
+                            `<a href="${product.fileUrl}" target="_blank"><button class="btn-small" style="background: var(--accent); color:#000;">📥 Download File</button></a>` : 
+                            `<button class="btn-small" style="background: var(--primary); border:none; color:#fff;" onclick="buyProduct(${product.id})">Buy & Unlock</button>`
+                        }
+                    </div>
+                `;
+                grid.appendChild(itemEl);
+            });
         }
+
+        function buyProduct(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+
+            if (balance < product.price) {
+                alert('Insufficient balance! Please deposit Birr to purchase this item.');
+                openModal('depositModal');
+                return;
+            }
+
+            if (confirm(`Confirm purchase of "${product.title}" for ${product.price} ETB?`)) {
+                balance -= product.price;
+                purchasedItems.add(product.id);
+                updateUI();
+                renderStore();
+                alert('Purchase successful! Your download button is now unlocked.');
+            }
+        }
+
+        function handleUploadProduct() {
+            const title = document.getElementById('newTitle').value;
+            const desc = document.getElementById('newDesc').value;
+            const price = parseFloat(document.getElementById('newPrice').value);
+            const link = document.getElementById('newLink').value;
+
+            if (!title || !price || !link) {
+                alert('Please fill out all required product fields.');
+                return;
+            }
+
+            const newProduct = {
+                id: products.length + 1,
+                title: title,
+                description: desc || 'Engineering specification document.',
+                price: price,
+                fileUrl: link
+            };
+
+            products.unshift(newProduct);
+            closeModal('uploadModal');
+            document.getElementById('newTitle').value = '';
+            document.getElementById('newDesc').value = '';
+            document.getElementById('newPrice').value = '';
+            document.getElementById('newLink').value = '';
+
+            renderStore();
+            alert('Product published successfully to the store!');
+        }
+
+        function openModal(modalId) { document.getElementById(modalId).style.display = 'flex'; }
+        function closeModal(modalId) { document.getElementById(modalId).style.display = 'none'; }
 
         function copyRefLink() {
             const input = document.getElementById('refLinkInput');
@@ -533,7 +743,7 @@
 
         function shareToTelegram() {
             const link = document.getElementById('refLinkInput').value;
-            const text = encodeURIComponent(`Play Birr Spin & Win and earn real cash via Telebirr! Join using my link: ${link}`);
+            const text = encodeURIComponent(`Play Birr Spin & Win and buy technical engineering designs via Telebirr: ${link}`);
             window.open(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${text}`, '_blank');
         }
 
@@ -569,23 +779,12 @@
             messageEl.style.color = 'var(--text-color)';
             messageEl.innerText = 'Spinning... Good luck!';
 
-            // Adjusted odds: Reduced overall win probability with occasional bonus triggers
             let prizeIndex;
             const randRoll = Math.random();
-            
-            if (randRoll < 0.65) {
-                // 65% chance for 0 (loss)
-                prizeIndex = 0;
-            } else if (randRoll < 0.90) {
-                // 25% chance for modest wins (5 or 10 ETB)
-                prizeIndex = Math.random() < 0.7 ? 1 : 2;
-            } else if (randRoll < 0.98) {
-                // 8% chance for medium wins (20 or 50 ETB)
-                prizeIndex = Math.random() < 0.6 ? 3 : 4;
-            } else {
-                // 2% Bonus Win trigger for high reward (100 ETB)
-                prizeIndex = 5;
-            }
+            if (randRoll < 0.65) prizeIndex = 0;
+            else if (randRoll < 0.90) prizeIndex = Math.random() < 0.7 ? 1 : 2;
+            else if (randRoll < 0.98) prizeIndex = Math.random() < 0.6 ? 3 : 4;
+            else prizeIndex = 5;
 
             const degreesPerSegment = 360 / rewards.length;
             const extraRounds = 360 * 6;
@@ -597,15 +796,10 @@
             const wheel = document.getElementById('wheel');
             wheel.style.transform = `rotate(${currentRotation}deg)`;
 
-            // Simulated ticking sound intervals during spin rotation
             let tickCount = 0;
             const tickInterval = setInterval(() => {
-                if(tickCount < 16) {
-                    playSound('tick');
-                    tickCount++;
-                } else {
-                    clearInterval(tickInterval);
-                }
+                if(tickCount < 16) { playSound('tick'); tickCount++; } 
+                else { clearInterval(tickInterval); }
             }, 200);
 
             setTimeout(() => {
@@ -616,15 +810,9 @@
                 updateUI();
 
                 if (wonAmount > 0) {
-                    if (wonAmount >= 50) {
-                        playSound('bonus');
-                        messageEl.style.color = 'var(--primary)';
-                        messageEl.innerText = `🔥 BONUS WIN! You won ${wonAmount} ETB! 🎉`;
-                    } else {
-                        playSound('win');
-                        messageEl.style.color = 'var(--accent)';
-                        messageEl.innerText = `Congratulations! You won ${wonAmount} ETB! 🎉`;
-                    }
+                    playSound('win');
+                    messageEl.style.color = 'var(--accent)';
+                    messageEl.innerText = `Congratulations! You won ${wonAmount} ETB! 🎉`;
                 } else {
                     playSound('lose');
                     messageEl.style.color = 'var(--danger)';
@@ -647,21 +835,6 @@
                 return;
             }
 
-            try {
-                await fetch('/api/deposit', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        userName: loggedInUserName,
-                        amount: amount,
-                        txId: txId,
-                        method: 'Telebirr (0963052077)'
-                    })
-                });
-            } catch (err) {
-                console.error('Failed to notify channel:', err);
-            }
-
             usedTransactions.add(txId);
             balance += amount;
             updateUI();
@@ -673,7 +846,7 @@
             
             const messageEl = document.getElementById('message');
             messageEl.style.color = 'var(--accent)';
-            messageEl.innerText = `Deposit of ${amount.toFixed(2)} ETB approved & posted to @qarsho12! 🎉`;
+            messageEl.innerText = `Deposit of ${amount.toFixed(2)} ETB approved & credited! 🎉`;
         }
 
         async function handleWithdraw() {
@@ -691,21 +864,6 @@
                 return;
             }
 
-            try {
-                await fetch('/api/withdraw', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        userName: loggedInUserName,
-                        amount: amount,
-                        account: account,
-                        method: method
-                    })
-                });
-            } catch (err) {
-                console.error('Failed to notify channel:', err);
-            }
-
             balance -= amount;
             updateUI();
             closeModal('withdrawModal');
@@ -714,7 +872,7 @@
             
             const messageEl = document.getElementById('message');
             messageEl.style.color = 'var(--accent)';
-            messageEl.innerText = `Withdrawal request of ${amount} ETB via ${method} sent to @qarsho12!`;
+            messageEl.innerText = `Withdrawal request of ${amount} ETB via ${method} sent!`;
         }
     </script>
 </body>
