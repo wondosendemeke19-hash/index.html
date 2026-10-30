@@ -1,135 +1,224 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#121212">
-  <title>NEW GAME</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spin & Win Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
-<body>
-  <header class="topbar">
-    <div>
-      <div class="brand">🎮 NEW GAME</div>
-      <small>Spin • Drop • Win Big Rewards</small>
-    </div>
-  </header>
-  
-  <main>
-    <!-- Telegram Auto-Auth / Profile Verification View -->
-    <section id="authView" class="panel auth text-center">
-      <h1>Welcome to NEW GAME</h1>
-      <p class="muted">Connecting securely through your Telegram account...</p>
-      <div class="spinner-box" style="margin: 20px 0;">
-        <div class="gameicon" style="animation: pulse 1s infinite;">🎰</div>
-      </div>
-      <div id="phonePromptContainer" class="hidden">
-        <p>Please share your phone number to complete registration:</p>
-        <button id="shareContactBtn" class="primary full" type="button" style="margin-top: 10px;">
-          Share Telegram Contact 📞
-        </button>
-      </div>
-      <p id="authMessage" class="message"></p>
-    </section>
+<body class="bg-slate-900 text-white min-h-screen flex flex-col">
 
-    <!-- Main Casino App View -->
-    <section id="appView" class="hidden">
-      <!-- Wallet & Referral Banner -->
-      <section class="wallet panel">
-        <div>
-          <small>WALLET BALANCE (ETB)</small>
-          <div id="walletBalance" class="money">0.00</div>
-          <small id="welcome"></small>
+    <!-- Header / Balance Bar -->
+    <header class="bg-slate-800 p-4 shadow-md flex justify-between items-center">
+        <h1 class="font-bold text-lg text-amber-400">🎰 SpinApp</h1>
+        <div class="bg-slate-700 px-3 py-1 rounded-full text-sm">
+            Balance: <span id="user-balance" class="font-bold text-emerald-400">$100.00</span>
         </div>
-        <div class="points">
-          <small>CASINO COINS</small>
-          <strong id="pointsBalance">0</strong>
-        </div>
-      </section>
+    </header>
 
-      <!-- Referral Sharing Card -->
-      <section class="panel" style="background: linear-gradient(135deg, #ff416c, #ff4b2b); color: #fff;">
-        <h3 style="margin-bottom: 6px;">🎁 Invite Friends & Earn Coins!</h3>
-        <p style="color: #ffe6e6; font-size: 13px; margin-bottom: 12px;">Share your referral link to earn +50 bonus coins for every friend who joins!</p>
-        <div style="display: flex; gap: 8px;">
-          <input type="text" id="refLinkInput" readonly style="background: #ffffff15; color: #fff; border: 1px solid #ffffff40; margin-top:0;" />
-          <button class="primary" id="shareRefBtn" type="button" style="background: #fff; color: #ff416c; white-space: nowrap;">Copy Link</button>
-        </div>
-      </section>
-      
-      <nav class="nav">
-        <button class="navbtn active" data-view="home">Fruit Drop Arcade</button>
-        <button class="navbtn" data-view="wallet">Wallet</button>
-        <button class="navbtn" data-view="history">History</button>
-      </nav>
+    <!-- Navigation Tabs -->
+    <nav class="flex justify-around bg-slate-800 border-t border-slate-700">
+        <button onclick="switchTab('game')" id="tab-game" class="flex-1 py-3 text-center font-medium text-amber-400 border-b-2 border-amber-400">Game</button>
+        <button onclick="switchTab('deposit')" id="tab-deposit" class="flex-1 py-3 text-center font-medium text-slate-400">Deposit</button>
+        <button onclick="switchTab('withdraw')" id="tab-withdraw" class="flex-1 py-3 text-center font-medium text-slate-400">Withdraw</button>
+    </nav>
 
-      <!-- Fruit Drop Game Featured View -->
-      <section id="homeView" class="view">
-        <h2>🍇 Fruit Drop Multiplier</h2>
-        <p class="muted">Drop the fruit basket and catch winning multipliers! Costs 10 coins per drop.</p>
+    <!-- Main Content Area -->
+    <main class="flex-1 p-4 flex flex-col justify-center items-center">
+
+        <!-- GAME TAB -->
+        <section id="section-game" class="w-full max-w-sm flex flex-col items-center">
+            <div class="relative w-64 h-64 mb-6">
+                <!-- Wheel Pointer -->
+                <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[20px] border-t-amber-400 z-10"></div>
+                <canvas id="wheelCanvas" width="256" height="256" class="w-full h-full rounded-full border-4 border-slate-700 shadow-xl"></canvas>
+            </div>
+            <p id="game-message" class="mb-4 text-sm text-slate-300 h-6">Spin to win prizes!</p>
+            <button onclick="spinWheel()" id="spin-btn" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl shadow-lg transition">SPIN ($10)</button>
+        </section>
+
+        <!-- DEPOSIT TAB -->
+        <section id="section-deposit" class="w-full max-w-sm hidden flex flex-col space-y-4">
+            <h2 class="text-xl font-bold text-amber-400">Deposit Funds</h2>
+            <p class="text-xs text-slate-400">Select an amount to add to your balance.</p>
+            <div class="grid grid-cols-3 gap-2">
+                <button onclick="setDepositAmount(10)" class="bg-slate-800 hover:bg-slate-700 py-3 rounded-lg border border-slate-700 font-bold">$10</button>
+                <button onclick="setDepositAmount(50)" class="bg-slate-800 hover:bg-slate-700 py-3 rounded-lg border border-slate-700 font-bold">$50</button>
+                <button onclick="setDepositAmount(100)" class="bg-slate-800 hover:bg-slate-700 py-3 rounded-lg border border-slate-700 font-bold">$100</button>
+            </div>
+            <div>
+                <label class="block text-xs text-slate-400 mb-1">Custom Amount ($)</label>
+                <input type="number" id="deposit-input" placeholder="Enter amount" class="w-full p-3 bg-slate-800 rounded-lg border border-slate-700 text-white focus:outline-none focus:border-amber-400">
+            </div>
+            <button onclick="processDeposit()" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl shadow-lg transition">Proceed to Deposit</button>
+        </section>
+
+        <!-- WITHDRAW TAB -->
+        <section id="section-withdraw" class="w-full max-w-sm hidden flex flex-col space-y-4">
+            <h2 class="text-xl font-bold text-amber-400">Withdraw Funds</h2>
+            <p class="text-xs text-slate-400">Minimum withdrawal is $20.00.</p>
+            <div>
+                <label class="block text-xs text-slate-400 mb-1">Withdrawal Address / Account</label>
+                <input type="text" id="withdraw-account" placeholder="Enter Wallet or Crypto Address" class="w-full p-3 bg-slate-800 rounded-lg border border-slate-700 text-white focus:outline-none focus:border-amber-400 mb-3">
+                <label class="block text-xs text-slate-400 mb-1">Amount ($)</label>
+                <input type="number" id="withdraw-input" placeholder="0.00" class="w-full p-3 bg-slate-800 rounded-lg border border-slate-700 text-white focus:outline-none focus:border-amber-400">
+            </div>
+            <button onclick="processWithdraw()" class="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow-lg transition">Request Withdrawal</button>
+        </section>
+
+    </main>
+
+    <script>
+        // Initialize Telegram WebApp
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+
+        let balance = 100.00;
+        const sectors = [
+            { color: "#f59e0b", label: "$0" },
+            { color: "#10b981", label: "$5" },
+            { color: "#3b82f6", label: "$20" },
+            { color: "#ef4444", label: "$0" },
+            { color: "#8b5cf6", label: "$10" },
+            { color: "#ec4899", label: "$50" }
+        ];
         
-        <div class="panel" style="text-align: center; background: linear-gradient(180deg, #1f1f1f, #2a2a2a); border: 2px dashed #ff4b2b; color: #fff;">
-          <div id="fruitDisplay" style="font-size: 72px; margin: 20px 0; transition: transform 0.3s ease;">🍋 🍎 🍇</div>
-          <h3 id="fruitResultText" style="color: #ffcc00; min-height: 28px;">Ready to drop?</h3>
-          <button class="primary full" id="dropBtn" type="button" style="font-size: 18px; padding: 14px; margin-top: 15px; background: #ff4b2b;">DROP FRUIT (10 Coins)</button>
-        </div>
+        let currentAngle = 0;
+        let isSpinning = false;
+        const canvas = document.getElementById("wheelCanvas");
+        const ctx = canvas.getContext("2d");
 
-        <h2>High Roller Mini Dice</h2>
-        <div class="gamegrid">
-          <article class="gamecard">
-            <div class="gameicon">🎲</div>
-            <h3>Lucky Dice Roll</h3>
-            <p>Pick a number (1–6) to win coins.</p>
-            <select id="diceGuess" style="background:#333; color:#fff; padding: 8px; width: 100%; margin-top: 8px;">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-            </select>
-            <button class="primary full" id="diceBtn" type="button" style="margin-top:10px;">Roll Dice (5 Coins)</button>
-          </article>
-        </div>
-        <p id="gameMessage" class="message"></p>
-      </section>
+        function drawWheel() {
+            const arc = Math.PI / (sectors.length / 2);
+            const radius = canvas.width / 2;
 
-      <!-- Wallet View -->
-      <section id="walletView" class="view hidden">
-        <h2>Casino Wallet</h2>
-        <div class="panel">
-          <h3>Top-Up via Telebirr</h3>
-          <p>Transfer funds to <strong id="telebirrNumber">0917393624</strong> and enter your transaction reference below for instant crediting.</p>
-          <form id="depositForm">
-            <label>Amount (ETB)<input name="amount" type="number" min="10" step="0.01" required></label>
-            <label>Transaction reference<input name="reference" required minlength="4"></label>
-            <button class="primary" type="submit">Confirm Deposit</button>
-          </form>
-        </div>
-        <div class="panel">
-          <h3>Payout Request</h3>
-          <p class="muted">Withdraw your winnings securely.</p>
-          <form id="payoutForm">
-            <label>Amount (ETB)<input name="amount" type="number" min="10" step="0.01" required></label>
-            <label>Bank<select name="bank"><option>CBE</option><option>Oromia Cooperative Bank</option><option>Sinqee Bank</option></select></label>
-            <label>Account number<input name="account" required minlength="5"></label>
-            <button class="primary" type="submit">Request Payout</button>
-          </form>
-        </div>
-        <p id="walletMessage" class="message"></p>
-      </section>
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.translate(radius, radius);
+            ctx.rotate(currentAngle);
 
-      <!-- History View -->
-      <section id="historyView" class="view hidden">
-        <h2>Betting & Transaction History</h2>
-        <div id="historyList" class="panel">No past activity yet.</div>
-      </section>
-    </section>
-    <p id="globalMessage" class="message"></p>
-  </main>
+            sectors.forEach((sector, i) => {
+                const angle = i * arc;
+                ctx.beginPath();
+                ctx.fillStyle = sector.color;
+                ctx.moveTo(0, 0);
+                ctx.arc(0, 0, radius, angle, angle + arc, false);
+                ctx.lineTo(0, 0);
+                ctx.fill();
 
-  <footer>NEW GAME · Telegram Mini App</footer>
-  <script src="app.js"></script>
+                // Draw text labels
+                ctx.save();
+                ctx.rotate(angle + arc / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "bold 14px sans-serif";
+                ctx.fillText(sector.label, radius - 15, 5);
+                ctx.restore();
+            });
+
+            ctx.restore();
+        }
+
+        drawWheel();
+
+        function spinWheel() {
+            if (isSpinning) return;
+            if (balance < 10) {
+                alert("Insufficient balance! Please deposit funds.");
+                return;
+            }
+
+            balance -= 10;
+            updateUI();
+            isSpinning = true;
+            document.getElementById("spin-btn").disabled = true;
+            document.getElementById("game-message").innerText = "Spinning...";
+
+            const randomSpin = Math.floor(Math.random() * 3600) + 1800;
+            const targetAngle = currentAngle + randomSpin;
+            const duration = 3000;
+            const start = performance.now();
+
+            function animate(time) {
+                const elapsed = time - start;
+                const progress = Math.min(elapsed / duration, 1);
+                // Ease out cubic
+                const ease = 1 - Math.pow(1 - progress, 3);
+                
+                currentAngle = targetAngle * ease * (Math.PI / 180);
+                drawWheel();
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    isSpinning = false;
+                    document.getElementById("spin-btn").disabled = false;
+                    
+                    // Simple reward logic placeholder
+                    const winnings = 15; // Set dynamic or randomized based on pointer
+                    balance += winnings;
+                    updateUI();
+                    document.getElementById("game-message").innerText = `You won $${winnings}! 🎉`;
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        function updateUI() {
+            document.getElementById("user-balance").innerText = `$${balance.toFixed(2)}`;
+        }
+
+        // Tab Switching Logic
+        function switchTab(tab) {
+            ['game', 'deposit', 'withdraw'].forEach(t => {
+                document.getElementById(`section-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).className = "flex-1 py-3 text-center font-medium text-slate-400 border-b-0";
+            });
+            document.getElementById(`section-${tab}`).classList.remove('hidden');
+            document.getElementById(`tab-${tab}`).className = "flex-1 py-3 text-center font-medium text-amber-400 border-b-2 border-amber-400";
+        }
+
+        function setDepositAmount(amount) {
+            document.getElementById('deposit-input').value = amount;
+        }
+
+        function processDeposit() {
+            const amount = parseFloat(document.getElementById('deposit-input').value);
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid deposit amount.');
+                return;
+            }
+            // Trigger Telegram native popup or payment API hook here
+            alert(`Deposit request for $${amount} submitted successfully!`);
+            balance += amount;
+            updateUI();
+            switchTab('game');
+        }
+
+        function processWithdraw() {
+            const amount = parseFloat(document.getElementById('withdraw-input').value);
+            const account = document.getElementById('withdraw-account').value;
+            if (!account || !amount || amount < 20) {
+                alert('Minimum withdrawal is $20 and account info is required.');
+                return;
+            }
+            if (amount > balance) {
+                alert('Insufficient balance.');
+                return;
+            }
+            balance -= amount;
+            updateUI();
+            alert(`Withdrawal request of $${amount} processed successfully!`);
+            switchTab('game');
+        }
+        
+        // Handle URL parameters if opened from inline keyboard tabs
+        const urlParams = new URLSearchParams(window.location.search);
+        if(urlParams.get('tab')) {
+            switchTab(urlParams.get('tab'));
+        }
+    </script>
 </body>
 </html>
