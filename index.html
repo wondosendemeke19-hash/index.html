@@ -31,12 +31,10 @@
             box-sizing: border-box;
         }
 
-        .container {
-            width: 100%;
-            max-width: 400px;
-        }
+        .container { width: 100%; max-width: 400px; }
 
-        .auth-container, .game-card, header, .referral-card, .store-card, .upload-card {
+        .auth-container, .game-card, header, .referral-card, .store-card,
+        .upload-card, .history-card {
             background: var(--card-bg);
             border-radius: 16px;
             padding: 20px;
@@ -54,25 +52,10 @@
             margin-bottom: 16px;
         }
 
-        .balance-title {
-            font-size: 13px;
-            color: var(--text-secondary);
-            text-align: left;
-        }
+        .balance-title { font-size: 13px; color: var(--text-secondary); text-align: left; }
+        .balance-amount { font-size: 18px; font-weight: bold; color: var(--accent); text-align: left; }
 
-        .balance-amount {
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--accent);
-            text-align: left;
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            justify-content: flex-end;
-        }
+        .nav-buttons { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
 
         .btn-small {
             background: var(--card-bg);
@@ -84,27 +67,11 @@
             cursor: pointer;
             font-weight: bold;
         }
+        .btn-small:hover { background: var(--accent); color: #000; }
+        .logout-btn { border-color: var(--danger); color: var(--danger); }
+        .logout-btn:hover { background: var(--danger); color: #fff; }
 
-        .btn-small:hover {
-            background: var(--accent);
-            color: #000;
-        }
-
-        .logout-btn {
-            border-color: var(--danger);
-            color: var(--danger);
-        }
-
-        .logout-btn:hover {
-            background: var(--danger);
-            color: #fff;
-        }
-
-        .tab-bar {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
+        .tab-bar { display: flex; gap: 8px; margin-bottom: 16px; }
 
         .tab-btn {
             flex: 1;
@@ -115,14 +82,35 @@
             border-radius: 10px;
             font-weight: bold;
             cursor: pointer;
+            font-size: 12px;
+        }
+        .tab-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+        /* Auth tabs */
+        .auth-tab-bar { display: flex; gap: 8px; margin-bottom: 16px; }
+        .auth-tab-btn {
+            flex: 1;
+            background: var(--bg-color);
+            border: 1px solid var(--text-secondary);
+            color: var(--text-secondary);
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
             font-size: 13px;
         }
+        .auth-tab-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
 
-        .tab-btn.active {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: #fff;
+        .remember-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 14px;
+            text-align: left;
         }
+        .remember-row input { width: auto; }
 
         .wheel-container {
             position: relative;
@@ -139,22 +127,17 @@
             position: relative;
             transition: transform 4s cubic-bezier(0.15, 0.95, 0.15, 1);
             background: conic-gradient(
-                #3b82f6 0deg 60deg,
-                #8b5cf6 60deg 120deg,
-                #ec4899 120deg 180deg,
-                #f59e0b 180deg 240deg,
-                #10b981 240deg 300deg,
-                #6366f1 300deg 360deg
+                #3b82f6 0deg 60deg, #8b5cf6 60deg 120deg,
+                #ec4899 120deg 180deg, #f59e0b 180deg 240deg,
+                #10b981 240deg 300deg, #6366f1 300deg 360deg
             );
             box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
         }
 
         .wheel-label {
             position: absolute;
-            width: 50%;
-            height: 30px;
-            top: 50%;
-            left: 50%;
+            width: 50%; height: 30px;
+            top: 50%; left: 50%;
             transform-origin: 0% 50%;
             text-align: right;
             padding-right: 15px;
@@ -164,7 +147,6 @@
             text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
             pointer-events: none;
         }
-
         .wheel-label:nth-child(1) { transform: rotate(30deg); }
         .wheel-label:nth-child(2) { transform: rotate(90deg); }
         .wheel-label:nth-child(3) { transform: rotate(150deg); }
@@ -173,12 +155,9 @@
         .wheel-label:nth-child(6) { transform: rotate(330deg); }
 
         .pointer {
-            position: absolute;
-            top: -12px;
-            left: 50%;
+            position: absolute; top: -12px; left: 50%;
             transform: translateX(-50%);
-            width: 0;
-            height: 0;
+            width: 0; height: 0;
             border-left: 10px solid transparent;
             border-right: 10px solid transparent;
             border-top: 20px solid #fff;
@@ -198,65 +177,30 @@
             cursor: pointer;
             transition: background 0.2s;
         }
+        .spin-btn:active, .action-btn:active { transform: scale(0.98); }
 
-        .spin-btn:active, .action-btn:active {
-            transform: scale(0.98);
-        }
-
-        /* Product Store Styles */
-        .product-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            text-align: left;
-        }
-
+        .product-grid { display: flex; flex-direction: column; gap: 12px; text-align: left; }
         .product-item {
             background: var(--bg-color);
             padding: 14px;
             border-radius: 10px;
             border: 1px solid rgba(255,255,255,0.05);
         }
-
-        .product-title {
-            font-weight: bold;
-            font-size: 14px;
-            color: var(--text-color);
-            margin-bottom: 4px;
-        }
-
-        .product-desc {
-            font-size: 11px;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-            line-height: 1.3;
-        }
-
-        .product-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .product-price {
-            font-weight: bold;
-            color: var(--accent);
-            font-size: 14px;
-        }
+        .product-title { font-weight: bold; font-size: 14px; color: var(--text-color); margin-bottom: 4px; }
+        .product-desc { font-size: 11px; color: var(--text-secondary); margin-bottom: 8px; line-height: 1.3; }
+        .product-footer { display: flex; justify-content: space-between; align-items: center; }
+        .product-price { font-weight: bold; color: var(--accent); font-size: 14px; }
 
         .modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.7);
             justify-content: center;
             align-items: center;
             z-index: 100;
         }
-
         .modal-content {
             background: var(--card-bg);
             padding: 24px;
@@ -279,18 +223,13 @@
             line-height: 1.4;
         }
 
-        .form-group {
-            margin-bottom: 14px;
-            text-align: left;
-        }
-
+        .form-group { margin-bottom: 14px; text-align: left; }
         .form-group label {
             display: block;
             font-size: 12px;
             color: var(--text-secondary);
             margin-bottom: 6px;
         }
-
         .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             padding: 10px;
@@ -302,60 +241,56 @@
             font-family: inherit;
         }
 
-        .modal-actions {
-            display: flex;
-            gap: 10px;
-        }
+        .modal-actions { display: flex; gap: 10px; }
 
         .btn-primary {
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            flex: 1;
-            font-weight: bold;
-            cursor: pointer;
+            background: var(--accent); color: #fff; border: none;
+            padding: 10px; border-radius: 8px; flex: 1;
+            font-weight: bold; cursor: pointer;
         }
-
         .btn-secondary {
-            background: transparent;
-            border: 1px solid var(--text-secondary);
-            color: var(--text-secondary);
-            padding: 10px;
+            background: transparent; border: 1px solid var(--text-secondary);
+            color: var(--text-secondary); padding: 10px; border-radius: 8px;
+            flex: 1; font-weight: bold; cursor: pointer;
+        }
+
+        .referral-input-group { display: flex; gap: 6px; margin-top: 8px; }
+        #message { margin-top: 12px; font-size: 14px; font-weight: 500; min-height: 20px; }
+        .hidden { display: none !important; }
+
+        /* History styles */
+        .history-list { text-align: left; display: flex; flex-direction: column; gap: 8px; }
+        .history-item {
+            background: var(--bg-color);
+            border-left: 3px solid var(--primary);
+            padding: 10px 12px;
             border-radius: 8px;
-            flex: 1;
-            font-weight: bold;
-            cursor: pointer;
+            font-size: 12px;
         }
-
-        .referral-input-group {
-            display: flex;
-            gap: 6px;
-            margin-top: 8px;
-        }
-
-        #message {
-            margin-top: 12px;
-            font-size: 14px;
-            font-weight: 500;
-            min-height: 20px;
-        }
-
-        .hidden {
-            display: none !important;
-        }
+        .history-item.spin { border-left-color: var(--purple); }
+        .history-item.deposit { border-left-color: var(--accent); }
+        .history-item.withdraw { border-left-color: var(--danger); }
+        .history-item.purchase { border-left-color: var(--primary); }
+        .history-item .h-top { display: flex; justify-content: space-between; font-weight: bold; }
+        .history-item .h-sub { color: var(--text-secondary); font-size: 10px; margin-top: 3px; }
+        .history-empty { color: var(--text-secondary); font-size: 12px; padding: 12px; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        
-        <!-- Registration Screen -->
+
+        <!-- AUTH SCREEN: Sign Up + Login -->
         <div id="authContainer" class="auth-container">
             <h2 style="margin-top: 0; color: var(--accent);">Birr Spin & Store</h2>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 20px;">Register your account to play, shop designs, & earn!</p>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 20px;">Register or log in to play, shop designs, & earn!</p>
 
+            <div class="auth-tab-bar">
+                <button class="auth-tab-btn active" id="authTabSignup" onclick="switchAuthTab('signup')">Sign Up</button>
+                <button class="auth-tab-btn" id="authTabLogin" onclick="switchAuthTab('login')">Login</button>
+            </div>
+
+            <!-- Signup -->
             <form id="signupForm" onsubmit="handleSignup(event)">
                 <div class="form-group">
                     <label>Full Name</label>
@@ -367,17 +302,38 @@
                 </div>
                 <div class="form-group">
                     <label>Create Password</label>
-                    <input type="password" id="signupPass" placeholder="********" required>
+                    <input type="password" id="signupPass" placeholder="********" minlength="4" required>
                 </div>
-                <button type="submit" class="spin-btn" style="padding: 12px; font-size: 14px; background: var(--primary); margin-top: 10px;">Register Account</button>
+                <div class="remember-row">
+                    <input type="checkbox" id="signupRemember" checked>
+                    <label for="signupRemember" style="margin:0;">Remember me on this device</label>
+                </div>
+                <button type="submit" class="spin-btn" style="padding: 12px; font-size: 14px; background: var(--primary);">Register Account</button>
+            </form>
+
+            <!-- Login -->
+            <form id="loginForm" class="hidden" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="text" id="loginPhone" placeholder="09xxxxxxxx" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPass" placeholder="********" required>
+                </div>
+                <div class="remember-row">
+                    <input type="checkbox" id="loginRemember" checked>
+                    <label for="loginRemember" style="margin:0;">Remember me on this device</label>
+                </div>
+                <button type="submit" class="spin-btn" style="padding: 12px; font-size: 14px; background: var(--accent);">Login</button>
             </form>
         </div>
 
-        <!-- Main Dashboard -->
+        <!-- MAIN DASHBOARD -->
         <div id="mainDashboard" class="hidden">
             <header>
                 <div>
-                    <div class="balance-title">Welcome, <span id="userNameDisplay" style="color: var(--text-color);">User</span></div>
+                    <div class="balance-title">Welcome, <span id="userNameDisplay">User</span></div>
                     <div class="balance-amount"><span id="balance">50.00</span> ETB</div>
                 </div>
                 <div class="nav-buttons">
@@ -387,17 +343,16 @@
                 </div>
             </header>
 
-            <!-- Navigation Tabs -->
             <div class="tab-bar">
-                <button class="tab-btn active" id="tabGame" onclick="switchTab('game')">🎡 Spin Wheel</button>
-                <button class="tab-btn" id="tabStore" onclick="switchTab('store')">📚 Engineering Store</button>
+                <button class="tab-btn active" id="tabGame" onclick="switchTab('game')">🎡 Spin</button>
+                <button class="tab-btn" id="tabStore" onclick="switchTab('store')">📚 Store</button>
+                <button class="tab-btn" id="tabHistory" onclick="switchTab('history')">📜 History</button>
             </div>
 
-            <!-- SPIN WHEEL SECTION -->
+            <!-- GAME -->
             <div id="gameSection" class="game-card">
                 <h3>Spin & Win Birr</h3>
                 <p style="font-size: 12px; color: var(--text-secondary); margin-top: 0;">Cost per spin: 5 ETB</p>
-                
                 <div class="wheel-container">
                     <div class="pointer"></div>
                     <div class="wheel" id="wheel">
@@ -409,29 +364,32 @@
                         <div class="wheel-label">100 ETB</div>
                     </div>
                 </div>
-
                 <button class="spin-btn" id="spinBtn" onclick="spinWheel()">SPIN NOW (5 ETB)</button>
                 <div id="message"></div>
             </div>
 
-            <!-- STORE & DESIGNS SECTION -->
+            <!-- STORE -->
             <div id="storeSection" class="store-card hidden">
                 <h3 style="margin-top: 0; color: var(--primary);">Engineering Specs & Books</h3>
                 <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 14px;">Purchase technical designs, blueprints, and textbooks instantly with your balance.</p>
-                
-                <div class="product-grid" id="productGrid">
-                    <!-- Dynamic Products Injected Here -->
-                </div>
+                <div class="product-grid" id="productGrid"></div>
             </div>
 
-            <!-- UPLOAD NEW PRODUCT SECTION (For Admin / Sellers) -->
+            <!-- HISTORY -->
+            <div id="historySection" class="history-card hidden">
+                <h3 style="margin-top: 0; color: var(--purple);">📜 Your History</h3>
+                <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 14px;">All spins, deposits, withdrawals, and purchases on this account.</p>
+                <div class="history-list" id="historyList"></div>
+            </div>
+
+            <!-- UPLOAD -->
             <div class="upload-card">
                 <h4 style="margin-top: 0; margin-bottom: 8px; color: var(--purple);">Upload Digital Product 📤</h4>
                 <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 12px;">Add a new book, design blueprint, or engineering doc for sale.</p>
                 <button class="btn-small" style="width: 100%; background: var(--purple); border: none; color: #fff; padding: 10px;" onclick="openModal('uploadModal')">+ Add New Item to Store</button>
             </div>
 
-            <!-- Referral Card -->
+            <!-- REFERRAL -->
             <div class="referral-card">
                 <h4 style="margin-top: 0; margin-bottom: 8px; color: var(--accent);">Invite & Earn 🎁</h4>
                 <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 12px;">Share your referral link with friends to earn bonus spins!</p>
@@ -445,22 +403,20 @@
 
     </div>
 
-    <!-- Deposit Modal -->
+    <!-- DEPOSIT MODAL (Telebirr updated to 0917393624) -->
     <div class="modal" id="depositModal">
         <div class="modal-content">
             <h3>Deposit Birr</h3>
             <div class="instruction-box">
                 <b>Payment Account:</b><br>
-                • <b>Telebirr:</b> 0963052077<br><br>
-                Paste your full Telebirr SMS receipt below to auto-verify and credit your account instantly!
+                • <b>Telebirr:</b> 0917393624<br><br>
+                Paste your full Telebirr SMS receipt below to auto-verify and credit your account.
             </div>
-            
             <div class="form-group">
                 <label>Paste Telebirr SMS Receipt</label>
                 <textarea id="receiptText" rows="4" placeholder="Dear Wandu You have transferred ETB 100.00..."></textarea>
                 <button type="button" class="btn-small" style="width: 100%; margin-top: 6px;" onclick="parseReceipt()">Auto-Fill from SMS</button>
             </div>
-
             <div class="form-group">
                 <label>Detected Amount (ETB)</label>
                 <input type="number" id="depositAmount" placeholder="e.g. 100" readonly>
@@ -469,7 +425,6 @@
                 <label>Transaction ID</label>
                 <input type="text" id="depositTxId" placeholder="e.g. DJL856XCCK" readonly>
             </div>
-            
             <div class="modal-actions">
                 <button class="btn-secondary" onclick="closeModal('depositModal')">Cancel</button>
                 <button class="btn-primary" onclick="handleDeposit()">Approve Deposit</button>
@@ -477,7 +432,7 @@
         </div>
     </div>
 
-    <!-- Upload Product Modal -->
+    <!-- UPLOAD MODAL -->
     <div class="modal" id="uploadModal">
         <div class="modal-content">
             <h3>Upload Product</h3>
@@ -487,7 +442,7 @@
             </div>
             <div class="form-group">
                 <label>Description</label>
-                <textarea id="newDesc" rows="3" placeholder="Detailed engineering specs, AutoCAD files included..."></textarea>
+                <textarea id="newDesc" rows="3" placeholder="Detailed engineering specs..."></textarea>
             </div>
             <div class="form-group">
                 <label>Price (ETB)</label>
@@ -495,7 +450,7 @@
             </div>
             <div class="form-group">
                 <label>Download / File Link (URL)</label>
-                <input type="text" id="newLink" placeholder="https://t.me/qarsho_files/123 or Google Drive link">
+                <input type="text" id="newLink" placeholder="https://t.me/qarsho_files/123">
             </div>
             <div class="modal-actions">
                 <button class="btn-secondary" onclick="closeModal('uploadModal')">Cancel</button>
@@ -504,7 +459,7 @@
         </div>
     </div>
 
-    <!-- Withdraw Modal -->
+    <!-- WITHDRAW MODAL -->
     <div class="modal" id="withdrawModal">
         <div class="modal-content">
             <h3>Withdraw Birr</h3>
@@ -531,349 +486,315 @@
         </div>
     </div>
 
-    <script>
-        let tg = window.Telegram?.WebApp;
-        if (tg) { tg.expand(); }
+<script>
+/* ============================================================
+   STORAGE LAYER
+   ============================================================ */
+const USERS_KEY = 'birr_users_v1';      // { phone: { name, phone, passHash, balance, purchased, history, createdAt } }
+const SESSION_KEY = 'birr_session_v1';  // { phone } | null
+const PRODUCTS_KEY = 'birr_products_v1';// [ { id, title, description, price, fileUrl, ownerPhone } ]
 
-        let balance = 50.00;
-        let loggedInUserName = "User";
-        let currentRotation = 0;
-        let isSpinning = false;
-        
-        const rewards = [0, 5, 10, 20, 50, 100];
-        const usedTransactions = new Set();
-        let purchasedItems = new Set(); // Track items user has unlocked
+function loadUsers() {
+    try { return JSON.parse(localStorage.getItem(USERS_KEY)) || {}; }
+    catch { return {}; }
+}
+function saveUsers(u) { localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
 
-        // Initial Products List (Books & Engineering Specifications)
-        let products = [
-            {
-                id: 1,
-                title: "Structural Steel Engineering Specification (PDF)",
-                description: "Comprehensive structural design standards, load calculation formulas, and building guidelines.",
-                price: 150.00,
-                fileUrl: "https://t.me/qarsho12"
-            },
-            {
-                id: 2,
-                title: "Advanced AutoCAD & Blueprint Templates",
-                description: "Professional architectural and civil engineering floor plans and component schematics.",
-                price: 250.00,
-                fileUrl: "https://t.me/qarsho12"
-            },
-            {
-                id: 3,
-                title: "Telegram Bot Python Source Code Guide",
-                description: "Complete guide and source code for building automated Telebirr payment bots.",
-                price: 100.00,
-                fileUrl: "https://t.me/qarsho12"
-            }
-        ];
+function loadSession() {
+    try { return JSON.parse(localStorage.getItem(SESSION_KEY)) || null; }
+    catch { return null; }
+}
+function saveSession(s) { localStorage.setItem(SESSION_KEY, JSON.stringify(s)); }
+function clearSession() { localStorage.removeItem(SESSION_KEY); }
 
-        // Web Audio API Sound Generator
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        
-        function playSound(type) {
-            if (audioCtx.state === 'suspended') { audioCtx.resume(); }
-            const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-
-            if (type === 'tick') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-                gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.05);
-            } else if (type === 'win') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
-                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
-                osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
-                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.4);
-            } else if (type === 'lose') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-                osc.frequency.linearRampToValueAtTime(80, audioCtx.currentTime + 0.3);
-                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.3);
-            }
+function loadProducts() {
+    try {
+        const p = JSON.parse(localStorage.getItem(PRODUCTS_KEY));
+        if (Array.isArray(p) && p.length) return p;
+    } catch {}
+    // Default seed products
+    const seed = [
+        {
+            id: 1,
+            title: "Structural Steel Engineering Specification (PDF)",
+            description: "Comprehensive structural design standards, load calculation formulas, and building guidelines.",
+            price: 150.00,
+            fileUrl: "https://t.me/qarsho12",
+            ownerPhone: "system"
+        },
+        {
+            id: 2,
+            title: "Advanced AutoCAD & Blueprint Templates",
+            description: "Professional architectural and civil engineering floor plans and component schematics.",
+            price: 250.00,
+            fileUrl: "https://t.me/qarsho12",
+            ownerPhone: "system"
+        },
+        {
+            id: 3,
+            title: "Telegram Bot Python Source Code Guide",
+            description: "Complete guide and source code for building automated Telebirr payment bots.",
+            price: 100.00,
+            fileUrl: "https://t.me/qarsho12",
+            ownerPhone: "system"
         }
+    ];
+    localStorage.setItem(PRODUCTS_KEY, JSON.stringify(seed));
+    return seed;
+}
+function saveProducts(p) { localStorage.setItem(PRODUCTS_KEY, JSON.stringify(p)); }
 
-        function handleSignup(event) {
-            event.preventDefault();
-            const name = document.getElementById('signupName').value;
-            const phone = document.getElementById('signupPhone').value;
+/* ============================================================
+   PASSWORD HASH (SHA-256)
+   ============================================================ */
+async function hashPassword(pass) {
+    const data = new TextEncoder().encode(pass + '::birr_salt_v1');
+    const buf = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
-            if (!name || !phone) {
-                alert('Please enter all required fields.');
-                return;
-            }
+/* ============================================================
+   APP STATE
+   ============================================================ */
+let tg = window.Telegram?.WebApp;
+if (tg) { tg.expand(); }
 
-            loggedInUserName = name;
-            document.getElementById('userNameDisplay').innerText = name;
-            document.getElementById('authContainer').classList.add('hidden');
-            document.getElementById('mainDashboard').classList.remove('hidden');
-            
-            const botUsername = "Qarshigame_bot";
-            const refCode = btoa(phone).substring(0, 8);
-            document.getElementById('refLinkInput').value = `https://t.me/${botUsername}?start=ref_${refCode}`;
-            
-            updateUI();
-            renderStore();
+let currentUserPhone = null;   // key into users store
+let currentUser = null;        // user object
+let balance = 50.00;
+let currentRotation = 0;
+let isSpinning = false;
+
+const rewards = [0, 5, 10, 20, 50, 100];
+const usedTransactions = new Set();
+let products = loadProducts();
+
+/* ============================================================
+   AUDIO
+   ============================================================ */
+let audioCtx;
+try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch {}
+
+function playSound(type) {
+    if (!audioCtx) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    osc.connect(g); g.connect(audioCtx.destination);
+
+    if (type === 'tick') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+        g.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+    } else if (type === 'win') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
+        osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
+        g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+    } else if (type === 'lose') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+        osc.frequency.linearRampToValueAtTime(80, audioCtx.currentTime + 0.3);
+        g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+    }
+}
+
+/* ============================================================
+   AUTH
+   ============================================================ */
+function switchAuthTab(tab) {
+    const signupForm = document.getElementById('signupForm');
+    const loginForm = document.getElementById('loginForm');
+    const tS = document.getElementById('authTabSignup');
+    const tL = document.getElementById('authTabLogin');
+    if (tab === 'signup') {
+        signupForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+        tS.classList.add('active'); tL.classList.remove('active');
+    } else {
+        signupForm.classList.add('hidden');
+        loginForm.classList.remove('hidden');
+        tS.classList.remove('active'); tL.classList.add('active');
+    }
+}
+
+function normalizePhone(p) {
+    return String(p || '').replace(/\s+/g, '').replace(/[^\d]/g, '');
+}
+
+async function handleSignup(event) {
+    event.preventDefault();
+    const name = document.getElementById('signupName').value.trim();
+    const phoneRaw = document.getElementById('signupPhone').value;
+    const phone = normalizePhone(phoneRaw);
+    const pass = document.getElementById('signupPass').value;
+    const remember = document.getElementById('signupRemember').checked;
+
+    if (!name || !phone || pass.length < 4) {
+        alert('Please fill all fields. Password must be at least 4 characters.');
+        return;
+    }
+    if (phone.length < 9) {
+        alert('Please enter a valid phone number.');
+        return;
+    }
+
+    const users = loadUsers();
+    if (users[phone]) {
+        alert('An account with this phone already exists. Please log in instead.');
+        switchAuthTab('login');
+        document.getElementById('loginPhone').value = phoneRaw;
+        return;
+    }
+
+    const passHash = await hashPassword(pass);
+    users[phone] = {
+        name,
+        phone,
+        passHash,
+        balance: 50.00,
+        purchased: [],
+        history: [],
+        createdAt: Date.now()
+    };
+    saveUsers(users);
+
+    if (remember) saveSession({ phone });
+    else clearSession();
+
+    loginUser(phone);
+}
+
+async function handleLogin(event) {
+    event.preventDefault();
+    const phone = normalizePhone(document.getElementById('loginPhone').value);
+    const pass = document.getElementById('loginPass').value;
+    const remember = document.getElementById('loginRemember').checked;
+
+    const users = loadUsers();
+    const user = users[phone];
+    if (!user) {
+        alert('No account found with this phone. Please sign up first.');
+        switchAuthTab('signup');
+        return;
+    }
+
+    const passHash = await hashPassword(pass);
+    if (passHash !== user.passHash) {
+        alert('Incorrect password. Please try again.');
+        return;
+    }
+
+    if (remember) saveSession({ phone });
+    else clearSession();
+
+    loginUser(phone);
+}
+
+function loginUser(phone) {
+    const users = loadUsers();
+    const user = users[phone];
+    if (!user) return;
+
+    currentUserPhone = phone;
+    currentUser = user;
+    balance = user.balance;
+
+    document.getElementById('userNameDisplay').innerText = user.name;
+    document.getElementById('authContainer').classList.add('hidden');
+    document.getElementById('mainDashboard').classList.remove('hidden');
+
+    const botUsername = "Qarshigame_bot";
+    const refCode = btoa(phone).substring(0, 8);
+    document.getElementById('refLinkInput').value = `https://t.me/${botUsername}?start=ref_${refCode}`;
+
+    updateUI();
+    renderStore();
+    renderHistory();
+}
+
+function persistUser() {
+    if (!currentUserPhone) return;
+    const users = loadUsers();
+    if (!users[currentUserPhone]) return;
+    users[currentUserPhone].balance = balance;
+    users[currentUserPhone].purchased = currentUser.purchased;
+    users[currentUserPhone].history = currentUser.history;
+    saveUsers(users);
+    currentUser = users[currentUserPhone];
+}
+
+function addHistory(entry) {
+    if (!currentUser) return;
+    currentUser.history.unshift({ ...entry, at: Date.now() });
+    // Cap at 200 entries
+    if (currentUser.history.length > 200) currentUser.history.length = 200;
+    persistUser();
+    renderHistory();
+}
+
+function handleLogout() {
+    persistUser();
+    currentUserPhone = null;
+    currentUser = null;
+    clearSession();
+    document.getElementById('mainDashboard').classList.add('hidden');
+    document.getElementById('authContainer').classList.remove('hidden');
+    document.getElementById('signupForm').reset();
+    document.getElementById('loginForm').reset();
+    switchAuthTab('signup');
+    switchTab('game');
+}
+
+/* ============================================================
+   UI
+   ============================================================ */
+function updateUI() {
+    document.getElementById('balance').innerText = balance.toFixed(2);
+}
+
+function switchTab(tab) {
+    const sections = {
+        game: document.getElementById('gameSection'),
+        store: document.getElementById('storeSection'),
+        history: document.getElementById('historySection')
+    };
+    const tabs = {
+        game: document.getElementById('tabGame'),
+        store: document.getElementById('tabStore'),
+        history: document.getElementById('tabHistory')
+    };
+    Object.keys(sections).forEach(k => {
+        if (k === tab) {
+            sections[k].classList.remove('hidden');
+            tabs[k].classList.add('active');
+        } else {
+            sections[k].classList.add('hidden');
+            tabs[k].classList.remove('active');
         }
+    });
+    if (tab === 'store') renderStore();
+    if (tab === 'history') renderHistory();
+}
 
-        function handleLogout() {
-            document.getElementById('mainDashboard').classList.add('hidden');
-            document.getElementById('authContainer').classList.remove('hidden');
-            document.getElementById('signupForm').reset();
-        }
-
-        function updateUI() {
-            document.getElementById('balance').innerText = balance.toFixed(2);
-        }
-
-        function switchTab(tab) {
-            const gameSec = document.getElementById('gameSection');
-            const storeSec = document.getElementById('storeSection');
-            const tabGame = document.getElementById('tabGame');
-            const tabStore = document.getElementById('tabStore');
-
-            if (tab === 'game') {
-                gameSec.classList.remove('hidden');
-                storeSec.classList.add('hidden');
-                tabGame.classList.add('active');
-                tabStore.classList.remove('active');
-            } else {
-                gameSec.classList.add('hidden');
-                storeSec.classList.remove('hidden');
-                tabStore.classList.add('active');
-                tabGame.classList.remove('active');
-                renderStore();
-            }
-        }
-
-        function renderStore() {
-            const grid = document.getElementById('productGrid');
-            grid.innerHTML = '';
-
-            products.forEach(product => {
-                const isPurchased = purchasedItems.has(product.id);
-                const itemEl = document.createElement('div');
-                itemEl.className = 'product-item';
-                itemEl.innerHTML = `
-                    <div class="product-title">${product.title}</div>
-                    <div class="product-desc">${product.description}</div>
-                    <div class="product-footer">
-                        <span class="product-price">${product.price.toFixed(2)} ETB</span>
-                        ${isPurchased ? 
-                            `<a href="${product.fileUrl}" target="_blank"><button class="btn-small" style="background: var(--accent); color:#000;">📥 Download File</button></a>` : 
-                            `<button class="btn-small" style="background: var(--primary); border:none; color:#fff;" onclick="buyProduct(${product.id})">Buy & Unlock</button>`
-                        }
-                    </div>
-                `;
-                grid.appendChild(itemEl);
-            });
-        }
-
-        function buyProduct(id) {
-            const product = products.find(p => p.id === id);
-            if (!product) return;
-
-            if (balance < product.price) {
-                alert('Insufficient balance! Please deposit Birr to purchase this item.');
-                openModal('depositModal');
-                return;
-            }
-
-            if (confirm(`Confirm purchase of "${product.title}" for ${product.price} ETB?`)) {
-                balance -= product.price;
-                purchasedItems.add(product.id);
-                updateUI();
-                renderStore();
-                alert('Purchase successful! Your download button is now unlocked.');
-            }
-        }
-
-        function handleUploadProduct() {
-            const title = document.getElementById('newTitle').value;
-            const desc = document.getElementById('newDesc').value;
-            const price = parseFloat(document.getElementById('newPrice').value);
-            const link = document.getElementById('newLink').value;
-
-            if (!title || !price || !link) {
-                alert('Please fill out all required product fields.');
-                return;
-            }
-
-            const newProduct = {
-                id: products.length + 1,
-                title: title,
-                description: desc || 'Engineering specification document.',
-                price: price,
-                fileUrl: link
-            };
-
-            products.unshift(newProduct);
-            closeModal('uploadModal');
-            document.getElementById('newTitle').value = '';
-            document.getElementById('newDesc').value = '';
-            document.getElementById('newPrice').value = '';
-            document.getElementById('newLink').value = '';
-
-            renderStore();
-            alert('Product published successfully to the store!');
-        }
-
-        function openModal(modalId) { document.getElementById(modalId).style.display = 'flex'; }
-        function closeModal(modalId) { document.getElementById(modalId).style.display = 'none'; }
-
-        function copyRefLink() {
-            const input = document.getElementById('refLinkInput');
-            input.select();
-            navigator.clipboard.writeText(input.value);
-            alert('Referral link copied to clipboard!');
-        }
-
-        function shareToTelegram() {
-            const link = document.getElementById('refLinkInput').value;
-            const text = encodeURIComponent(`Play Birr Spin & Win and buy technical engineering designs via Telebirr: ${link}`);
-            window.open(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${text}`, '_blank');
-        }
-
-        function parseReceipt() {
-            const text = document.getElementById('receiptText').value;
-            const amountMatch = text.match(/ETB\s+([0-9]+\.[0-9]{2})/i);
-            const txMatch = text.match(/transaction number is\s+([A-Z0-9]+)/i) || text.match(/receipt\/([A-Z0-9]+)/i);
-
-            if (amountMatch && txMatch) {
-                document.getElementById('depositAmount').value = amountMatch[1];
-                document.getElementById('depositTxId').value = txMatch[1];
-                alert('Receipt successfully verified and parsed!');
-            } else {
-                alert('Could not parse receipt. Please make sure you paste the complete SMS text correctly.');
-            }
-        }
-
-        function spinWheel() {
-            const spinCost = 5;
-            const messageEl = document.getElementById('message');
-
-            if (isSpinning) return;
-            if (balance < spinCost) {
-                messageEl.style.color = 'var(--danger)';
-                messageEl.innerText = 'Insufficient balance! Please deposit.';
-                return;
-            }
-
-            balance -= spinCost;
-            updateUI();
-            isSpinning = true;
-            document.getElementById('spinBtn').disabled = true;
-            messageEl.style.color = 'var(--text-color)';
-            messageEl.innerText = 'Spinning... Good luck!';
-
-            let prizeIndex;
-            const randRoll = Math.random();
-            if (randRoll < 0.65) prizeIndex = 0;
-            else if (randRoll < 0.90) prizeIndex = Math.random() < 0.7 ? 1 : 2;
-            else if (randRoll < 0.98) prizeIndex = Math.random() < 0.6 ? 3 : 4;
-            else prizeIndex = 5;
-
-            const degreesPerSegment = 360 / rewards.length;
-            const extraRounds = 360 * 6;
-            const targetDegree = prizeIndex * degreesPerSegment;
-            const randomOffset = degreesPerSegment / 2; 
-            
-            currentRotation += extraRounds + (360 - (currentRotation % 360)) + (360 - (targetDegree + randomOffset));
-
-            const wheel = document.getElementById('wheel');
-            wheel.style.transform = `rotate(${currentRotation}deg)`;
-
-            let tickCount = 0;
-            const tickInterval = setInterval(() => {
-                if(tickCount < 16) { playSound('tick'); tickCount++; } 
-                else { clearInterval(tickInterval); }
-            }, 200);
-
-            setTimeout(() => {
-                isSpinning = false;
-                document.getElementById('spinBtn').disabled = false;
-                const wonAmount = rewards[prizeIndex];
-                balance += wonAmount;
-                updateUI();
-
-                if (wonAmount > 0) {
-                    playSound('win');
-                    messageEl.style.color = 'var(--accent)';
-                    messageEl.innerText = `Congratulations! You won ${wonAmount} ETB! 🎉`;
-                } else {
-                    playSound('lose');
-                    messageEl.style.color = 'var(--danger)';
-                    messageEl.innerText = 'Oops! Better luck next time.';
-                }
-            }, 4000);
-        }
-
-        async function handleDeposit() {
-            const amount = parseFloat(document.getElementById('depositAmount').value);
-            const txId = document.getElementById('depositTxId').value;
-
-            if (!amount || amount <= 0 || !txId) {
-                alert('Please paste and auto-fill your receipt first.');
-                return;
-            }
-
-            if (usedTransactions.has(txId)) {
-                alert('This transaction reference ID has already been used!');
-                return;
-            }
-
-            usedTransactions.add(txId);
-            balance += amount;
-            updateUI();
-            closeModal('depositModal');
-
-            document.getElementById('receiptText').value = '';
-            document.getElementById('depositAmount').value = '';
-            document.getElementById('depositTxId').value = '';
-            
-            const messageEl = document.getElementById('message');
-            messageEl.style.color = 'var(--accent)';
-            messageEl.innerText = `Deposit of ${amount.toFixed(2)} ETB approved & credited! 🎉`;
-        }
-
-        async function handleWithdraw() {
-            const amount = parseFloat(document.getElementById('withdrawAmount').value);
-            const account = document.getElementById('withdrawAccount').value;
-            const method = document.getElementById('withdrawMethod').value;
-
-            if (!amount || amount <= 0 || !account) {
-                alert('Please fill in all withdrawal details properly.');
-                return;
-            }
-
-            if (amount > balance) {
-                alert('Withdrawal amount exceeds your current balance.');
-                return;
-            }
-
-            balance -= amount;
-            updateUI();
-            closeModal('withdrawModal');
-            document.getElementById('withdrawAmount').value = '';
-            document.getElementById('withdrawAccount').value = '';
-            
-            const messageEl = document.getElementById('message');
-            messageEl.style.color = 'var(--accent)';
-            messageEl.innerText = `Withdrawal request of ${amount} ETB via ${method} sent!`;
-        }
-    </script>
-</body>
-</html>
+function renderStore() {
+    const grid = document.getElementById('productGrid');
+    grid.innerHTML = '';
+    if (!products.length) {
+        grid.innerHTML = '<div class="history-empty">No products yet.</div>';
+        return;
+    }
+    products.forEach(product => {
+        const isPurchased = currentUser?.purchased?.includes(product.id);
+        const itemEl = document.createElement('div');
+        itemEl.className = 'product-item';
+        itemEl.innerHTML = `
+            <div class="product-title">${escapeHtml(product.title)}</div>
+            <div class
