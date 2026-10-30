@@ -1,23 +1,157 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Mini App</title>
-    <!-- Include Telegram Web App SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#132b46">
+  <title>ROH GAMES</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>🚀 My Telegram Mini App</h1>
-        <p id="greeting">Loading user data...</p>
-        
-        <div class="card">
-            <button id="main-btn" class="btn">Click Me!</button>
-        </div>
+  <header class="topbar">
+    <div>
+      <div class="brand">ROH GAMES</div>
+      <small>Games • Books • Marketplace</small>
     </div>
+    <button id="logoutBtn" class="ghost hidden">Sign out</button>
+  </header>
+  
+  <main>
+    <section id="authView" class="panel auth">
+      <h1>Welcome to ROH GAMES</h1>
+      <p class="muted">Sign in or create an account to continue.</p>
+      <div class="tabs">
+        <button class="tab active" data-tab="login">Login</button>
+        <button class="tab" data-tab="register">Sign up</button>
+      </div>
+      <form id="loginForm">
+        <label>Email or phone<input name="identity" required autocomplete="username" placeholder="name@example.com or 09..."></label>
+        <label>Password<input name="password" type="password" required autocomplete="current-password"></label>
+        <button class="primary full">Login</button>
+      </form>
+      <form id="registerForm" class="hidden">
+        <label>Full name<input name="display_name" required minlength="2" maxlength="60"></label>
+        <label>Email (optional)<input name="email" type="email" placeholder="name@example.com"></label>
+        <label>Phone (optional)<input name="phone" placeholder="0912345678"></label>
+        <label>Password<input name="password" type="password" required minlength="8"></label>
+        <button class="primary full">Create account</button>
+        <small class="muted">Provide at least one: email or phone. Use a unique password.</small>
+      </form>
+      <p id="authMessage" class="message"></p>
+    </section>
 
-    <script src="app.js"></script>
+    <section id="appView" class="hidden">
+      <section class="wallet panel">
+        <div>
+          <small>WALLET BALANCE (ETB)</small>
+          <div id="walletBalance" class="money">0.00</div>
+          <small id="welcome"></small>
+        </div>
+        <div class="points">
+          <small>VIRTUAL GAME POINTS</small>
+          <strong id="pointsBalance">0</strong>
+        </div>
+      </section>
+      
+      <nav class="nav">
+        <button class="navbtn active" data-view="home">Home</button>
+        <button class="navbtn" data-view="books">Books</button>
+        <button class="navbtn" data-view="wallet">Wallet</button>
+        <button class="navbtn" data-view="history">History</button>
+        <button id="adminNav" class="navbtn hidden" data-view="admin">Admin</button>
+      </nav>
+
+      <section id="homeView" class="view">
+        <h2>Games</h2>
+        <p class="muted">Play for virtual points only. Points have no cash value and cannot be withdrawn.</p>
+        <div class="gamegrid">
+          <article class="gamecard">
+            <div class="gameicon">🎡</div>
+            <h3>Lucky Spin</h3>
+            <p>Spin for virtual points.</p>
+            <button class="primary full" id="spinBtn">Spin (10 points)</button>
+          </article>
+          <article class="gamecard">
+            <div class="gameicon">🎲</div>
+            <h3>Dice Roll</h3>
+            <p>Guess the dice number.</p>
+            <select id="diceGuess">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+            </select>
+            <button class="primary full" id="diceBtn">Play (5 points)</button>
+          </article>
+        </div>
+        <p id="gameMessage" class="message"></p>
+      </section>
+
+      <section id="booksView" class="view hidden">
+        <div class="sectionhead">
+          <div>
+            <h2>Book Marketplace</h2>
+            <p class="muted">Buy and sell digital books you have the right to distribute.</p>
+          </div>
+          <button id="showUpload" class="primary">Upload book</button>
+        </div>
+        <form id="uploadForm" class="panel hidden">
+          <h3>List a book</h3>
+          <label>Title<input name="title" required maxlength="120"></label>
+          <label>Description<textarea name="description" rows="3"></textarea></label>
+          <label>Price (ETB)<input name="price" type="number" min="0" step="0.01" required></label>
+          <label>Book file (PDF, EPUB, JPG, PNG; max 15 MB)<input name="book" type="file" accept=".pdf,.epub,.jpg,.jpeg,.png" required></label>
+          <button class="primary">Upload listing</button>
+        </form>
+        <div id="bookList" class="booklist"></div>
+      </section>
+
+      <section id="walletView" class="view hidden">
+        <h2>Wallet</h2>
+        <div class="panel">
+          <h3>Deposit via Telebirr</h3>
+          <p>Send payment to <strong id="telebirrNumber">0917393624</strong>. Then submit the amount and Telebirr transaction reference below. Your balance is credited only after administrator verification.</p>
+          <form id="depositForm">
+            <label>Amount (ETB)<input name="amount" type="number" min="10" step="0.01" required></label>
+            <label>Telebirr transaction reference<input name="reference" required minlength="4"></label>
+            <button class="primary">Submit deposit request</button>
+          </form>
+        </div>
+        <div class="panel">
+          <h3>Seller payout / eligible refund</h3>
+          <p class="muted">Requests are reviewed by an administrator. Virtual game points cannot be withdrawn.</p>
+          <form id="payoutForm">
+            <label>Amount (ETB)<input name="amount" type="number" min="10" step="0.01" required></label>
+            <label>Bank<select name="bank"><option>CBE</option><option>Oromia Cooperative Bank</option><option>Sinqee Bank</option></select></label>
+            <label>Account number<input name="account" required minlength="5"></label>
+            <button class="primary">Request payout</button>
+          </form>
+        </div>
+        <p id="walletMessage" class="message"></p>
+      </section>
+
+      <section id="historyView" class="view hidden">
+        <h2>My History</h2>
+        <div id="historyList"></div>
+      </section>
+
+      <section id="adminView" class="view hidden">
+        <h2>Administrator dashboard</h2>
+        <div class="adminTabs">
+          <button data-admin="users" class="active">Customers</button>
+          <button data-admin="transactions">Transactions</button>
+          <button data-admin="audit">Balance audit</button>
+        </div>
+        <div id="adminContent"></div>
+      </section>
+    </section>
+    <p id="globalMessage" class="message"></p>
+  </main>
+
+  <footer>ROH GAMES · Virtual games use points only · Use authorized book content</footer>
+  <script src="app.js"></script>
 </body>
 </html>
