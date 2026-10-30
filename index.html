@@ -3,24 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#132b46">
-  <title>ROH GAMES</title>
+  <meta name="theme-color" content="#0f2027">
+  <title>BOOK GAME</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
   <header class="topbar">
     <div>
-      <div class="brand">ROH GAMES</div>
-      <small>Games • Books • Marketplace</small>
+      <div class="brand">📖 BOOK GAME</div>
+      <small>Smart Reads • Mini Games • Rewards</small>
     </div>
     <button id="logoutBtn" class="ghost hidden">Sign out</button>
   </header>
   
   <main>
     <section id="authView" class="panel auth">
-      <h1>Welcome to ROH GAMES</h1>
-      <p class="muted">Sign in or create an account to continue.</p>
+      <h1>Welcome to BOOK GAME</h1>
+      <p class="muted">Sign in or create your profile to start playing and reading.</p>
       <div class="tabs">
         <button class="tab active" data-tab="login">Login</button>
         <button class="tab" data-tab="register">Sign up</button>
@@ -36,7 +36,6 @@
         <label>Phone (optional)<input name="phone" placeholder="0912345678"></label>
         <label>Password<input name="password" type="password" required minlength="8"></label>
         <button class="primary full">Create account</button>
-        <small class="muted">Provide at least one: email or phone. Use a unique password.</small>
       </form>
       <p id="authMessage" class="message"></p>
     </section>
@@ -49,33 +48,35 @@
           <small id="welcome"></small>
         </div>
         <div class="points">
-          <small>VIRTUAL GAME POINTS</small>
+          <small>GAME POINTS</small>
           <strong id="pointsBalance">0</strong>
         </div>
       </section>
       
       <nav class="nav">
-        <button class="navbtn active" data-view="home">Home</button>
-        <button class="navbtn" data-view="books">Books</button>
+        <button class="navbtn active" data-view="home">Games</button>
+        <button class="navbtn" data-view="books">Library</button>
         <button class="navbtn" data-view="wallet">Wallet</button>
         <button class="navbtn" data-view="history">History</button>
         <button id="adminNav" class="navbtn" data-view="admin">Admin</button>
       </nav>
 
       <section id="homeView" class="view">
-        <h2>Games</h2>
-        <p class="muted">Play for virtual points only. Points have no cash value and cannot be withdrawn.</p>
+        <h2>Smart Arcade</h2>
+        <p class="muted">Play to earn points, unlock achievements, and level up your reading perks!</p>
+        
         <div class="gamegrid">
           <article class="gamecard">
             <div class="gameicon">🎡</div>
-            <h3>Lucky Spin</h3>
-            <p>Spin for virtual points.</p>
+            <h3>Lucky Book Spin</h3>
+            <p>Test your luck and win bonus points.</p>
             <button class="primary full" id="spinBtn" type="button">Spin (10 points)</button>
           </article>
+          
           <article class="gamecard">
             <div class="gameicon">🎲</div>
-            <h3>Dice Roll</h3>
-            <p>Guess the dice number.</p>
+            <h3>Literary Dice Roll</h3>
+            <p>Guess the hidden number (1–6).</p>
             <select id="diceGuess">
               <option value="1">1</option>
               <option value="2">2</option>
@@ -84,7 +85,7 @@
               <option value="5">5</option>
               <option value="6">6</option>
             </select>
-            <button class="primary full" id="diceBtn" type="button">Play (5 points)</button>
+            <button class="primary full" id="diceBtn" type="button">Roll (5 points)</button>
           </article>
         </div>
         <p id="gameMessage" class="message"></p>
@@ -93,57 +94,62 @@
       <section id="booksView" class="view hidden">
         <div class="sectionhead">
           <div>
-            <h2>Book Marketplace</h2>
-            <p class="muted">Buy and sell digital books you have the right to distribute.</p>
+            <h2>Smart Library & Market</h2>
+            <p class="muted">Discover premium digital literature or list your own work.</p>
           </div>
-          <button id="showUpload" class="primary" type="button">Upload book</button>
+          <button id="showUpload" class="primary" type="button">Publish Book</button>
         </div>
+
+        <div class="panel" style="padding: 12px; margin-bottom: 12px;">
+          <input type="text" id="bookSearch" placeholder="🔍 Search books by title or author..." style="margin-top:0;">
+        </div>
+
         <form id="uploadForm" class="panel hidden">
-          <h3>List a book</h3>
+          <h3>Publish Digital Book</h3>
           <label>Title<input name="title" required maxlength="120"></label>
           <label>Description<textarea name="description" rows="3"></textarea></label>
           <label>Price (ETB)<input name="price" type="number" min="0" step="0.01" required></label>
-          <label>Book file (PDF, EPUB, JPG, PNG; max 15 MB)<input name="book" type="file" accept=".pdf,.epub,.jpg,.jpeg,.png" required></label>
-          <button class="primary" type="submit">Upload listing</button>
+          <label>Book file (PDF, EPUB, JPG, PNG)<input name="book" type="file" accept=".pdf,.epub,.jpg,.jpeg,.png" required></label>
+          <button class="primary" type="submit">Submit Publication</button>
         </form>
         <div id="bookList" class="booklist"></div>
       </section>
 
       <section id="walletView" class="view hidden">
-        <h2>Wallet</h2>
+        <h2>Smart Wallet</h2>
         <div class="panel">
-          <h3>Deposit via Telebirr</h3>
-          <p>Send payment to <strong id="telebirrNumber">0917393624</strong>. Then submit the amount and Telebirr transaction reference below.</p>
+          <h3>Top-Up via Telebirr</h3>
+          <p>Transfer funds to <strong id="telebirrNumber">0917393624</strong> and enter your transaction reference below for instant crediting.</p>
           <form id="depositForm">
             <label>Amount (ETB)<input name="amount" type="number" min="10" step="0.01" required></label>
-            <label>Telebirr transaction reference<input name="reference" required minlength="4"></label>
-            <button class="primary" type="submit">Submit deposit request</button>
+            <label>Transaction reference<input name="reference" required minlength="4"></label>
+            <button class="primary" type="submit">Confirm Deposit</button>
           </form>
         </div>
         <div class="panel">
-          <h3>Seller payout / eligible refund</h3>
-          <p class="muted">Requests are reviewed by an administrator. Virtual game points cannot be withdrawn.</p>
+          <h3>Payout Request</h3>
+          <p class="muted">Withdraw earnings or eligible balances securely.</p>
           <form id="payoutForm">
             <label>Amount (ETB)<input name="amount" type="number" min="10" step="0.01" required></label>
             <label>Bank<select name="bank"><option>CBE</option><option>Oromia Cooperative Bank</option><option>Sinqee Bank</option></select></label>
             <label>Account number<input name="account" required minlength="5"></label>
-            <button class="primary" type="submit">Request payout</button>
+            <button class="primary" type="submit">Request Payout</button>
           </form>
         </div>
         <p id="walletMessage" class="message"></p>
       </section>
 
       <section id="historyView" class="view hidden">
-        <h2>My History</h2>
+        <h2>Activity History</h2>
         <div id="historyList"></div>
       </section>
 
       <section id="adminView" class="view hidden">
-        <h2>Administrator dashboard</h2>
+        <h2>Admin Management Dashboard</h2>
         <div class="adminTabs">
-          <button data-admin="users" class="active" type="button">Customers</button>
+          <button data-admin="users" class="active" type="button">Users</button>
           <button data-admin="transactions" type="button">Transactions</button>
-          <button data-admin="audit" type="button">Balance audit</button>
+          <button data-admin="audit" type="button">System Logs</button>
         </div>
         <div id="adminContent"></div>
       </section>
@@ -151,7 +157,7 @@
     <p id="globalMessage" class="message"></p>
   </main>
 
-  <footer>ROH GAMES · Virtual games use points only · Use authorized book content</footer>
+  <footer>BOOK GAME · Smart Mini App & Library · Powered by Telegram</footer>
   <script src="app.js"></script>
 </body>
 </html>
