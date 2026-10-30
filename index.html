@@ -1,731 +1,187 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Birr Spin & Win Game & Store</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --accent: #22c55e;
-            --accent-hover: #16a34a;
-            --text-color: #f8fafc;
-            --text-secondary: #94a3b8;
-            --danger: #ef4444;
-            --primary: #3b82f6;
-            --purple: #8b5cf6;
-        }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#132b46">
+  <title>ROH GAMES</title>
+  <style>
+:root{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:#172235;background:#f3f6fb;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0}.topbar{background:#142c48;color:#fff;padding:16px max(18px,calc((100% - 980px)/2));display:flex;justify-content:space-between;align-items:center}.brand{font-weight:900;font-size:20px;letter-spacing:.7px}.topbar small{color:#c7d7e8}.topbar button{color:#fff}.topbar small{display:block;margin-top:3px}
+main{max-width:980px;margin:24px auto;padding:0 16px;min-height:70vh}h1,h2,h3{margin:0 0 10px}h1{font-size:26px}h2{font-size:22px;margin:10px 0 16px}h3{font-size:17px}.muted{color:#68778c;font-size:14px;line-height:1.5}.panel,.gamecard{background:#fff;border:1px solid #e3e9f1;border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 4px 16px #1b35500a}.auth{max-width:460px;margin:40px auto}.tabs,.nav,.adminTabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.tab,.navbtn,.adminTabs button{border:1px solid #dbe3ed;background:#fff;color:#42536a;border-radius:9px;padding:10px 14px;cursor:pointer}.tab.active,.navbtn.active,.adminTabs .active{background:#e7f0fb;border-color:#8bb1dc;color:#174a7d;font-weight:700}label{display:block;font-size:13px;font-weight:650;margin:12px 0;color:#34445a}input,textarea,select{display:block;width:100%;margin-top:6px;border:1px solid #d5deea;border-radius:9px;padding:12px;font:inherit;background:#fff;color:#172235}button{font:inherit;cursor:pointer}.primary{background:#1766a8;color:#fff;border:0;border-radius:9px;padding:11px 16px;font-weight:700}.primary:hover{background:#10558f}.full{width:100%;margin-top:12px}.ghost{background:transparent;border:1px solid #7b91a9;border-radius:8px;padding:8px 12px}.hidden{display:none!important}.wallet{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(120deg,#142c48,#235a86);color:#fff}.wallet small{color:#c6d9ed}.money{font-size:30px;font-weight:850;margin:4px 0}.points{background:#ffffff20;padding:12px 16px;border-radius:12px}.points strong{display:block;font-size:22px;margin-top:4px}.nav{background:#fff;border:1px solid #e2e9f2;padding:8px;border-radius:13px}.gamegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.gameicon{font-size:34px}.gamecard p{color:#718096;font-size:14px}.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.booklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}.book{background:#fff;border:1px solid #e3e9f1;border-radius:13px;padding:16px}.book p{font-size:14px;color:#68778c;line-height:1.5}.price{font-weight:800;color:#155d98}.message{min-height:20px;color:#1766a8;font-size:14px}.error{color:#b42318}.historyitem,.adminrow{background:#fff;border:1px solid #e2e9f2;border-radius:10px;padding:13px;margin:9px 0;font-size:14px}.historyitem strong,.adminrow strong{display:block;margin-bottom:5px}.pill{display:inline-block;background:#edf3fa;border-radius:20px;padding:3px 8px;font-size:11px;color:#315678}.adminrow{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.adminrow .actions{display:flex;gap:6px;flex-wrap:wrap}.smallbtn{padding:7px 9px;border:1px solid #ccd8e5;border-radius:7px;background:#fff}.smallbtn.danger{color:#b42318}footer{text-align:center;color:#8793a4;padding:20px;font-size:12px}
+@media(max-width:600px){main{margin:14px auto}.wallet{align-items:flex-start;gap:12px}.money{font-size:25px}.nav{display:grid;grid-template-columns:repeat(3,1fr)}.navbtn{padding:9px 5px;font-size:13px}.sectionhead{align-items:flex-start;flex-direction:column}.auth{margin:20px auto}}
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            box-sizing: border-box;
-        }
-
-        .container { width: 100%; max-width: 400px; }
-
-        .auth-container, .game-card, header, .referral-card, .store-card,
-        .upload-card, .history-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
-            margin-bottom: 16px;
-            box-sizing: border-box;
-            text-align: center;
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 16px;
-            margin-bottom: 16px;
-        }
-
-        .balance-title { font-size: 13px; color: var(--text-secondary); text-align: left; }
-        .balance-amount { font-size: 18px; font-weight: bold; color: var(--accent); text-align: left; }
-
-        .nav-buttons { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
-
-        .btn-small {
-            background: var(--card-bg);
-            border: 1px solid var(--accent);
-            color: var(--text-color);
-            padding: 6px 10px;
-            border-radius: 8px;
-            font-size: 11px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .btn-small:hover { background: var(--accent); color: #000; }
-        .logout-btn { border-color: var(--danger); color: var(--danger); }
-        .logout-btn:hover { background: var(--danger); color: #fff; }
-
-        .tab-bar { display: flex; gap: 8px; margin-bottom: 16px; }
-
-        .tab-btn {
-            flex: 1;
-            background: var(--card-bg);
-            border: 1px solid var(--text-secondary);
-            color: var(--text-secondary);
-            padding: 10px;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        .tab-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
-
-        .auth-tab-bar { display: flex; gap: 8px; margin-bottom: 16px; }
-        .auth-tab-btn {
-            flex: 1;
-            background: var(--bg-color);
-            border: 1px solid var(--text-secondary);
-            color: var(--text-secondary);
-            padding: 10px;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 13px;
-        }
-        .auth-tab-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
-
-        .remember-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-bottom: 14px;
-            text-align: left;
-        }
-        .remember-row input { width: auto; }
-
-        .wheel-container {
-            position: relative;
-            width: 240px;
-            height: 240px;
-            margin: 0 auto 20px auto;
-        }
-
-        .wheel {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 6px solid var(--accent);
-            position: relative;
-            transition: transform 4s cubic-bezier(0.15, 0.95, 0.15, 1);
-            background: conic-gradient(
-                #3b82f6 0deg 60deg, #8b5cf6 60deg 120deg,
-                #ec4899 120deg 180deg, #f59e0b 180deg 240deg,
-                #10b981 240deg 300deg, #6366f1 300deg 360deg
-            );
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
-        }
-
-        .wheel-label {
-            position: absolute;
-            width: 50%; height: 30px;
-            top: 50%; left: 50%;
-            transform-origin: 0% 50%;
-            text-align: right;
-            padding-right: 15px;
-            font-size: 13px;
-            font-weight: bold;
-            color: #fff;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-            pointer-events: none;
-        }
-        .wheel-label:nth-child(1) { transform: rotate(30deg); }
-        .wheel-label:nth-child(2) { transform: rotate(90deg); }
-        .wheel-label:nth-child(3) { transform: rotate(150deg); }
-        .wheel-label:nth-child(4) { transform: rotate(210deg); }
-        .wheel-label:nth-child(5) { transform: rotate(270deg); }
-        .wheel-label:nth-child(6) { transform: rotate(330deg); }
-
-        .pointer {
-            position: absolute; top: -12px; left: 50%;
-            transform: translateX(-50%);
-            width: 0; height: 0;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-top: 20px solid #fff;
-            z-index: 10;
-            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));
-        }
-
-        .spin-btn, .action-btn {
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .spin-btn:active, .action-btn:active { transform: scale(0.98); }
-        .spin-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .product-grid { display: flex; flex-direction: column; gap: 12px; text-align: left; }
-        .product-item {
-            background: var(--bg-color);
-            padding: 14px;
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .product-title { font-weight: bold; font-size: 14px; color: var(--text-color); margin-bottom: 4px; }
-        .product-desc { font-size: 11px; color: var(--text-secondary); margin-bottom: 8px; line-height: 1.3; }
-        .product-footer { display: flex; justify-content: space-between; align-items: center; }
-        .product-price { font-weight: bold; color: var(--accent); font-size: 14px; }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-        }
-        .modal-content {
-            background: var(--card-bg);
-            padding: 24px;
-            border-radius: 16px;
-            width: 85%;
-            max-width: 320px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .instruction-box {
-            background: var(--bg-color);
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 11px;
-            color: var(--text-secondary);
-            margin-bottom: 14px;
-            text-align: left;
-            line-height: 1.4;
-        }
-
-        .form-group { margin-bottom: 14px; text-align: left; }
-        .form-group label {
-            display: block;
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-bottom: 6px;
-        }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--text-secondary);
-            background: var(--bg-color);
-            color: var(--text-color);
-            box-sizing: border-box;
-            font-family: inherit;
-        }
-
-        .modal-actions { display: flex; gap: 10px; }
-
-        .btn-primary {
-            background: var(--accent); color: #fff; border: none;
-            padding: 10px; border-radius: 8px; flex: 1;
-            font-weight: bold; cursor: pointer;
-        }
-        .btn-secondary {
-            background: transparent; border: 1px solid var(--text-secondary);
-            color: var(--text-secondary); padding: 10px; border-radius: 8px;
-            flex: 1; font-weight: bold; cursor: pointer;
-        }
-
-        .referral-input-group { display: flex; gap: 6px; margin-top: 8px; }
-        #message { margin-top: 12px; font-size: 14px; font-weight: 500; min-height: 20px; }
-        .hidden { display: none !important; }
-
-        .history-list { text-align: left; display: flex; flex-direction: column; gap: 8px; }
-        .history-item {
-            background: var(--bg-color);
-            border-left: 3px solid var(--primary);
-            padding: 10px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-        }
-        .history-item.spin { border-left-color: var(--purple); }
-        .history-item.deposit { border-left-color: var(--accent); }
-        .history-item.withdraw { border-left-color: var(--danger); }
-        .history-item.purchase { border-left-color: var(--primary); }
-        .history-item .h-top { display: flex; justify-content: space-between; font-weight: bold; }
-        .history-item .h-sub { color: var(--text-secondary); font-size: 10px; margin-top: 3px; }
-        .history-empty { color: var(--text-secondary); font-size: 12px; padding: 12px; }
-    </style>
+  </style>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
+  <header class="topbar">
+    <div><div class="brand">ROH GAMES</div><small>Games • Books • Marketplace</small></div>
+    <button id="logoutBtn" class="ghost hidden">Sign out</button>
+  </header>
+  <main>
+    <section id="authView" class="panel auth">
+      <h1>Welcome to ROH GAMES</h1>
+      <p class="muted">Sign in or create an account to continue.</p>
+      <div class="tabs"><button class="tab active" data-tab="login">Login</button><button class="tab" data-tab="register">Sign up</button></div>
+      <form id="loginForm">
+        <label>Email or phone<input name="identity" required autocomplete="username" placeholder="name@example.com or 09..."></label>
+        <label>Password<input name="password" type="password" required autocomplete="current-password"></label>
+        <button class="primary full">Login</button>
+      </form>
+      <form id="registerForm" class="hidden">
+        <label>Full name<input name="display_name" required minlength="2" maxlength="60"></label>
+        <label>Email (optional)<input name="email" type="email" placeholder="name@example.com"></label>
+        <label>Phone (optional)<input name="phone" placeholder="0912345678"></label>
+        <label>Password<input name="password" type="password" required minlength="8"></label>
+        <button class="primary full">Create account</button>
+        <small class="muted">Provide at least one: email or phone. Use a unique password.</small>
+      </form>
+      <p id="authMessage" class="message"></p>
+    </section>
 
-    <div class="container">
-
-        <!-- AUTH SCREEN -->
-        <div id="authContainer" class="auth-container">
-            <h2 style="margin-top: 0; color: var(--accent);">Birr Spin & Store</h2>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 20px;">Register or log in to play, shop designs, & earn!</p>
-
-            <div class="auth-tab-bar">
-                <button class="auth-tab-btn active" id="authTabSignup" onclick="switchAuthTab('signup')">Sign Up</button>
-                <button class="auth-tab-btn" id="authTabLogin" onclick="switchAuthTab('login')">Login</button>
-            </div>
-
-            <!-- Signup -->
-            <form id="signupForm" onsubmit="handleSignup(event)">
-                <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" id="signupName" placeholder="Abebe Kebede" required>
-                </div>
-                <div class="form-group">
-                    <label>Phone Number (Telebirr)</label>
-                    <input type="text" id="signupPhone" placeholder="09xxxxxxxx" required>
-                </div>
-                <div class="form-group">
-                    <label>Create Password</label>
-                    <input type="password" id="signupPass" placeholder="********" minlength="4" required>
-                </div>
-                <div class="remember-row">
-                    <input type="checkbox" id="signupRemember" checked>
-                    <label for="signupRemember" style="margin:0;">Remember me on this device</label>
-                </div>
-                <button type="submit" class="spin-btn" style="padding: 12px; font-size: 14px; background: var(--primary);">Register Account</button>
-            </form>
-
-            <!-- Login -->
-            <form id="loginForm" class="hidden" onsubmit="handleLogin(event)">
-                <div class="form-group">
-                    <label>Phone Number</label>
-                    <input type="text" id="loginPhone" placeholder="09xxxxxxxx" required>
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="loginPass" placeholder="********" required>
-                </div>
-                <div class="remember-row">
-                    <input type="checkbox" id="loginRemember" checked>
-                    <label for="loginRemember" style="margin:0;">Remember me on this device</label>
-                </div>
-                <button type="submit" class="spin-btn" style="padding: 12px; font-size: 14px; background: var(--accent);">Login</button>
-                <button type="button" class="btn-small" style="width:100%; margin-top:10px; background:#229ED9; border:none; color:#fff; padding:10px;" onclick="handleTelegramLogin()">Login with Telegram</button>
-            </form>
+    <section id="appView" class="hidden">
+      <section class="wallet panel">
+        <div><small>WALLET BALANCE (ETB)</small><div id="walletBalance" class="money">0.00</div><small id="welcome"></small></div>
+        <div class="points"><small>VIRTUAL GAME POINTS</small><strong id="pointsBalance">0</strong></div>
+      </section>
+      <nav class="nav">
+        <button class="navbtn active" data-view="home">Home</button>
+        <button class="navbtn" data-view="books">Books</button>
+        <button class="navbtn" data-view="wallet">Wallet</button>
+        <button class="navbtn" data-view="history">History</button>
+        <button id="adminNav" class="navbtn hidden" data-view="admin">Admin</button>
+      </nav>
+      <section id="homeView" class="view">
+        <h2>Games</h2>
+        <p class="muted">Play for virtual points only. Points have no cash value and cannot be withdrawn.</p>
+        <div class="gamegrid">
+          <article class="gamecard"><div class="gameicon">🎡</div><h3>Lucky Spin</h3><p>Spin for virtual points.</p><button class="primary full" id="spinBtn">Spin (10 points)</button></article>
+          <article class="gamecard"><div class="gameicon">🎲</div><h3>Dice Roll</h3><p>Guess the dice number.</p><select id="diceGuess"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option></select><button class="primary full" id="diceBtn">Play (5 points)</button></article>
         </div>
+        <p id="gameMessage" class="message"></p>
+      </section>
 
-        <!-- MAIN DASHBOARD -->
-        <div id="mainDashboard" class="hidden">
-            <header>
-                <div>
-                    <div class="balance-title">Welcome, <span id="userNameDisplay">User</span></div>
-                    <div class="balance-amount"><span id="balance">50.00</span> ETB</div>
-                </div>
-                <div class="nav-buttons">
-                    <button class="btn-small" onclick="openModal('depositModal')">Deposit</button>
-                    <button class="btn-small" onclick="openModal('withdrawModal')">Withdraw</button>
-                    <button class="btn-small logout-btn" onclick="handleLogout()">Logout</button>
-                </div>
-            </header>
+      <section id="booksView" class="view hidden">
+        <div class="sectionhead"><div><h2>Book Marketplace</h2><p class="muted">Buy and sell digital books you have the right to distribute.</p></div><button id="showUpload" class="primary">Upload book</button></div>
+        <form id="uploadForm" class="panel hidden">
+          <h3>List a book</h3>
+          <label>Title<input name="title" required maxlength="120"></label>
+          <label>Description<textarea name="description" rows="3"></textarea></label>
+          <label>Price (ETB)<input name="price" type="number" min="0" step="0.01" required></label>
+          <label>Book file (PDF, EPUB, JPG, PNG; max 15 MB)<input name="book" type="file" accept=".pdf,.epub,.jpg,.jpeg,.png" required></label>
+          <button class="primary">Upload listing</button>
+        </form>
+        <div id="bookList" class="booklist"></div>
+      </section>
 
-            <div class="tab-bar">
-                <button class="tab-btn active" id="tabGame" onclick="switchTab('game')">🎡 Spin</button>
-                <button class="tab-btn" id="tabStore" onclick="switchTab('store')">📚 Store</button>
-                <button class="tab-btn" id="tabHistory" onclick="switchTab('history')">📜 History</button>
-            </div>
-
-            <!-- GAME -->
-            <div id="gameSection" class="game-card">
-                <h3>Spin & Win Birr</h3>
-                <p style="font-size: 12px; color: var(--text-secondary); margin-top: 0;">Cost per spin: 5 ETB</p>
-                <div class="wheel-container">
-                    <div class="pointer"></div>
-                    <div class="wheel" id="wheel">
-                        <div class="wheel-label">0 ETB</div>
-                        <div class="wheel-label">5 ETB</div>
-                        <div class="wheel-label">10 ETB</div>
-                        <div class="wheel-label">20 ETB</div>
-                        <div class="wheel-label">50 ETB</div>
-                        <div class="wheel-label">100 ETB</div>
-                    </div>
-                </div>
-                <button class="spin-btn" id="spinBtn" onclick="spinWheel()">SPIN NOW (5 ETB)</button>
-                <div id="message"></div>
-            </div>
-
-            <!-- STORE -->
-            <div id="storeSection" class="store-card hidden">
-                <h3 style="margin-top: 0; color: var(--primary);">Engineering Specs & Books</h3>
-                <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 14px;">Purchase technical designs, blueprints, and textbooks instantly with your balance.</p>
-                <div class="product-grid" id="productGrid"></div>
-            </div>
-
-            <!-- HISTORY -->
-            <div id="historySection" class="history-card hidden">
-                <h3 style="margin-top: 0; color: var(--purple);">📜 Your History</h3>
-                <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 14px;">All spins, deposits, withdrawals, and purchases on this account.</p>
-                <div class="history-list" id="historyList"></div>
-            </div>
-
-            <!-- UPLOAD -->
-            <div class="upload-card">
-                <h4 style="margin-top: 0; margin-bottom: 8px; color: var(--purple);">Upload Digital Product 📤</h4>
-                <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 12px;">Add a new book, design blueprint, or engineering doc for sale.</p>
-                <button class="btn-small" style="width: 100%; background: var(--purple); border: none; color: #fff; padding: 10px;" onclick="openModal('uploadModal')">+ Add New Item to Store</button>
-            </div>
-
-            <!-- REFERRAL -->
-            <div class="referral-card">
-                <h4 style="margin-top: 0; margin-bottom: 8px; color: var(--accent);">Invite & Earn 🎁</h4>
-                <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 12px;">Share your referral link with friends to earn bonus spins!</p>
-                <div class="referral-input-group">
-                    <input type="text" id="refLinkInput" readonly style="background: var(--bg-color); border: 1px solid var(--text-secondary); color: var(--text-color); padding: 8px; border-radius: 8px; font-size: 11px; flex: 1;">
-                    <button class="btn-small" onclick="copyRefLink()" style="background: var(--primary); border: none; color: #fff;">Copy</button>
-                    <button class="btn-small" onclick="shareToTelegram()" style="background: #229ED9; border: none; color: #fff;">Share</button>
-                </div>
-            </div>
+      <section id="walletView" class="view hidden">
+        <h2>Wallet</h2>
+        <div class="panel">
+          <h3>Deposit via Telebirr</h3>
+          <p>Send payment to <strong id="telebirrNumber">0917393624</strong>. Then submit the amount and Telebirr transaction reference below. Your balance is credited only after administrator verification.</p>
+          <form id="depositForm">
+            <label>Amount (ETB)<input name="amount" type="number" min="10" step="0.01" required></label>
+            <label>Telebirr transaction reference<input name="reference" required minlength="4"></label>
+            <button class="primary">Submit deposit request</button>
+          </form>
         </div>
-
-    </div>
-
-    <!-- DEPOSIT MODAL -->
-    <div class="modal" id="depositModal">
-        <div class="modal-content">
-            <h3>Deposit Birr</h3>
-            <div class="instruction-box">
-                <b>Payment Account:</b><br>
-                • <b>Telebirr:</b> 0917393624<br><br>
-                Paste your full Telebirr SMS receipt below to auto-verify and credit your account.
-            </div>
-            <div class="form-group">
-                <label>Paste Telebirr SMS Receipt</label>
-                <textarea id="receiptText" rows="4" placeholder="Dear Wandu You have transferred ETB 100.00..."></textarea>
-                <button type="button" class="btn-small" style="width: 100%; margin-top: 6px;" onclick="parseReceipt()">Auto-Fill from SMS</button>
-            </div>
-            <div class="form-group">
-                <label>Detected Amount (ETB)</label>
-                <input type="number" id="depositAmount" placeholder="e.g. 100" readonly>
-            </div>
-            <div class="form-group">
-                <label>Transaction ID</label>
-                <input type="text" id="depositTxId" placeholder="e.g. DJL856XCCK" readonly>
-            </div>
-            <div class="modal-actions">
-                <button class="btn-secondary" onclick="closeModal('depositModal')">Cancel</button>
-                <button class="btn-primary" onclick="handleDeposit()">Approve Deposit</button>
-            </div>
+        <div class="panel">
+          <h3>Seller payout / eligible refund</h3>
+          <p class="muted">Requests are reviewed by an administrator. Virtual game points cannot be withdrawn.</p>
+          <form id="payoutForm">
+            <label>Amount (ETB)<input name="amount" type="number" min="10" step="0.01" required></label>
+            <label>Bank<select name="bank"><option>CBE</option><option>Oromia Cooperative Bank</option><option>Sinqee Bank</option></select></label>
+            <label>Account number<input name="account" required minlength="5"></label>
+            <button class="primary">Request payout</button>
+          </form>
         </div>
-    </div>
+        <p id="walletMessage" class="message"></p>
+      </section>
 
-    <!-- UPLOAD MODAL -->
-    <div class="modal" id="uploadModal">
-        <div class="modal-content">
-            <h3>Upload Product</h3>
-            <div class="form-group">
-                <label>Item Title</label>
-                <input type="text" id="newTitle" placeholder="e.g. Structural Steel Design Spec">
-            </div>
-            <div class="form-group">
-                <label>Description</label>
-                <textarea id="newDesc" rows="3" placeholder="Detailed engineering specs..."></textarea>
-            </div>
-            <div class="form-group">
-                <label>Price (ETB)</label>
-                <input type="number" id="newPrice" placeholder="e.g. 150">
-            </div>
-            <div class="form-group">
-                <label>Download / File Link (URL)</label>
-                <input type="text" id="newLink" placeholder="https://t.me/qarsho_files/123">
-            </div>
-            <div class="modal-actions">
-                <button class="btn-secondary" onclick="closeModal('uploadModal')">Cancel</button>
-                <button class="btn-primary" onclick="handleUploadProduct()">Publish Item</button>
-            </div>
-        </div>
-    </div>
+      <section id="historyView" class="view hidden">
+        <h2>My History</h2><div id="historyList"></div>
+      </section>
 
-    <!-- WITHDRAW MODAL -->
-    <div class="modal" id="withdrawModal">
-        <div class="modal-content">
-            <h3>Withdraw Birr</h3>
-            <div class="form-group">
-                <label>Payout Method</label>
-                <select id="withdrawMethod">
-                    <option value="telebirr">Telebirr</option>
-                    <option value="sinqee">Sinqee Bank</option>
-                    <option value="oromia">Oromia Cooperative Bank</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Account / Phone Number</label>
-                <input type="text" id="withdrawAccount" placeholder="09xxxxxxxx or Account No">
-            </div>
-            <div class="form-group">
-                <label>Amount (ETB)</label>
-                <input type="number" id="withdrawAmount" placeholder="e.g. 50" min="20">
-            </div>
-            <div class="modal-actions">
-                <button class="btn-secondary" onclick="closeModal('withdrawModal')">Cancel</button>
-                <button class="btn-primary" onclick="handleWithdraw()">Request</button>
-            </div>
-        </div>
-    </div>
-
-<script>
-/* ============================================================
-   SAFE STORAGE (falls back to memory if localStorage blocked)
-   ============================================================ */
-const store = (() => {
-    let mem = {};
-    let ok = true;
-    try { localStorage.setItem('__t','1'); localStorage.removeItem('__t'); }
-    catch { ok = false; }
-    return {
-        get(k){ try { return ok ? localStorage.getItem(k) : (mem[k] ?? null); } catch { return mem[k] ?? null; } },
-        set(k,v){ try { if(ok) localStorage.setItem(k,v); else mem[k]=v; } catch { mem[k]=v; } },
-        del(k){ try { if(ok) localStorage.removeItem(k); else delete mem[k]; } catch { delete mem[k]; } }
-    };
-})();
-
-const USERS_KEY    = 'birr_users_v2';
-const SESSION_KEY  = 'birr_session_v2';
-const PRODUCTS_KEY = 'birr_products_v2';
-
-function loadUsers(){ try { return JSON.parse(store.get(USERS_KEY)) || {}; } catch { return {}; } }
-function saveUsers(u){ store.set(USERS_KEY, JSON.stringify(u)); }
-function loadSession(){ try { return JSON.parse(store.get(SESSION_KEY)) || null; } catch { return null; } }
-function saveSession(s){ store.set(SESSION_KEY, JSON.stringify(s)); }
-function clearSession(){ store.del(SESSION_KEY); }
-
-/* ============================================================
-   PHONE NORMALIZATION
-   ============================================================ */
-function normalizePhone(p){
-    let d = String(p || '').replace(/\D/g, '');
-    if (d.startsWith('251')) d = '0' + d.slice(3);
-    if (d.length === 9 && !d.startsWith('0')) d = '0' + d;
-    return d;
+      <section id="adminView" class="view hidden">
+        <h2>Administrator dashboard</h2>
+        <div class="adminTabs"><button data-admin="users" class="active">Customers</button><button data-admin="transactions">Transactions</button><button data-admin="audit">Balance audit</button></div>
+        <div id="adminContent"></div>
+      </section>
+    </section>
+    <p id="globalMessage" class="message"></p>
+  </main>
+  <footer>ROH GAMES · Virtual games use points only · Use authorized book content</footer>
+  <script>
+const $ = s => document.querySelector(s);
+let token = localStorage.getItem("roh_token") || "";
+let me = null;
+const api = async (url, options={}) => {
+  const headers = options.body instanceof FormData ? {} : {"Content-Type":"application/json"};
+  if (token) headers.Authorization = `Bearer ${token}`;
+  const response = await fetch(`/api${url}`, {...options, headers:{...headers,...options.headers}});
+  const data = await response.json().catch(()=>({}));
+  if (!response.ok) throw new Error(data.error || "Request failed.");
+  return data;
+};
+function message(el, text, error=false){el.textContent=text;el.classList.toggle("error",error)}
+function money(v){return Number(v||0).toLocaleString("en-ET",{minimumFractionDigits:2,maximumFractionDigits:2})}
+function showApp(){
+  $("#authView").classList.add("hidden");$("#appView").classList.remove("hidden");$("#logoutBtn").classList.remove("hidden");
+  $("#welcome").textContent=`Welcome, ${me.display_name}`;$("#walletBalance").textContent=money(me.wallet_balance);
+  $("#pointsBalance").textContent=Number(me.points_balance).toLocaleString();
+  $("#adminNav").classList.toggle("hidden",me.role!=="admin");
 }
-
-/* ============================================================
-   PURE-JS SHA-256 (fallback if crypto.subtle unavailable)
-   ============================================================ */
-function sha256(ascii){
-    function rightRotate(v,a){ return (v>>>a)|(v<<(32-a)); }
-    const maxWord = Math.pow(2,32);
-    let result='', words=[], asciiBitLength=ascii.length*8;
-    let hash=sha256.h=sha256.h||[], k=sha256.k=sha256.k||[], primeCounter=k.length;
-    const isComposite={};
-    for (let candidate=2; primeCounter<64; candidate++){
-        if (!isComposite[candidate]){
-            for (let i=0;i<313;i+=candidate) isComposite[i]=candidate;
-            hash[primeCounter]=(Math.pow(candidate,.5)*maxWord)|0;
-            k[primeCounter++]=(Math.pow(candidate,1/3)*maxWord)|0;
-        }
-    }
-    ascii += '\x80';
-    while (ascii.length%64-56) ascii += '\x00';
-    for (let i=0;i<ascii.length;i++){
-        const j=ascii.charCodeAt(i);
-        if (j>>8) return '';
-        words[i>>2]|=j<<((3-i)%4)*8;
-    }
-    words[words.length]=(asciiBitLength/maxWord)|0;
-    words[words.length]=asciiBitLength;
-    for (let j=0;j<words.length;){
-        const w=words.slice(j,j+=16), oldHash=hash;
-        hash=hash.slice(0,8);
-        for (let i=0;i<64;i++){
-            const w15=w[i-15], w2=w[i-2];
-            const a=hash[0], e=hash[4];
-            const temp1=hash[7]
-                +(rightRotate(e,6)^rightRotate(e,11)^rightRotate(e,25))
-                +((e&hash[5])^((~e)&hash[6]))
-                +k[i]
-                +(w[i]=(i<16)?w[i]:(
-                    w[i-16]
-                    +(rightRotate(w15,7)^rightRotate(w15,18)^(w15>>>3))
-                    +w[i-7]
-                    +(rightRotate(w2,17)^rightRotate(w2,19)^(w2>>>10))
-                )|0);
-            const temp2=(rightRotate(a,2)^rightRotate(a,13)^rightRotate(a,22))
-                +((a&hash[1])^(a&hash[2])^(hash[1]&hash[2]));
-            hash=[(temp1+temp2)|0].concat(hash);
-            hash[4]=(hash[4]+temp1)|0;
-        }
-        for (let i=0;i<8;i++) hash[i]=(hash[i]+oldHash[i])|0;
-    }
-    for (let i=0;i<8;i++){
-        for (let j=3;j+1;j--){
-            const b=(hash[i]>>(j*8))&255;
-            result+=((b<16)?'0':'')+b.toString(16);
-        }
-    }
-    return result;
+async function refreshMe(){const d=await api("/me");me=d.user;showApp()}
+function signOut(){token="";me=null;localStorage.removeItem("roh_token");$("#appView").classList.add("hidden");$("#authView").classList.remove("hidden");$("#logoutBtn").classList.add("hidden")}
+$("#logoutBtn").onclick=signOut;
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===b));
+  $("#loginForm").classList.toggle("hidden",b.dataset.tab!=="login");$("#registerForm").classList.toggle("hidden",b.dataset.tab!=="register");message($("#authMessage"),"");
+});
+$("#loginForm").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target);try{const d=await api("/auth/login",{method:"POST",body:JSON.stringify({identity:f.get("identity"),password:f.get("password")})});token=d.token;localStorage.setItem("roh_token",token);await refreshMe()}catch(err){message($("#authMessage"),err.message,true)}};
+$("#registerForm").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target);try{const d=await api("/auth/register",{method:"POST",body:JSON.stringify(Object.fromEntries(f))});token=d.token;localStorage.setItem("roh_token",token);await refreshMe()}catch(err){message($("#authMessage"),err.message,true)}};
+function switchView(name){
+  document.querySelectorAll(".view").forEach(v=>v.classList.add("hidden"));$(`#${name}View`).classList.remove("hidden");
+  document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active",b.dataset.view===name));
+  if(name==="books")loadBooks();if(name==="history")loadHistory();if(name==="admin")loadAdmin("users");
 }
-
-async function hashPassword(pass){
-    try {
-        const data = new TextEncoder().encode(pass + '::birr_salt_v2');
-        const buf = await crypto.subtle.digest('SHA-256', data);
-        return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-    } catch {
-        return sha256(pass + '::birr_salt_v2');
-    }
+document.querySelectorAll(".navbtn").forEach(b=>b.onclick=()=>switchView(b.dataset.view));
+$("#spinBtn").onclick=async()=>{try{const d=await api("/games/spin",{method:"POST",body:"{}"});message($("#gameMessage"),d.message);await refreshMe()}catch(e){message($("#gameMessage"),e.message,true)}};
+$("#diceBtn").onclick=async()=>{try{const d=await api("/games/dice",{method:"POST",body:JSON.stringify({guess:Number($("#diceGuess").value)})});message($("#gameMessage"),d.message);await refreshMe()}catch(e){message($("#gameMessage"),e.message,true)}};
+$("#showUpload").onclick=()=>$("#uploadForm").classList.toggle("hidden");
+$("#uploadForm").onsubmit=async e=>{e.preventDefault();try{const d=await api("/books",{method:"POST",body:new FormData(e.target)});message($("#globalMessage"),"Book uploaded.");e.target.reset();e.target.classList.add("hidden");loadBooks()}catch(err){message($("#globalMessage"),err.message,true)}};
+async function loadBooks(){
+  try{const d=await api("/books");$("#bookList").innerHTML=d.books.map(b=>`<article class="book"><h3>${esc(b.title)}</h3><p>${esc(b.description||"")}</p><p>Seller: ${esc(b.seller)}</p><div class="price">${money(b.price)} ETB</div><button class="primary full" onclick="buyBook(${b.id})">Buy book</button></article>`).join("")||"<p>No books listed yet.</p>"}catch(e){message($("#globalMessage"),e.message,true)}
 }
-
-/* ============================================================
-   STATE
-   ============================================================ */
-let tg = window.Telegram?.WebApp;
-if (tg) { try { tg.expand(); } catch {} }
-
-let currentUserPhone = null;
-let currentUser = null;
-let balance = 50.00;
-let currentRotation = 0;
-let isSpinning = false;
-const rewards = [0, 5, 10, 20, 50, 100];
-const usedTransactions = new Set();
-
-let products;
-try { products = JSON.parse(store.get(PRODUCTS_KEY)) || null; } catch { products = null; }
-if (!Array.isArray(products) || !products.length) {
-    products = [
-        { id:1, title:"Structural Steel Engineering Specification (PDF)", description:"Comprehensive structural design standards, load calculation formulas, and building guidelines.", price:150.00, fileUrl:"https://t.me/qarsho12" },
-        { id:2, title:"Advanced AutoCAD & Blueprint Templates", description:"Professional architectural and civil engineering floor plans and component schematics.", price:250.00, fileUrl:"https://t.me/qarsho12" },
-        { id:3, title:"Telegram Bot Python Source Code Guide", description:"Complete guide and source code for building automated Telebirr payment bots.", price:100.00, fileUrl:"https://t.me/qarsho12" }
-    ];
-    store.set(PRODUCTS_KEY, JSON.stringify(products));
+window.buyBook=async id=>{if(!confirm("Buy this book using your wallet balance?"))return;try{const d=await api(`/books/${id}/buy`,{method:"POST",body:"{}"});alert(d.message);await refreshMe();loadBooks()}catch(e){alert(e.message)}};
+$("#depositForm").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target);try{const d=await api("/wallet/deposit",{method:"POST",body:JSON.stringify({amount:f.get("amount"),reference:f.get("reference")})});message($("#walletMessage"),d.message);e.target.reset()}catch(err){message($("#walletMessage"),err.message,true)}};
+$("#payoutForm").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target);try{const d=await api("/wallet/payout",{method:"POST",body:JSON.stringify(Object.fromEntries(f))});message($("#walletMessage"),d.message);e.target.reset();await refreshMe()}catch(err){message($("#walletMessage"),err.message,true)}};
+async function loadHistory(){try{const d=await api("/history");const tx=d.transactions.map(t=>`<div class="historyitem"><strong>${esc(t.type.replace("_"," "))} · ${money(t.amount)} ETB</strong><span class="pill">${esc(t.status)}</span><p>${esc(t.reference||"")}</p><small>${new Date(t.created_at).toLocaleString()}</small></div>`);const orders=d.purchases.map(o=>`<div class="historyitem"><strong>Purchased: ${esc(o.title)}</strong><div>${money(o.amount)} ETB · ${new Date(o.created_at).toLocaleString()}</div><button class="smallbtn" onclick="downloadBook(${o.book_id})">Download</button></div>`);$("#historyList").innerHTML=[...tx,...orders].join("")||"<p>No history yet.</p>"}catch(e){message($("#historyList"),e.message,true)}}
+window.downloadBook=async id=>{try{const r=await fetch(`/api/books/${id}/download`,{headers:{Authorization:`Bearer ${token}`}});if(!r.ok){const d=await r.json();throw new Error(d.error)}const blob=await r.blob();const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`book-${id}`;a.click();URL.revokeObjectURL(a.href)}catch(e){alert(e.message)}};
+document.querySelectorAll("[data-admin]").forEach(b=>b.onclick=()=>loadAdmin(b.dataset.admin));
+async function loadAdmin(section){
+  document.querySelectorAll("[data-admin]").forEach(b=>b.classList.toggle("active",b.dataset.admin===section));
+  try{
+    if(section==="users"){const d=await api("/admin/users");$("#adminContent").innerHTML=d.users.map(u=>`<div class="adminrow"><div><strong>#${u.id} ${esc(u.display_name)}</strong><small>${esc(u.email||u.phone||"Telegram user")} · Wallet ${money(u.wallet_balance)} · Points ${u.points_balance}</small></div><div class="actions"><button class="smallbtn" onclick="adjustBalance(${u.id},'wallet')">Edit wallet</button><button class="smallbtn" onclick="adjustBalance(${u.id},'points')">Edit points</button><button class="smallbtn danger" onclick="suspendUser(${u.id},${!u.is_suspended})">${u.is_suspended?"Reactivate":"Suspend"}</button></div></div>`).join("")}
+    if(section==="transactions"){const d=await api("/admin/transactions");$("#adminContent").innerHTML=d.transactions.map(t=>`<div class="adminrow"><div><strong>#${t.id} ${esc(t.type)} · ${money(t.amount)} ETB</strong><small>${esc(t.display_name)} · ${esc(t.email||t.phone||"")} · ${esc(t.status)} · ${esc(t.reference||"")}</small></div><div class="actions">${t.status==="pending"?`<button class="smallbtn" onclick="reviewTx(${t.id},'approve')">Approve</button><button class="smallbtn danger" onclick="reviewTx(${t.id},'reject')">Reject</button>`:""}</div></div>`).join("")}
+    if(section==="audit"){const d=await api("/admin/audit");$("#adminContent").innerHTML=d.audit.map(a=>`<div class="historyitem"><strong>${esc(a.action)} · ${money(a.amount)}</strong><div>Customer: ${esc(a.customer_email||a.phone||a.target_user_id)} · Admin: ${esc(a.admin_email)}</div><div>${money(a.before_value)} → ${money(a.after_value)}</div><small>${esc(a.reason)} · ${new Date(a.created_at).toLocaleString()}</small></div>`).join("")||"<p>No adjustments recorded.</p>"}
+  }catch(e){message($("#adminContent"),e.message,true)}
 }
-function saveProducts(){ store.set(PRODUCTS_KEY, JSON.stringify(products)); }
+window.adjustBalance=async(id,kind)=>{const amount=prompt(`Adjustment for ${kind} balance (positive to add, negative to subtract):`);if(amount===null)return;const reason=prompt("Reason for this adjustment (required):");if(!reason)return;try{const d=await api(`/admin/users/${id}/balance`,{method:"POST",body:JSON.stringify({amount:Number(amount),reason,kind})});alert(`${d.message} New balance: ${d.after}`);loadAdmin("users")}catch(e){alert(e.message)}};
+window.reviewTx=async(id,decision)=>{if(!confirm(`${decision} transaction #${id}?`))return;try{await api(`/admin/transactions/${id}/review`,{method:"POST",body:JSON.stringify({decision})});loadAdmin("transactions")}catch(e){alert(e.message)}};
+window.suspendUser=async(id,suspended)=>{if(!confirm(`${suspended?"Suspend":"Reactivate"} customer #${id}?`))return;try{await api(`/admin/users/${id}/suspend`,{method:"POST",body:JSON.stringify({suspended})});loadAdmin("users")}catch(e){alert(e.message)}};
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 
-/* ============================================================
-   AUDIO
-   ============================================================ */
-let audioCtx;
-try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch {}
-function playSound(type){
-    if (!audioCtx) return;
-    try { if (audioCtx.state === 'suspended') audioCtx.resume(); } catch {}
-    const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
-    osc.connect(g); g.connect(audioCtx.destination);
-    if (type==='tick'){
-        osc.type='sine'; osc.frequency.setValueAtTime(400,audioCtx.currentTime);
-        g.gain.setValueAtTime(0.05,audioCtx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.05);
-        osc.start(); osc.stop(audioCtx.currentTime+0.05);
-    } else if (type==='win'){
-        osc.type='triangle';
-        osc.frequency.setValueAtTime(523.25,audioCtx.currentTime);
-        osc.frequency.setValueAtTime(659.25,audioCtx.currentTime+0.1);
-        osc.frequency.setValueAtTime(783.99,audioCtx.currentTime+0.2);
-        g.gain.setValueAtTime(0.1,audioCtx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.4);
-        osc.start(); osc.stop(audioCtx.currentTime+0.4);
-    } else if (type==='lose'){
-        osc.type='sawtooth';
-        osc.frequency.setValueAtTime(150,audioCtx.currentTime);
-        osc.frequency.linearRampToValueAtTime(80,audioCtx.currentTime+0.3);
-        g.gain.setValueAtTime(0.1,audioCtx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.3);
-        osc.start(); osc.stop(audioCtx.currentTime+0.3);
-    }
+// Virtual-point game endpoints are implemented below by the server.
+async function bootstrap(){
+  $("#telebirrNumber").textContent="0917393624";
+  const tg=window.Telegram?.WebApp;
+  if(tg){tg.ready();tg.expand();if(tg.initData){try{const d=await api("/auth/telegram",{method:"POST",body:JSON.stringify({initData:tg.initData})});token=d.token;localStorage.setItem("roh_token",token)}catch{/* Allow email/phone login as fallback. */}}}
+  if(token){try{await refreshMe();return}catch{signOut()}}
 }
+bootstrap();
 
-/* ============================================================
-   AUTH TABS
-   ============================================================ */
-function switchAuthTab(tab){
-    const s  = document.getElementById('signupForm');
-    const l  = document.getElementById('loginForm');
-    const ts = document.getElementById('authTabSignup');
-    const tl = document.getElementById('authTabLogin');
-    if (!s || !l) return;
-    if (tab === 'signup'){
-        s.classList.remove('hidden'); l.classList.add('hidden');
-        ts.classList.add('active');  tl.classList.remove('active');
-    } else {
-        s.classList.add('hidden');   l.classList.remove('hidden');
-        ts.classList.remove('active'); tl.classList.add('active');
-    }
-}
-
-/* ============================================================
-   SIGN UP
-   ============================================================ */
-async function handleSignup(event){
-    event.preventDefault();
-    const name  = document.getElementById('signupName').value.trim();
-    const phone = normalizePhone(document.getElementById('signupPhone').value);
-    const pass  = document.getElementById('signupPass').value;
-    const remember = document.getElementById('signupRemember')?.checked ?? true;
-
-    if (!name || !phone || pass.length < 4){
-        alert('Please fill all fields. Password must be at least 4 characters.');
-        return;
-    }
-    if (phone.length < 10){
-        alert('Please enter a valid Ethiopian phone number (e.g. 0917393624).');
-        return;
-    }
-
-    const users = loadUsers();
-    if (users[phone]){
-        alert('An account with this phone already exists. Switching to Login.');
-        switchAuthTab('login');
-        document.getElementById('loginPhone').value = phone;
-        return;
-    }
-
-    const passHash = await hashPassword(pass);
-    users[phone] = {
-        name, phone, passHash,
-        balance: 50.00,
-        purchased: [],
-        history: [],
-        createdAt: Date.now()
-    };
-    saveUsers(users);
-    if (remember) saveSession({ phone }); else clearSession();
-    loginUser(phone);
-}
-
-/* ============================================================
-   LOGIN
-   ============================================================ */
-async function handleLogin(event){
-    event.preventDefault();
-    const phone = normalizePhone(document.getElementById('loginPhone').value);
-    const pass  = document.getElementById('loginPass').value;
-    const remember = document.getElementById('loginRemember')?.checked ?? true;
-
-    if (!phone || !pass){ alert('Enter your phone and password.'); return; }
-
-    const users = loadUsers();
-    const user = users[phone];
-    if (!user){
-        alert('No account found with this phone number.\nPlease sign up first.');
-        switchAuthTab('signup');
-        document.getElementById('signupPhone').value = phone;
-        return;
-    }
-
-    const passHash = await hashPassword(pass);
-    if (passHash !== user.passHash){
-        alert('Incorrect password. Please
+  </script>
+</body>
+</html>
