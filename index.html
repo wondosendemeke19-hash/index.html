@@ -1,18 +1,148 @@
-<section id="authView" class="panel auth text-center">
-  <h1>Welcome to BOOK GAME</h1>
-  <p class="muted">Connecting securely through your Telegram account...</p>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#121212">
+  <title>FRUIT DROP CASINO</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <div class="brand">🍒 FRUIT DROP CASINO</div>
+      <small>Spin • Drop • Win Big Rewards</small>
+    </div>
+    <button id="logoutBtn" class="ghost hidden">Disconnect</button>
+  </header>
   
-  <div class="spinner-box" style="margin: 20px 0;">
-    <div class="gameicon" style="animation: pulse 1s infinite;">📱</div>
-  </div>
+  <main>
+    <!-- Telegram Auto-Auth / Profile Verification View -->
+    <section id="authView" class="panel auth text-center">
+      <h1>Welcome to Fruit Drop</h1>
+      <p class="muted">Connecting securely through your Telegram account...</p>
+      <div class="spinner-box" style="margin: 20px 0;">
+        <div class="gameicon" style="animation: pulse 1s infinite;">🎰</div>
+      </div>
+      <div id="phonePromptContainer" class="hidden">
+        <p>Please share your phone number to complete registration:</p>
+        <button id="shareContactBtn" class="primary full" type="button" style="margin-top: 10px;">
+          Share Telegram Contact 📞
+        </button>
+      </div>
+      <p id="authMessage" class="message"></p>
+    </section>
 
-  <!-- Manual phone prompt if Telegram contact sharing is triggered -->
-  <div id="phonePromptContainer" class="hidden">
-    <p>Please share your phone number to complete your registration:</p>
-    <button id="shareContactBtn" class="primary full" type="button" style="margin-top: 10px;">
-      Share Telegram Contact 📞
-    </button>
-  </div>
+    <!-- Main Casino App View -->
+    <section id="appView" class="hidden">
+      <!-- Wallet & Referral Banner -->
+      <section class="wallet panel">
+        <div>
+          <small>WALLET BALANCE (ETB)</small>
+          <div id="walletBalance" class="money">0.00</div>
+          <small id="welcome"></small>
+        </div>
+        <div class="points">
+          <small>CASINO COINS</small>
+          <strong id="pointsBalance">0</strong>
+        </div>
+      </section>
 
-  <p id="authMessage" class="message"></p>
-</section>
+      <!-- Referral Sharing Card -->
+      <section class="panel" style="background: linear-gradient(135deg, #ff416c, #ff4b2b); color: #fff;">
+        <h3 style="margin-bottom: 6px;">🎁 Invite Friends & Earn Coins!</h3>
+        <p style="color: #ffe6e6; font-size: 13px; margin-bottom: 12px;">Share your referral link to earn +50 bonus coins for every friend who joins!</p>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="refLinkInput" readonly style="background: #ffffff15; color: #fff; border: 1px solid #ffffff40; margin-top:0;" />
+          <button class="primary" id="shareRefBtn" type="button" style="background: #fff; color: #ff416c; white-space: nowrap;">Copy Link</button>
+        </div>
+      </section>
+      
+      <nav class="nav">
+        <button class="navbtn active" data-view="home">Fruit Drop Arcade</button>
+        <button class="navbtn" data-view="wallet">Wallet</button>
+        <button class="navbtn" data-view="history">History</button>
+        <button id="adminNav" class="navbtn hidden" data-view="admin">Admin</button>
+      </nav>
+
+      <!-- Fruit Drop Game Featured View -->
+      <section id="homeView" class="view">
+        <h2>🍇 Fruit Drop Multiplier</h2>
+        <p class="muted">Drop the fruit basket and catch winning multipliers! Costs 10 coins per drop.</p>
+        
+        <div class="panel" style="text-align: center; background: linear-gradient(180deg, #1f1f1f, #2a2a2a); border: 2px dashed #ff4b2b; color: #fff;">
+          <div id="fruitDisplay" style="font-size: 72px; margin: 20px 0; transition: transform 0.3s ease;">🍋 🍎 🍇</div>
+          <h3 id="fruitResultText" style="color: #ffcc00; min-height: 28px;">Ready to drop?</h3>
+          <button class="primary full" id="dropBtn" type="button" style="font-size: 18px; padding: 14px; margin-top: 15px; background: #ff4b2b;">DROP FRUIT (10 Coins)</button>
+        </div>
+
+        <h2>High Roller Mini Dice</h2>
+        <div class="gamegrid">
+          <article class="gamecard">
+            <div class="gameicon">🎲</div>
+            <h3>Lucky Dice Roll</h3>
+            <p>Pick a number (1–6) to 5x your coins.</p>
+            <select id="diceGuess" style="background:#333; color:#fff;">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+            </select>
+            <button class="primary full" id="diceBtn" type="button" style="margin-top:10px;">Roll Dice (5 Coins)</button>
+          </article>
+        </div>
+        <p id="gameMessage" class="message"></p>
+      </section>
+
+      <!-- Wallet View -->
+      <section id="walletView" class="view hidden">
+        <h2>Casino Wallet</h2>
+        <div class="panel">
+          <h3>Top-Up via Telebirr</h3>
+          <p>Transfer funds to <strong id="telebirrNumber">0917393624</strong> and enter your transaction reference below for instant crediting.</p>
+          <form id="depositForm">
+            <label>Amount (ETB)<input name="amount" type="number" min="10" step="0.01" required></label>
+            <label>Transaction reference<input name="reference" required minlength="4"></label>
+            <button class="primary" type="submit">Confirm Deposit</button>
+          </form>
+        </div>
+        <div class="panel">
+          <h3>Payout Request</h3>
+          <p class="muted">Withdraw your winnings securely.</p>
+          <form id="payoutForm">
+            <label>Amount (ETB)<input name="amount" type="number" min="10" step="0.01" required></label>
+            <label>Bank<select name="bank"><option>CBE</option><option>Oromia Cooperative Bank</option><option>Sinqee Bank</option></select></label>
+            <label>Account number<input name="account" required minlength="5"></label>
+            <button class="primary" type="submit">Request Payout</button>
+          </form>
+        </div>
+        <p id="walletMessage" class="message"></p>
+      </section>
+
+      <!-- History View -->
+      <section id="historyView" class="view hidden">
+        <h2>Betting & Transaction History</h2>
+        <div id="historyList"></div>
+      </section>
+
+      <!-- Admin View -->
+      <section id="adminView" class="view hidden">
+        <h2>Casino Management Dashboard</h2>
+        <div class="adminTabs">
+          <button data-admin="users" class="active" type="button">Users</button>
+          <button data-admin="transactions" type="button">Transactions</button>
+          <button data-admin="audit" type="button">Logs</button>
+        </div>
+        <div id="adminContent"></div>
+      </section>
+    </section>
+    <p id="globalMessage" class="message"></p>
+  </main>
+
+  <footer>FRUIT DROP CASINO · Telegram Mini App</footer>
+  <script src="app.js"></script>
+</body>
+</html>
