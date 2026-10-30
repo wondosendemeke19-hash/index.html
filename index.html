@@ -12,7 +12,7 @@
   <header class="topbar">
     <div>
       <div class="brand">📖 BOOK GAME</div>
-      <small>Smart Reads • Mini Games • Rewards</small>
+      <small>Smart Reads • Spin & Win • Rewards</small>
     </div>
     <button id="logoutBtn" class="ghost hidden">Sign out</button>
   </header>
@@ -20,7 +20,7 @@
   <main>
     <section id="authView" class="panel auth">
       <h1>Welcome to BOOK GAME</h1>
-      <p class="muted">Sign in or create your profile to start playing and reading.</p>
+      <p class="muted">Sign in or create your profile to start spinning, playing, and reading.</p>
       <div class="tabs">
         <button class="tab active" data-tab="login">Login</button>
         <button class="tab" data-tab="register">Sign up</button>
@@ -41,6 +41,7 @@
     </section>
 
     <section id="appView" class="hidden">
+      <!-- Wallet & Referral Banner -->
       <section class="wallet panel">
         <div>
           <small>WALLET BALANCE (ETB)</small>
@@ -52,27 +53,38 @@
           <strong id="pointsBalance">0</strong>
         </div>
       </section>
+
+      <!-- Referral Sharing Card -->
+      <section class="panel" style="background: linear-gradient(135deg, #1e3c72, #2a5298); color: #fff;">
+        <h3 style="margin-bottom: 6px;">🎁 Invite Friends & Earn Points!</h3>
+        <p style="color: #d0e1fd; font-size: 13px; margin-bottom: 12px;">Share your personal referral link to earn +50 bonus points for every friend who joins BOOK GAME.</p>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="refLinkInput" readonly style="background: #ffffff15; color: #fff; border: 1px solid #ffffff40; margin-top:0;" />
+          <button class="primary" id="shareRefBtn" type="button" style="background: #fff; color: #1e3c72; white-space: nowrap;">Copy Link</button>
+        </div>
+      </section>
       
       <nav class="nav">
-        <button class="navbtn active" data-view="home">Games</button>
+        <button class="navbtn active" data-view="home">Lucky Spin & Games</button>
         <button class="navbtn" data-view="books">Library</button>
         <button class="navbtn" data-view="wallet">Wallet</button>
         <button class="navbtn" data-view="history">History</button>
         <button id="adminNav" class="navbtn" data-view="admin">Admin</button>
       </nav>
 
+      <!-- Spin Game Featured View -->
       <section id="homeView" class="view">
-        <h2>Smart Arcade</h2>
-        <p class="muted">Play to earn points, unlock achievements, and level up your reading perks!</p>
+        <h2>🎡 BOOK GAME Lucky Wheel</h2>
+        <p class="muted">Spin the wheel to win massive game points! Spend 10 points per spin.</p>
         
+        <div class="panel" style="text-align: center; background: linear-gradient(180deg, #ffffff, #f7f9fc); border: 2px dashed #203a43;">
+          <div id="wheelDisplay" style="font-size: 64px; margin: 15px 0; transition: transform 0.5s ease;">🎁</div>
+          <h3 id="wheelResultText" style="color: #203a43; min-height: 28px;">Ready to spin?</h3>
+          <button class="primary full" id="spinBtn" type="button" style="font-size: 18px; padding: 14px; margin-top: 15px;">SPIN NOW (10 Points)</button>
+        </div>
+
+        <h2>Other Arcade Games</h2>
         <div class="gamegrid">
-          <article class="gamecard">
-            <div class="gameicon">🎡</div>
-            <h3>Lucky Book Spin</h3>
-            <p>Test your luck and win bonus points.</p>
-            <button class="primary full" id="spinBtn" type="button">Spin (10 points)</button>
-          </article>
-          
           <article class="gamecard">
             <div class="gameicon">🎲</div>
             <h3>Literary Dice Roll</h3>
@@ -94,7 +106,7 @@
       <section id="booksView" class="view hidden">
         <div class="sectionhead">
           <div>
-            <h2>Smart Library & Market</h2>
+            <h2>BOOK GAME Library & Market</h2>
             <p class="muted">Discover premium digital literature or list your own work.</p>
           </div>
           <button id="showUpload" class="primary" type="button">Publish Book</button>
