@@ -14,7 +14,6 @@
       <div class="brand">🍒 FRUIT DROP CASINO</div>
       <small>Spin • Drop • Win Big Rewards</small>
     </div>
-    <button id="logoutBtn" class="ghost hidden">Disconnect</button>
   </header>
   
   <main>
@@ -63,7 +62,6 @@
         <button class="navbtn active" data-view="home">Fruit Drop Arcade</button>
         <button class="navbtn" data-view="wallet">Wallet</button>
         <button class="navbtn" data-view="history">History</button>
-        <button id="adminNav" class="navbtn hidden" data-view="admin">Admin</button>
       </nav>
 
       <!-- Fruit Drop Game Featured View -->
@@ -82,8 +80,8 @@
           <article class="gamecard">
             <div class="gameicon">🎲</div>
             <h3>Lucky Dice Roll</h3>
-            <p>Pick a number (1–6) to 5x your coins.</p>
-            <select id="diceGuess" style="background:#333; color:#fff;">
+            <p>Pick a number (1–6) to win coins.</p>
+            <select id="diceGuess" style="background:#333; color:#fff; padding: 8px; width: 100%; margin-top: 8px;">
               <option value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
@@ -125,18 +123,7 @@
       <!-- History View -->
       <section id="historyView" class="view hidden">
         <h2>Betting & Transaction History</h2>
-        <div id="historyList"></div>
-      </section>
-
-      <!-- Admin View -->
-      <section id="adminView" class="view hidden">
-        <h2>Casino Management Dashboard</h2>
-        <div class="adminTabs">
-          <button data-admin="users" class="active" type="button">Users</button>
-          <button data-admin="transactions" type="button">Transactions</button>
-          <button data-admin="audit" type="button">Logs</button>
-        </div>
-        <div id="adminContent"></div>
+        <div id="historyList" class="panel">No past activity yet.</div>
       </section>
     </section>
     <p id="globalMessage" class="message"></p>
