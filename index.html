@@ -2,134 +2,59 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
   <meta name="theme-color" content="#121212">
+  <meta name="description" content="NEW GAME – Spin, drop, and win big rewards on Telegram.">
+  <meta property="og:title" content="NEW GAME">
+  <meta property="og:description" content="Spin • Drop • Win Big Rewards">
   <title>NEW GAME</title>
+
+  <!-- Telegram WebApp SDK (must load before our app.js) -->
+  <script src="https://telegram.org/js/telegram-web-app.js" defer></script>
+
   <link rel="stylesheet" href="style.css">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="app.js" defer></script>
 </head>
 <body>
   <header class="topbar">
-    <div>
-      <div class="brand">🎮 NEW GAME</div>
-      <small>Spin • Drop • Win Big Rewards</small>
+    <div class="topbar__inner">
+      <h1 class="brand">🎮 NEW GAME</h1>
+      <p class="tagline">Spin • Drop • Win Big Rewards</p>
     </div>
   </header>
-  
-  <main>
-    <!-- Telegram Auto-Auth / Profile Verification View -->
-    <section id="authView" class="panel auth text-center">
-      <h1>Welcome to NEW GAME</h1>
-      <p class="muted">Connecting securely through your Telegram account...</p>
-      <div class="spinner-box" style="margin: 20px 0;">
-        <div class="gameicon" style="animation: pulse 1s infinite;">🎰</div>
+
+  <main class="container">
+    <!-- Auth view -->
+    <section id="authView" class="panel panel--auth" aria-live="polite" aria-busy="true">
+      <h2 class="panel__title">Welcome to NEW GAME</h2>
+      <p class="muted">Connecting securely through your Telegram account…</p>
+      <div class="spinner-box" role="status" aria-label="Authenticating">
+        <div class="spinner"></div>
       </div>
-      <div id="phonePromptContainer" class="hidden">
-        <p>Please share your phone number to complete registration:</p>
-        <button id="shareContactBtn" class="primary full" type="button" style="margin-top: 10px;">
-          Share Telegram Contact 📞
-        </button>
-      </div>
-      <p id="authMessage" class="message"></p>
+      <p class="hint">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.03-1.99 1.27-5.62 3.73-.53.36-1.02.54-1.45.53-.48-.01-1.4-.27-2.08-.49-.84-.27-1.51-.41-1.45-.87.03-.24.37-.48 1.02-.74 3.97-1.73 6.62-2.87 7.95-3.43 3.78-1.57 4.57-1.85 5.08-1.86.11 0 .36.03.52.16.14.12.18.28.2.44.02.16.05.65.03.98z"/></svg>
+        <span>Telegram WebApp authentication</span>
+      </p>
     </section>
 
-    <!-- Main Casino App View -->
-    <section id="appView" class="hidden">
-      <!-- Wallet & Referral Banner -->
-      <section class="wallet panel">
-        <div>
-          <small>WALLET BALANCE (ETB)</small>
-          <div id="walletBalance" class="money">0.00</div>
-          <small id="welcome"></small>
-        </div>
-        <div class="points">
-          <small>CASINO COINS</small>
-          <strong id="pointsBalance">0</strong>
-        </div>
-      </section>
-
-      <!-- Referral Sharing Card -->
-      <section class="panel" style="background: linear-gradient(135deg, #ff416c, #ff4b2b); color: #fff;">
-        <h3 style="margin-bottom: 6px;">🎁 Invite Friends & Earn Coins!</h3>
-        <p style="color: #ffe6e6; font-size: 13px; margin-bottom: 12px;">Share your referral link to earn +50 bonus coins for every friend who joins!</p>
-        <div style="display: flex; gap: 8px;">
-          <input type="text" id="refLinkInput" readonly style="background: #ffffff15; color: #fff; border: 1px solid #ffffff40; margin-top:0;" />
-          <button class="primary" id="shareRefBtn" type="button" style="background: #fff; color: #ff416c; white-space: nowrap;">Copy Link</button>
-        </div>
-      </section>
-      
-      <nav class="nav">
-        <button class="navbtn active" data-view="home">Fruit Drop Arcade</button>
-        <button class="navbtn" data-view="wallet">Wallet</button>
-        <button class="navbtn" data-view="history">History</button>
-      </nav>
-
-      <!-- Fruit Drop Game Featured View -->
-      <section id="homeView" class="view">
-        <h2>🍇 Fruit Drop Multiplier</h2>
-        <p class="muted">Drop the fruit basket and catch winning multipliers! Costs 10 coins per drop.</p>
-        
-        <div class="panel" style="text-align: center; background: linear-gradient(180deg, #1f1f1f, #2a2a2a); border: 2px dashed #ff4b2b; color: #fff;">
-          <div id="fruitDisplay" style="font-size: 72px; margin: 20px 0; transition: transform 0.3s ease;">🍋 🍎 🍇</div>
-          <h3 id="fruitResultText" style="color: #ffcc00; min-height: 28px;">Ready to drop?</h3>
-          <button class="primary full" id="dropBtn" type="button" style="font-size: 18px; padding: 14px; margin-top: 15px; background: #ff4b2b;">DROP FRUIT (10 Coins)</button>
-        </div>
-
-        <h2>High Roller Mini Dice</h2>
-        <div class="gamegrid">
-          <article class="gamecard">
-            <div class="gameicon">🎲</div>
-            <h3>Lucky Dice Roll</h3>
-            <p>Pick a number (1–6) to win coins.</p>
-            <select id="diceGuess" style="background:#333; color:#fff; padding: 8px; width: 100%; margin-top: 8px;">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-            </select>
-            <button class="primary full" id="diceBtn" type="button" style="margin-top:10px;">Roll Dice (5 Coins)</button>
-          </article>
-        </div>
-        <p id="gameMessage" class="message"></p>
-      </section>
-
-      <!-- Wallet View -->
-      <section id="walletView" class="view hidden">
-        <h2>Casino Wallet</h2>
-        <div class="panel">
-          <h3>Top-Up via Telebirr</h3>
-          <p>Transfer funds to <strong id="telebirrNumber">0917393624</strong> and enter your transaction reference below for instant crediting.</p>
-          <form id="depositForm">
-            <label>Amount (ETB)<input name="amount" type="number" min="10" step="0.01" required></label>
-            <label>Transaction reference<input name="reference" required minlength="4"></label>
-            <button class="primary" type="submit">Confirm Deposit</button>
-          </form>
-        </div>
-        <div class="panel">
-          <h3>Payout Request</h3>
-          <p class="muted">Withdraw your winnings securely.</p>
-          <form id="payoutForm">
-            <label>Amount (ETB)<input name="amount" type="number" min="10" step="0.01" required></label>
-            <label>Bank<select name="bank"><option>CBE</option><option>Oromia Cooperative Bank</option><option>Sinqee Bank</option></select></label>
-            <label>Account number<input name="account" required minlength="5"></label>
-            <button class="primary" type="submit">Request Payout</button>
-          </form>
-        </div>
-        <p id="walletMessage" class="message"></p>
-      </section>
-
-      <!-- History View -->
-      <section id="historyView" class="view hidden">
-        <h2>Betting & Transaction History</h2>
-        <div id="historyList" class="panel">No past activity yet.</div>
-      </section>
+    <!-- Game view -->
+    <section id="gameView" class="panel panel--game" hidden>
+      <div class="badge">
+        <span class="badge__avatar" id="userAvatar">🎲</span>
+        <span id="userName">Player</span>
+      </div>
+      <h2 class="panel__title">Ready to play?</h2>
+      <p class="muted">Spin the wheel, drop the coin,<br>and win exclusive rewards!</p>
+      <button id="playButton" class="btn" type="button">Start Game</button>
+      <p class="hint hint--center">🔒 Secure session</p>
     </section>
-    <p id="globalMessage" class="message"></p>
+
+    <!-- Error view -->
+    <section id="errorView" class="panel panel--error" hidden>
+      <h2 class="panel__title">⚠️ Connection Error</h2>
+      <p class="muted" id="errorMessage">Could not authenticate. Please try again.</p>
+      <button id="retryButton" class="btn" type="button">Retry</button>
+    </section>
   </main>
-
-  <footer>NEW GAME · Telegram Mini App</footer>
-  <script src="app.js"></script>
 </body>
 </html>
