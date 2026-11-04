@@ -1,19 +1,822 @@
-<!doctype html>
-<html lang="en">
-
+<!DOCTYPE html>
+<html lang="en" class="dark">
 <head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/png" href="/logo-with-bg-min.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TON401K: Your on-chain retirement plan for a secure future!</title>
-  <meta name="description"
-    content="TON401K provides decentralized security, low costs, flexible options and transparency for a better retirement.">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fruit Drop & Spin - Telegram Mini App</title>
+    
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- TON Connect SDK -->
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tone.js Web Audio FX -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
 
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        tgBg: '#0f172a',
+                        tgCard: '#1e293b',
+                        tgAccent: '#0088cc',
+                        neonGreen: '#10b981',
+                        neonGold: '#f59e0b',
+                        neonPink: '#ec4899',
+                        neonPurple: '#8b5cf6'
+                    },
+                    boxShadow: {
+                        'neon-blue': '0 0 15px rgba(0, 136, 204, 0.4)',
+                        'neon-gold': '0 0 20px rgba(245, 158, 11, 0.5)',
+                        'neon-green': '0 0 15px rgba(16, 185, 129, 0.4)',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap');
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0b0f19;
+            color: #f8fafc;
+            user-select: none;
+            -webkit-user-select: none;
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .reel-box {
+            background: linear-gradient(180deg, #090d16 0%, #172033 50%, #090d16 100%);
+            box-shadow: inset 0 0 18px rgba(0,0,0,0.9);
+        }
+
+        .reel-strip {
+            transition: transform 0.1s linear;
+        }
+
+        .symbol-blur {
+            filter: blur(4px);
+            transform: scale(0.92);
+        }
+
+        .glow-text-gold {
+            text-shadow: 0 0 12px rgba(245, 158, 11, 0.8), 0 0 24px rgba(245, 158, 11, 0.4);
+        }
+
+        #dropCanvas {
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            border-radius: 1rem;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); }
+        }
+        .pulse-glow {
+            animation: pulseGlow 2s infinite ease-in-out;
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+    </style>
 </head>
+<body class="min-h-screen flex flex-col justify-between pb-16">
 
-<body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.tsx"></script>
+    <!-- HEADER / USER PROFILE / TON CONNECT BAR -->
+    <header class="sticky top-0 z-30 glass-panel border-b border-slate-800 px-4 py-3">
+        <div class="max-w-md mx-auto flex items-center justify-between">
+            <!-- User Info -->
+            <div class="flex items-center space-x-2">
+                <div id="userPhotoContainer" class="w-9 h-9 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center font-bold text-white shadow-neon-blue">
+                    <i class="fa-solid fa-user-ninja" id="userIcon"></i>
+                </div>
+                <div>
+                    <div class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Telegram Gamer</div>
+                    <div class="text-sm font-bold text-white flex items-center gap-1">
+                        <span id="userName">User_77</span>
+                        <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.5 rounded-full font-bold">PRO</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TON CONNECT BUTTON PLACEHOLDER -->
+            <div id="ton-connect-button"></div>
+        </div>
+
+        <!-- BALANCE & QUICK TRANSACTIONS BANNER -->
+        <div class="max-w-md mx-auto mt-3 bg-slate-900/90 rounded-2xl p-3 border border-slate-800 flex items-center justify-between shadow-inner">
+            <div class="pl-2">
+                <span class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider block">Wallet Balance</span>
+                <div class="flex items-center gap-1.5">
+                    <i class="fa-solid fa-gem text-amber-400 text-lg"></i>
+                    <span id="userBalance" class="text-2xl font-black text-amber-400 glow-text-gold">10.00</span>
+                    <span class="text-xs text-amber-300 font-bold self-end mb-1">TON</span>
+                </div>
+            </div>
+
+            <!-- Deposit / Withdraw Buttons -->
+            <div class="flex items-center gap-2">
+                <button onclick="openModal('depositModal')" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold px-3 py-2 rounded-xl text-xs shadow-neon-green flex items-center gap-1 transition active:scale-95">
+                    <i class="fa-solid fa-circle-plus"></i> Deposit
+                </button>
+                <button onclick="openModal('withdrawModal')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1 transition active:scale-95">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Cashout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN APP SCREEN WRAPPER -->
+    <main class="max-w-md mx-auto w-full px-4 pt-3 pb-6 flex-grow flex flex-col justify-center">
+
+        <!-- TAB 1: FRUIT SPIN WHEEL -->
+        <section id="spinTab" class="space-y-4">
+            <div class="relative bg-gradient-to-b from-slate-800 via-slate-900 to-slate-950 p-4 rounded-3xl border-2 border-amber-500/40 shadow-neon-gold">
+                
+                <!-- Payout Rates Header -->
+                <div class="flex justify-between items-center bg-slate-950/80 rounded-xl p-2 mb-3 border border-slate-800 text-[11px] text-slate-300 font-semibold">
+                    <span class="text-amber-400"><i class="fa-solid fa-crown mr-1"></i>3x 💎 = 50x</span>
+                    <span class="text-rose-400">3x 🍒 = 15x</span>
+                    <span class="text-purple-400">3x Any = 5x</span>
+                </div>
+
+                <!-- 3 SLOT REELS -->
+                <div class="grid grid-cols-3 gap-2 reel-box p-3 rounded-2xl border border-slate-700 relative overflow-hidden">
+                    <!-- Center Payline Overlay -->
+                    <div class="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-16 border-y-2 border-amber-400/60 bg-amber-500/10 pointer-events-none z-10 flex items-center justify-between px-1">
+                        <i class="fa-solid fa-caret-right text-amber-400 text-xs"></i>
+                        <i class="fa-solid fa-caret-left text-amber-400 text-xs"></i>
+                    </div>
+
+                    <!-- Reel 1 -->
+                    <div class="h-28 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center">
+                        <div id="reel1" class="reel-strip text-5xl flex flex-col items-center justify-center space-y-8 py-2">
+                            <span>🍎</span>
+                        </div>
+                    </div>
+
+                    <!-- Reel 2 -->
+                    <div class="h-28 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center">
+                        <div id="reel2" class="reel-strip text-5xl flex flex-col items-center justify-center space-y-8 py-2">
+                            <span>🍌</span>
+                        </div>
+                    </div>
+
+                    <!-- Reel 3 -->
+                    <div class="h-28 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center">
+                        <div id="reel3" class="reel-strip text-5xl flex flex-col items-center justify-center space-y-8 py-2">
+                            <span>🍒</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Result Alert Message -->
+                <div id="spinResultBox" class="mt-3 text-center min-h-[32px] flex items-center justify-center">
+                    <span class="text-sm font-bold text-slate-400">Press SPIN to test your luck!</span>
+                </div>
+
+                <!-- Bet Adjustment & Spin Action -->
+                <div class="mt-3 pt-3 border-t border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-400 uppercase">Bet Amount</span>
+                        <div class="flex items-center gap-2">
+                            <button onclick="adjustBet(-0.5)" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-white font-bold hover:bg-slate-700 active:scale-95 text-sm">-</button>
+                            <span id="currentBet" class="w-16 text-center font-extrabold text-amber-400 text-lg">1.00</span>
+                            <button onclick="adjustBet(0.5)" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-white font-bold hover:bg-slate-700 active:scale-95 text-sm">+</button>
+                            <button onclick="setMaxBet()" class="px-2 py-1 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold text-xs">MAX</button>
+                        </div>
+                    </div>
+
+                    <button id="spinBtn" onclick="spinSlotMachine()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-xl uppercase tracking-wider shadow-neon-gold transition active:scale-98 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rotate text-2xl"></i> SPIN WHEEL
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: FRUIT DROP MINIGAME -->
+        <section id="dropTab" class="hidden space-y-3">
+            <div class="bg-slate-900/90 rounded-2xl p-3 border border-slate-800 flex justify-between items-center text-xs">
+                <div>
+                    <span class="text-slate-400">Drop Cost:</span>
+                    <span class="text-amber-400 font-bold ml-1">0.50 TON</span>
+                </div>
+                <div class="text-right">
+                    <span class="text-slate-400">Last Win:</span>
+                    <span id="dropScore" class="text-emerald-400 font-bold ml-1">0.00 TON</span>
+                </div>
+            </div>
+
+            <!-- Canvas Display -->
+            <div class="relative w-full aspect-[4/5] max-h-[380px] rounded-2xl border border-slate-700 overflow-hidden shadow-2xl">
+                <canvas id="dropCanvas" class="w-full h-full block"></canvas>
+                
+                <div id="dropClickArea" onclick="dropFruitFromTop(event)" class="absolute inset-0 cursor-pointer flex flex-col justify-between p-2">
+                    <div class="text-center text-[10px] text-slate-400 bg-slate-950/70 rounded-full py-1 backdrop-blur-xs border border-slate-800">
+                        Tap top bar to drop Fruit 🍎
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: TRANSACTION & GAME HISTORY -->
+        <section id="historyTab" class="hidden space-y-3">
+            <div class="bg-slate-900/80 rounded-2xl p-3 border border-slate-800">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Live Activity Log</h3>
+                <div id="historyList" class="space-y-2 max-h-[340px] overflow-y-auto pr-1">
+                    <!-- Entries generated dynamically -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER NAV BAR -->
+    <nav class="fixed bottom-0 left-0 right-0 z-30 glass-panel border-t border-slate-800 px-4 py-2">
+        <div class="max-w-md mx-auto grid grid-cols-3 gap-1">
+            <button onclick="switchTab('spin')" id="navSpin" class="flex flex-col items-center justify-center py-1 text-amber-400 font-bold text-xs">
+                <i class="fa-solid fa-gamepad text-lg mb-0.5"></i>
+                Spin Wheel
+            </button>
+            <button onclick="switchTab('drop')" id="navDrop" class="flex flex-col items-center justify-center py-1 text-slate-400 font-semibold text-xs hover:text-slate-200">
+                <i class="fa-solid fa-apple-whole text-lg mb-0.5"></i>
+                Fruit Drop
+            </button>
+            <button onclick="switchTab('history')" id="navHistory" class="flex flex-col items-center justify-center py-1 text-slate-400 font-semibold text-xs hover:text-slate-200">
+                <i class="fa-solid fa-list-check text-lg mb-0.5"></i>
+                History
+            </button>
+        </div>
+    </nav>
+
+    <!-- DEPOSIT MODAL -->
+    <div id="depositModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-5 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center">
+                <h3 class="font-extrabold text-lg text-white flex items-center gap-2">
+                    <i class="fa-solid fa-circle-plus text-emerald-400"></i> Deposit TON
+                </h3>
+                <button onclick="closeModal('depositModal')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <!-- Amount Options -->
+            <div>
+                <label class="text-xs font-semibold text-slate-400 block mb-2">Choose Amount</label>
+                <div class="grid grid-cols-4 gap-2">
+                    <button onclick="setDepositAmount(1)" class="dep-btn bg-slate-800 border border-slate-700 text-white font-bold py-2 rounded-xl text-xs hover:border-emerald-500">1 TON</button>
+                    <button onclick="setDepositAmount(5)" class="dep-btn bg-slate-800 border border-slate-700 text-white font-bold py-2 rounded-xl text-xs hover:border-emerald-500">5 TON</button>
+                    <button onclick="setDepositAmount(10)" class="dep-btn bg-slate-800 border border-emerald-500/50 text-emerald-400 font-bold py-2 rounded-xl text-xs">10 TON</button>
+                    <button onclick="setDepositAmount(25)" class="dep-btn bg-slate-800 border border-slate-700 text-white font-bold py-2 rounded-xl text-xs hover:border-emerald-500">25 TON</button>
+                </div>
+            </div>
+
+            <!-- Deposit Address Code -->
+            <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800 flex flex-col items-center space-y-2">
+                <div class="w-28 h-28 bg-white p-1.5 rounded-xl flex items-center justify-center">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=EQBvW8Z5huBkMJY532452345234" alt="QR" class="w-full h-full">
+                </div>
+                <div class="w-full text-center">
+                    <span class="text-[10px] text-slate-500 uppercase font-semibold">Deposit Treasury Address</span>
+                    <div class="flex items-center justify-between bg-slate-900 border border-slate-800 p-2 rounded-xl text-[11px] font-mono text-slate-300 mt-1">
+                        <span class="truncate mr-2">EQBvW8Z5huBkMJY...9420x</span>
+                        <button onclick="copyDepositAddress()" class="text-sky-400 hover:text-sky-300 font-bold"><i class="fa-solid fa-copy"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="confirmDeposit()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-extrabold text-sm shadow-neon-green active:scale-98 transition">
+                Pay via TON Connect / Web3
+            </button>
+        </div>
+    </div>
+
+    <!-- WITHDRAW MODAL -->
+    <div id="withdrawModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-5 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center">
+                <h3 class="font-extrabold text-lg text-white flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-up-right-from-square text-amber-400"></i> Cashout TON
+                </h3>
+                <button onclick="closeModal('withdrawModal')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <div class="space-y-3">
+                <div>
+                    <label class="text-xs font-semibold text-slate-400 block mb-1">Destination Wallet Address</label>
+                    <input type="text" id="withdrawAddress" placeholder="EQ..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500 font-mono">
+                </div>
+
+                <div>
+                    <div class="flex justify-between text-xs font-semibold text-slate-400 mb-1">
+                        <span>Withdraw Amount</span>
+                        <span>Min: 2.00 TON</span>
+                    </div>
+                    <div class="relative">
+                        <input type="number" id="withdrawAmount" placeholder="0.00" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500 font-extrabold">
+                        <button onclick="setMaxWithdraw()" class="absolute right-2 top-2 bg-amber-500/20 text-amber-300 text-[10px] font-bold px-2 py-1 rounded-lg">MAX</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-2.5 text-[11px] text-amber-300">
+                <i class="fa-solid fa-circle-info mr-1"></i> Instant automated payout on TON blockchain.
+            </div>
+
+            <button onclick="processWithdrawal()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-extrabold text-sm shadow-neon-gold active:scale-98 transition">
+                Submit Withdrawal Request
+            </button>
+        </div>
+    </div>
+
+    <!-- CORE JAVASCRIPT ENGINE -->
+    <script>
+        // --- TELEGRAM WEB APP INTEGRATION ---
+        const tg = window.Telegram?.WebApp;
+        let tonConnectUI = null;
+
+        const state = {
+            balance: 10.00,
+            betAmount: 1.00,
+            walletAddress: null,
+            isSpinning: false,
+            selectedDepositAmount: 10.00,
+            symbols: ['🍎', '🍌', '🍒', '🍇', '🍊', '💎'],
+            multipliers: {
+                '💎': 50,
+                '🍒': 15,
+                '🍎': 8,
+                '🍇': 6,
+                '🍌': 4,
+                '🍊': 3
+            }
+        };
+
+        // --- AUDIO ENGINE ---
+        let synth, polySynth;
+        function initAudio() {
+            if (!synth && window.Tone) {
+                synth = new Tone.Synth().toDestination();
+                polySynth = new Tone.PolySynth().toDestination();
+            }
+        }
+
+        function playSound(type) {
+            try {
+                initAudio();
+                if (Tone.context && Tone.context.state !== 'running') {
+                    Tone.start();
+                }
+                if (type === 'spin') synth?.triggerAttackRelease('C4', '8n');
+                else if (type === 'win') polySynth?.triggerAttackRelease(['C4', 'E4', 'G4', 'C5'], '4n');
+                else if (type === 'jackpot') polySynth?.triggerAttackRelease(['E4', 'G#4', 'B4', 'E5'], '2n');
+                else if (type === 'drop') synth?.triggerAttackRelease('G3', '16n');
+            } catch (e) {}
+        }
+
+        // --- INITIALIZATION ---
+        window.addEventListener('DOMContentLoaded', () => {
+            // Telegram SDK initialization
+            if (tg) {
+                tg.ready();
+                tg.expand();
+                
+                // Fetch Telegram User Data if available
+                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                    const u = tg.initDataUnsafe.user;
+                    document.getElementById('userName').innerText = u.first_name || u.username || 'TgUser';
+                    if (u.photo_url) {
+                        document.getElementById('userPhotoContainer').innerHTML = `<img src="${u.photo_url}" class="w-full h-full rounded-full object-cover">`;
+                    }
+                }
+            }
+
+            // TON Connect Integration
+            try {
+                tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+                    manifestUrl: 'https://ton-connect.github.io/demo-dapp-with-react-ui/tonconnect-manifest.json',
+                    buttonRootId: 'ton-connect-button'
+                });
+
+                tonConnectUI.onStatusChange(wallet => {
+                    if (wallet) {
+                        state.walletAddress = wallet.account.address;
+                        addHistoryLog('Wallet', `Connected: ${state.walletAddress.substring(0, 6)}...`, 0);
+                    } else {
+                        state.walletAddress = null;
+                        addHistoryLog('Wallet', 'Wallet Disconnected', 0);
+                    }
+                });
+            } catch(e) {
+                console.log('TON Connect initialized in offline mode');
+            }
+
+            updateBalanceUI();
+            initDropCanvas();
+            addHistoryLog('System', 'Game initialized', 0);
+        });
+
+        function updateBalanceUI() {
+            document.getElementById('userBalance').innerText = state.balance.toFixed(2);
+        }
+
+        function adjustBet(delta) {
+            if (state.isSpinning) return;
+            let newBet = state.betAmount + delta;
+            if (newBet >= 0.5 && newBet <= state.balance) {
+                state.betAmount = newBet;
+                document.getElementById('currentBet').innerText = state.betAmount.toFixed(2);
+            }
+        }
+
+        function setMaxBet() {
+            if (state.isSpinning) return;
+            if (state.balance >= 0.5) {
+                state.betAmount = Math.min(state.balance, 10.00);
+                document.getElementById('currentBet').innerText = state.betAmount.toFixed(2);
+            }
+        }
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        function switchTab(tabName) {
+            document.getElementById('spinTab').classList.add('hidden');
+            document.getElementById('dropTab').classList.add('hidden');
+            document.getElementById('historyTab').classList.add('hidden');
+
+            document.getElementById('navSpin').className = "flex flex-col items-center justify-center py-1 text-slate-400 font-semibold text-xs hover:text-slate-200";
+            document.getElementById('navDrop').className = "flex flex-col items-center justify-center py-1 text-slate-400 font-semibold text-xs hover:text-slate-200";
+            document.getElementById('navHistory').className = "flex flex-col items-center justify-center py-1 text-slate-400 font-semibold text-xs hover:text-slate-200";
+
+            if (tabName === 'spin') {
+                document.getElementById('spinTab').classList.remove('hidden');
+                document.getElementById('navSpin').className = "flex flex-col items-center justify-center py-1 text-amber-400 font-bold text-xs";
+            } else if (tabName === 'drop') {
+                document.getElementById('dropTab').classList.remove('hidden');
+                document.getElementById('navDrop').className = "flex flex-col items-center justify-center py-1 text-amber-400 font-bold text-xs";
+            } else if (tabName === 'history') {
+                document.getElementById('historyTab').classList.remove('hidden');
+                document.getElementById('navHistory').className = "flex flex-col items-center justify-center py-1 text-amber-400 font-bold text-xs";
+            }
+        }
+
+        // --- SLOT MACHINE LOGIC ---
+        function spinSlotMachine() {
+            if (state.isSpinning) return;
+            if (state.balance < state.betAmount) {
+                if (tg && tg.showAlert) tg.showAlert('Insufficient balance! Please deposit to continue.');
+                else alert('Insufficient balance!');
+                openModal('depositModal');
+                return;
+            }
+
+            state.isSpinning = true;
+            state.balance -= state.betAmount;
+            updateBalanceUI();
+
+            const spinBtn = document.getElementById('spinBtn');
+            spinBtn.disabled = true;
+            spinBtn.classList.add('opacity-50');
+
+            document.getElementById('spinResultBox').innerHTML = `<span class="text-xs font-bold text-sky-400 pulse-glow">Spinning reels...</span>`;
+            playSound('spin');
+
+            const reels = [
+                document.getElementById('reel1'),
+                document.getElementById('reel2'),
+                document.getElementById('reel3')
+            ];
+
+            reels.forEach(r => r.classList.add('symbol-blur'));
+
+            const outcome1 = getRandomSymbol();
+            const outcome2 = getRandomSymbol();
+            const outcome3 = getRandomSymbol();
+
+            setTimeout(() => {
+                reels[0].innerHTML = `<span>${outcome1}</span>`;
+                reels[0].classList.remove('symbol-blur');
+                playSound('spin');
+            }, 500);
+
+            setTimeout(() => {
+                reels[1].innerHTML = `<span>${outcome2}</span>`;
+                reels[1].classList.remove('symbol-blur');
+                playSound('spin');
+            }, 900);
+
+            setTimeout(() => {
+                reels[2].innerHTML = `<span>${outcome3}</span>`;
+                reels[2].classList.remove('symbol-blur');
+                
+                evaluateSlotResult(outcome1, outcome2, outcome3);
+
+                state.isSpinning = false;
+                spinBtn.disabled = false;
+                spinBtn.classList.remove('opacity-50');
+            }, 1300);
+        }
+
+        function getRandomSymbol() {
+            const rand = Math.random();
+            if (rand < 0.05) return '💎';
+            if (rand < 0.20) return '🍒';
+            if (rand < 0.40) return '🍎';
+            if (rand < 0.60) return '🍇';
+            if (rand < 0.80) return '🍌';
+            return '🍊';
+        }
+
+        function evaluateSlotResult(s1, s2, s3) {
+            let winAmount = 0;
+            let resultHTML = '';
+
+            if (s1 === s2 && s2 === s3) {
+                const mult = state.multipliers[s1] || 5;
+                winAmount = state.betAmount * mult;
+                playSound(s1 === '💎' ? 'jackpot' : 'win');
+                resultHTML = `<span class="text-base font-black text-amber-400 glow-text-gold">🎉 JACKPOT WIN! +${winAmount.toFixed(2)} TON (${mult}x)</span>`;
+            } else if (s1 === s2 || s2 === s3 || s1 === s3) {
+                winAmount = state.betAmount * 1.5;
+                playSound('win');
+                resultHTML = `<span class="text-sm font-bold text-emerald-400">Match! +${winAmount.toFixed(2)} TON (1.5x)</span>`;
+            } else {
+                resultHTML = `<span class="text-xs font-semibold text-slate-500">No match. Try again!</span>`;
+            }
+
+            if (winAmount > 0) {
+                state.balance += winAmount;
+                updateBalanceUI();
+                addHistoryLog('Slot Spin', `Won with [${s1}${s2}${s3}]`, winAmount);
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            } else {
+                addHistoryLog('Slot Spin', `Loss [${s1}${s2}${s3}]`, -state.betAmount);
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            }
+
+            document.getElementById('spinResultBox').innerHTML = resultHTML;
+        }
+
+        // --- FRUIT DROP CANVAS PHYSICS ---
+        let canvas, ctx;
+        let fruits = [];
+        let pegs = [];
+        let dropCost = 0.50;
+
+        function initDropCanvas() {
+            canvas = document.getElementById('dropCanvas');
+            ctx = canvas.getContext('2d');
+            resizeCanvas();
+
+            pegs = [];
+            const rows = 6;
+            for (let r = 0; r < rows; r++) {
+                const count = r + 3;
+                const spacing = canvas.width / (count + 1);
+                for (let c = 0; c < count; c++) {
+                    pegs.push({
+                        x: spacing * (c + 1),
+                        y: 70 + r * 38,
+                        radius: 4
+                    });
+                }
+            }
+
+            requestAnimationFrame(updateDropPhysics);
+        }
+
+        function resizeCanvas() {
+            if (!canvas) return;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+        }
+
+        function dropFruitFromTop(e) {
+            if (state.balance < dropCost) {
+                if (tg && tg.showAlert) tg.showAlert('Insufficient balance for Fruit Drop!');
+                else alert('Insufficient balance!');
+                openModal('depositModal');
+                return;
+            }
+
+            state.balance -= dropCost;
+            updateBalanceUI();
+            playSound('drop');
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+
+            fruits.push({
+                x: Math.max(20, Math.min(canvas.width - 20, clickX)),
+                y: 15,
+                vx: (Math.random() - 0.5) * 2,
+                vy: 2,
+                radius: 12,
+                symbol: state.symbols[Math.floor(Math.random() * (state.symbols.length - 1))]
+            });
+        }
+
+        function updateDropPhysics() {
+            if (!ctx) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Pegs
+            ctx.fillStyle = '#64748b';
+            pegs.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Draw Slots
+            const slots = [0.2, 1.5, 3.0, 1.5, 0.2];
+            const slotWidth = canvas.width / slots.length;
+
+            for (let i = 0; i < slots.length; i++) {
+                ctx.strokeStyle = '#334155';
+                ctx.beginPath();
+                ctx.moveTo(i * slotWidth, canvas.height - 40);
+                ctx.lineTo(i * slotWidth, canvas.height);
+                ctx.stroke();
+
+                ctx.fillStyle = slots[i] >= 2.0 ? '#f59e0b' : '#94a3b8';
+                ctx.font = 'bold 11px Outfit';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${slots[i]}x`, i * slotWidth + slotWidth / 2, canvas.height - 12);
+            }
+
+            // Update Active Fruits
+            for (let i = fruits.length - 1; i >= 0; i--) {
+                let f = fruits[i];
+                f.vy += 0.15;
+                f.x += f.vx;
+                f.y += f.vy;
+
+                pegs.forEach(p => {
+                    let dx = f.x - p.x;
+                    let dy = f.y - p.y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < f.radius + p.radius) {
+                        f.vy *= -0.5;
+                        f.vx += (dx / dist) * 1.5;
+                        playSound('drop');
+                    }
+                });
+
+                if (f.x - f.radius < 0 || f.x + f.radius > canvas.width) {
+                    f.vx *= -0.8;
+                }
+
+                ctx.font = '16px serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(f.symbol, f.x, f.y + 5);
+
+                if (f.y + f.radius >= canvas.height - 35) {
+                    let slotIndex = Math.floor(f.x / slotWidth);
+                    slotIndex = Math.max(0, Math.min(slots.length - 1, slotIndex));
+                    let mult = slots[slotIndex];
+                    let reward = dropCost * mult;
+
+                    state.balance += reward;
+                    updateBalanceUI();
+                    document.getElementById('dropScore').innerText = `${reward.toFixed(2)} TON`;
+                    addHistoryLog('Fruit Drop', `Dropped ${f.symbol} (${mult}x)`, reward);
+
+                    fruits.splice(i, 1);
+                }
+            }
+
+            requestAnimationFrame(updateDropPhysics);
+        }
+
+        // --- DEPOSIT & WITHDRAW ACTIONS ---
+        function setDepositAmount(amt) {
+            state.selectedDepositAmount = amt;
+            document.querySelectorAll('.dep-btn').forEach(btn => {
+                btn.classList.remove('border-emerald-500', 'text-emerald-400');
+                if (btn.innerText.includes(amt + ' TON')) {
+                    btn.classList.add('border-emerald-500', 'text-emerald-400');
+                }
+            });
+        }
+
+        function copyDepositAddress() {
+            const addr = "EQBvW8Z5huBkMJY532452345234";
+            document.execCommand('copy');
+            if (tg && tg.showAlert) tg.showAlert('Deposit address copied!');
+            else alert('Deposit address copied!');
+        }
+
+        async function confirmDeposit() {
+            const amt = state.selectedDepositAmount;
+
+            if (tonConnectUI && tonConnectUI.connected) {
+                const transaction = {
+                    validUntil: Math.floor(Date.now() / 1000) + 60,
+                    messages: [
+                        {
+                            address: "EQBvW8Z5huBkMJY532452345234",
+                            amount: (amt * 1000000000).toString()
+                        }
+                    ]
+                };
+                try {
+                    await tonConnectUI.sendTransaction(transaction);
+                    state.balance += amt;
+                    updateBalanceUI();
+                    closeModal('depositModal');
+                    addHistoryLog('Deposit', 'Web3 TON Transaction', amt);
+                } catch(e) {
+                    console.error(e);
+                }
+            } else {
+                // Simulation Fallback
+                state.balance += amt;
+                updateBalanceUI();
+                closeModal('depositModal');
+                addHistoryLog('Deposit', 'Direct TON Deposit', amt);
+                if (tg && tg.showAlert) tg.showAlert(`Successfully credited ${amt} TON!`);
+                else alert(`Deposit credited: ${amt} TON`);
+            }
+        }
+
+        function setMaxWithdraw() {
+            document.getElementById('withdrawAmount').value = state.balance.toFixed(2);
+        }
+
+        function processWithdrawal() {
+            const addr = document.getElementById('withdrawAddress').value;
+            const amt = parseFloat(document.getElementById('withdrawAmount').value);
+
+            if (!addr || addr.length < 10) {
+                if (tg && tg.showAlert) tg.showAlert('Enter a valid TON wallet address');
+                else alert('Invalid wallet address');
+                return;
+            }
+            if (isNaN(amt) || amt < 2.0) {
+                if (tg && tg.showAlert) tg.showAlert('Minimum withdrawal is 2.00 TON');
+                else alert('Minimum 2.00 TON withdrawal');
+                return;
+            }
+            if (amt > state.balance) {
+                if (tg && tg.showAlert) tg.showAlert('Insufficient wallet balance');
+                else alert('Insufficient balance');
+                return;
+            }
+
+            state.balance -= amt;
+            updateBalanceUI();
+            closeModal('withdrawModal');
+            addHistoryLog('Withdrawal', `Payout to ${addr.substring(0, 6)}...`, -amt);
+            
+            if (tg && tg.showAlert) tg.showAlert(`Withdrawal request for ${amt.toFixed(2)} TON processed!`);
+            else alert(`Withdrawal for ${amt.toFixed(2)} TON submitted!`);
+        }
+
+        function addHistoryLog(type, details, amount) {
+            const logList = document.getElementById('historyList');
+            const isPositive = amount > 0;
+            const amtText = amount === 0 ? '' : `${isPositive ? '+' : ''}${amount.toFixed(2)} TON`;
+
+            const item = document.createElement('div');
+            item.className = "flex items-center justify-between p-2.5 bg-slate-950/70 border border-slate-800/80 rounded-xl text-xs";
+            item.innerHTML = `
+                <div>
+                    <div class="font-bold text-slate-200">${type}</div>
+                    <div class="text-[10px] text-slate-400">${details}</div>
+                </div>
+                <div class="${isPositive ? 'text-emerald-400' : (amount < 0 ? 'text-rose-400' : 'text-slate-400')} font-extrabold">
+                    ${amtText}
+                </div>
+            `;
+            logList.prepend(item);
+        }
+    </script>
 </body>
-
 </html>
