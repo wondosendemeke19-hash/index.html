@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fruit Drop & Spin - Telegram Mini App</title>
+    <title>Fruit Drop & Spin ETB - Telegram Mini App</title>
     
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- TON Connect SDK -->
-    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -23,17 +21,17 @@
             theme: {
                 extend: {
                     colors: {
-                        tgBg: '#0f172a',
+                        tgBg: '#0b0f19',
                         tgCard: '#1e293b',
-                        tgAccent: '#0088cc',
-                        neonGreen: '#10b981',
-                        neonGold: '#f59e0b',
-                        neonPink: '#ec4899',
-                        neonPurple: '#8b5cf6'
+                        ethGreen: '#10b981',
+                        ethYellow: '#f59e0b',
+                        ethRed: '#ef4444',
+                        telebirr: '#0088cc',
+                        coopBank: '#0284c7',
+                        sinqee: '#8b5cf6'
                     },
                     boxShadow: {
-                        'neon-blue': '0 0 15px rgba(0, 136, 204, 0.4)',
-                        'neon-gold': '0 0 20px rgba(245, 158, 11, 0.5)',
+                        'neon-gold': '0 0 20px rgba(245, 158, 11, 0.4)',
                         'neon-green': '0 0 15px rgba(16, 185, 129, 0.4)',
                     }
                 }
@@ -106,35 +104,40 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between pb-16">
 
-    <!-- HEADER / USER PROFILE / TON CONNECT BAR -->
+    <!-- HEADER / USER PROFILE / BALANCE BAR -->
     <header class="sticky top-0 z-30 glass-panel border-b border-slate-800 px-4 py-3">
         <div class="max-w-md mx-auto flex items-center justify-between">
             <!-- User Info -->
             <div class="flex items-center space-x-2">
-                <div id="userPhotoContainer" class="w-9 h-9 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center font-bold text-white shadow-neon-blue">
-                    <i class="fa-solid fa-user-ninja" id="userIcon"></i>
+                <div id="userPhotoContainer" class="w-9 h-9 rounded-full bg-gradient-to-tr from-emerald-500 via-amber-500 to-rose-500 p-0.5 shadow-neon-gold">
+                    <div class="w-full h-full bg-slate-900 rounded-full flex items-center justify-center font-bold text-white text-xs">
+                        <i class="fa-solid fa-user-ninja" id="userIcon"></i>
+                    </div>
                 </div>
                 <div>
-                    <div class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Telegram Gamer</div>
+                    <div class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider flex items-center gap-1">
+                        <span>Ethiopian Gamer</span> 🇪🇹
+                    </div>
                     <div class="text-sm font-bold text-white flex items-center gap-1">
-                        <span id="userName">User_77</span>
-                        <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.5 rounded-full font-bold">PRO</span>
+                        <span id="userName">TgUser</span>
+                        <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.5 rounded-full font-bold">VIP</span>
                     </div>
                 </div>
             </div>
 
-            <!-- TON CONNECT BUTTON PLACEHOLDER -->
-            <div id="ton-connect-button"></div>
+            <!-- Sound Toggle -->
+            <button onclick="toggleSound()" id="soundBtn" class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs text-slate-300">
+                <i class="fa-solid fa-volume-high"></i>
+            </button>
         </div>
 
-        <!-- BALANCE & QUICK TRANSACTIONS BANNER -->
+        <!-- ETHIOPIAN BIRR BALANCE & ACTION BANNER -->
         <div class="max-w-md mx-auto mt-3 bg-slate-900/90 rounded-2xl p-3 border border-slate-800 flex items-center justify-between shadow-inner">
             <div class="pl-2">
-                <span class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider block">Wallet Balance</span>
+                <span class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider block">Total Balance</span>
                 <div class="flex items-center gap-1.5">
-                    <i class="fa-solid fa-gem text-amber-400 text-lg"></i>
-                    <span id="userBalance" class="text-2xl font-black text-amber-400 glow-text-gold">10.00</span>
-                    <span class="text-xs text-amber-300 font-bold self-end mb-1">TON</span>
+                    <span id="userBalance" class="text-2xl font-black text-amber-400 glow-text-gold">100.00</span>
+                    <span class="text-xs text-amber-300 font-extrabold self-end mb-1">ETB (ብር)</span>
                 </div>
             </div>
 
@@ -159,9 +162,9 @@
                 
                 <!-- Payout Rates Header -->
                 <div class="flex justify-between items-center bg-slate-950/80 rounded-xl p-2 mb-3 border border-slate-800 text-[11px] text-slate-300 font-semibold">
-                    <span class="text-amber-400"><i class="fa-solid fa-crown mr-1"></i>3x 💎 = 50x</span>
-                    <span class="text-rose-400">3x 🍒 = 15x</span>
-                    <span class="text-purple-400">3x Any = 5x</span>
+                    <span class="text-amber-400"><i class="fa-solid fa-gem mr-1"></i>3x 💎 Opal = 50x</span>
+                    <span class="text-rose-400">3x 🥭 Mango = 15x</span>
+                    <span class="text-emerald-400">3x Any = 5x</span>
                 </div>
 
                 <!-- 3 SLOT REELS -->
@@ -182,31 +185,31 @@
                     <!-- Reel 2 -->
                     <div class="h-28 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center">
                         <div id="reel2" class="reel-strip text-5xl flex flex-col items-center justify-center space-y-8 py-2">
-                            <span>🍌</span>
+                            <span>🥭</span>
                         </div>
                     </div>
 
                     <!-- Reel 3 -->
                     <div class="h-28 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center">
                         <div id="reel3" class="reel-strip text-5xl flex flex-col items-center justify-center space-y-8 py-2">
-                            <span>🍒</span>
+                            <span>🥑</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Result Alert Message -->
                 <div id="spinResultBox" class="mt-3 text-center min-h-[32px] flex items-center justify-center">
-                    <span class="text-sm font-bold text-slate-400">Press SPIN to test your luck!</span>
+                    <span class="text-sm font-bold text-slate-400">Press SPIN to win Ethiopian Birr!</span>
                 </div>
 
                 <!-- Bet Adjustment & Spin Action -->
                 <div class="mt-3 pt-3 border-t border-slate-800 space-y-3">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold text-slate-400 uppercase">Bet Amount</span>
+                        <span class="text-xs font-bold text-slate-400 uppercase">Bet Amount (ETB)</span>
                         <div class="flex items-center gap-2">
-                            <button onclick="adjustBet(-0.5)" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-white font-bold hover:bg-slate-700 active:scale-95 text-sm">-</button>
-                            <span id="currentBet" class="w-16 text-center font-extrabold text-amber-400 text-lg">1.00</span>
-                            <button onclick="adjustBet(0.5)" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-white font-bold hover:bg-slate-700 active:scale-95 text-sm">+</button>
+                            <button onclick="adjustBet(-5)" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-white font-bold hover:bg-slate-700 active:scale-95 text-sm">-5</button>
+                            <span id="currentBet" class="w-16 text-center font-extrabold text-amber-400 text-lg">10.00</span>
+                            <button onclick="adjustBet(5)" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-white font-bold hover:bg-slate-700 active:scale-95 text-sm">+5</button>
                             <button onclick="setMaxBet()" class="px-2 py-1 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold text-xs">MAX</button>
                         </div>
                     </div>
@@ -223,11 +226,11 @@
             <div class="bg-slate-900/90 rounded-2xl p-3 border border-slate-800 flex justify-between items-center text-xs">
                 <div>
                     <span class="text-slate-400">Drop Cost:</span>
-                    <span class="text-amber-400 font-bold ml-1">0.50 TON</span>
+                    <span class="text-amber-400 font-bold ml-1">5.00 ETB</span>
                 </div>
                 <div class="text-right">
                     <span class="text-slate-400">Last Win:</span>
-                    <span id="dropScore" class="text-emerald-400 font-bold ml-1">0.00 TON</span>
+                    <span id="dropScore" class="text-emerald-400 font-bold ml-1">0.00 ETB</span>
                 </div>
             </div>
 
@@ -236,8 +239,8 @@
                 <canvas id="dropCanvas" class="w-full h-full block"></canvas>
                 
                 <div id="dropClickArea" onclick="dropFruitFromTop(event)" class="absolute inset-0 cursor-pointer flex flex-col justify-between p-2">
-                    <div class="text-center text-[10px] text-slate-400 bg-slate-950/70 rounded-full py-1 backdrop-blur-xs border border-slate-800">
-                        Tap top bar to drop Fruit 🍎
+                    <div class="text-center text-[10px] text-slate-300 bg-slate-950/80 rounded-full py-1 backdrop-blur-xs border border-slate-800 font-semibold">
+                        Tap anywhere at the top to drop Fruit 🥭
                     </div>
                 </div>
             </div>
@@ -275,75 +278,105 @@
 
     <!-- DEPOSIT MODAL -->
     <div id="depositModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-5 space-y-4 shadow-2xl">
-            <div class="flex justify-between items-center">
-                <h3 class="font-extrabold text-lg text-white flex items-center gap-2">
-                    <i class="fa-solid fa-circle-plus text-emerald-400"></i> Deposit TON
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-5 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                <h3 class="font-extrabold text-base text-white flex items-center gap-2">
+                    <i class="fa-solid fa-circle-plus text-emerald-400"></i> Deposit Ethiopian Birr (ETB)
                 </h3>
                 <button onclick="closeModal('depositModal')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <!-- Amount Options -->
-            <div>
-                <label class="text-xs font-semibold text-slate-400 block mb-2">Choose Amount</label>
-                <div class="grid grid-cols-4 gap-2">
-                    <button onclick="setDepositAmount(1)" class="dep-btn bg-slate-800 border border-slate-700 text-white font-bold py-2 rounded-xl text-xs hover:border-emerald-500">1 TON</button>
-                    <button onclick="setDepositAmount(5)" class="dep-btn bg-slate-800 border border-slate-700 text-white font-bold py-2 rounded-xl text-xs hover:border-emerald-500">5 TON</button>
-                    <button onclick="setDepositAmount(10)" class="dep-btn bg-slate-800 border border-emerald-500/50 text-emerald-400 font-bold py-2 rounded-xl text-xs">10 TON</button>
-                    <button onclick="setDepositAmount(25)" class="dep-btn bg-slate-800 border border-slate-700 text-white font-bold py-2 rounded-xl text-xs hover:border-emerald-500">25 TON</button>
+            <!-- Select Payment Method -->
+            <div class="space-y-2">
+                <label class="text-xs font-semibold text-slate-400 block">Select Payment Method</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="selectDepositMethod('telebirr')" id="depTabTelebirr" class="dep-method-btn border-2 border-sky-500 bg-sky-500/10 text-white p-2 rounded-xl text-center text-xs font-bold">
+                        <div class="text-sky-400 mb-0.5"><i class="fa-solid fa-mobile-screen-button text-base"></i></div>
+                        Telebirr
+                    </button>
+                    <button onclick="selectDepositMethod('sinqee')" id="depTabSinqee" class="dep-method-btn border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold">
+                        <div class="text-purple-400 mb-0.5"><i class="fa-solid fa-building-columns text-base"></i></div>
+                        Sinqee
+                    </button>
+                    <button onclick="selectDepositMethod('coop')" id="depTabCoop" class="dep-method-btn border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold">
+                        <div class="text-blue-400 mb-0.5"><i class="fa-solid fa-landmark text-base"></i></div>
+                        Coop Bank
+                    </button>
                 </div>
             </div>
 
-            <!-- Deposit Address Code -->
-            <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800 flex flex-col items-center space-y-2">
-                <div class="w-28 h-28 bg-white p-1.5 rounded-xl flex items-center justify-center">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=EQBvW8Z5huBkMJY532452345234" alt="QR" class="w-full h-full">
-                </div>
-                <div class="w-full text-center">
-                    <span class="text-[10px] text-slate-500 uppercase font-semibold">Deposit Treasury Address</span>
-                    <div class="flex items-center justify-between bg-slate-900 border border-slate-800 p-2 rounded-xl text-[11px] font-mono text-slate-300 mt-1">
-                        <span class="truncate mr-2">EQBvW8Z5huBkMJY...9420x</span>
-                        <button onclick="copyDepositAddress()" class="text-sky-400 hover:text-sky-300 font-bold"><i class="fa-solid fa-copy"></i></button>
-                    </div>
-                </div>
+            <!-- Selected Method Deposit Details Box -->
+            <div id="depositDetailsBox" class="bg-slate-950 p-3 rounded-2xl border border-slate-800 space-y-2 text-xs">
+                <!-- Content inserted via JavaScript -->
             </div>
 
-            <button onclick="confirmDeposit()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-extrabold text-sm shadow-neon-green active:scale-98 transition">
-                Pay via TON Connect / Web3
+            <!-- Deposit Amount -->
+            <div class="space-y-1">
+                <label class="text-xs font-semibold text-slate-400 block">Deposit Amount (ETB)</label>
+                <input type="number" id="depositAmountInput" placeholder="Minimum 50 ETB" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-emerald-500 font-extrabold">
+            </div>
+
+            <!-- Transaction Reference Text Box -->
+            <div class="space-y-1">
+                <label class="text-xs font-semibold text-amber-400 block">
+                    <i class="fa-solid fa-paste mr-1"></i> Paste Transaction Reference / SMS Text
+                </label>
+                <textarea id="depositRefInput" rows="3" placeholder="Paste the SMS receipt text or Transaction Reference number here (e.g. Transaction ID: TXN987654321)..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500 font-mono resize-none"></textarea>
+            </div>
+
+            <button onclick="submitDepositRequest()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-extrabold text-sm shadow-neon-green active:scale-98 transition">
+                Submit Deposit for Verification
             </button>
         </div>
     </div>
 
     <!-- WITHDRAW MODAL -->
     <div id="withdrawModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-5 space-y-4 shadow-2xl">
-            <div class="flex justify-between items-center">
-                <h3 class="font-extrabold text-lg text-white flex items-center gap-2">
-                    <i class="fa-solid fa-arrow-up-right-from-square text-amber-400"></i> Cashout TON
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-5 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                <h3 class="font-extrabold text-base text-white flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-up-right-from-square text-amber-400"></i> Cashout (Withdraw) ETB
                 </h3>
                 <button onclick="closeModal('withdrawModal')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <div class="space-y-3">
-                <div>
-                    <label class="text-xs font-semibold text-slate-400 block mb-1">Destination Wallet Address</label>
-                    <input type="text" id="withdrawAddress" placeholder="EQ..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500 font-mono">
+            <!-- Select Withdrawal Method -->
+            <div class="space-y-2">
+                <label class="text-xs font-semibold text-slate-400 block">Select Destination Method</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="selectWithdrawMethod('telebirr')" id="withTabTelebirr" class="with-method-btn border-2 border-sky-500 bg-sky-500/10 text-white p-2 rounded-xl text-center text-xs font-bold">
+                        <div class="text-sky-400 mb-0.5"><i class="fa-solid fa-mobile-screen-button text-base"></i></div>
+                        Telebirr
+                    </button>
+                    <button onclick="selectWithdrawMethod('sinqee')" id="withTabSinqee" class="with-method-btn border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold">
+                        <div class="text-purple-400 mb-0.5"><i class="fa-solid fa-building-columns text-base"></i></div>
+                        Sinqee
+                    </button>
+                    <button onclick="selectWithdrawMethod('coop')" id="withTabCoop" class="with-method-btn border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold">
+                        <div class="text-blue-400 mb-0.5"><i class="fa-solid fa-landmark text-base"></i></div>
+                        Coop Bank
+                    </button>
                 </div>
+            </div>
 
-                <div>
-                    <div class="flex justify-between text-xs font-semibold text-slate-400 mb-1">
-                        <span>Withdraw Amount</span>
-                        <span>Min: 2.00 TON</span>
-                    </div>
-                    <div class="relative">
-                        <input type="number" id="withdrawAmount" placeholder="0.00" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500 font-extrabold">
-                        <button onclick="setMaxWithdraw()" class="absolute right-2 top-2 bg-amber-500/20 text-amber-300 text-[10px] font-bold px-2 py-1 rounded-lg">MAX</button>
-                    </div>
+            <!-- Dynamic Fields for Account Details -->
+            <div id="withdrawFieldsBox" class="space-y-3">
+                <!-- Populated via Javascript -->
+            </div>
+
+            <div>
+                <div class="flex justify-between text-xs font-semibold text-slate-400 mb-1">
+                    <span>Withdraw Amount (ETB)</span>
+                    <span>Min: 50.00 ETB</span>
+                </div>
+                <div class="relative">
+                    <input type="number" id="withdrawAmount" placeholder="50.00" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500 font-extrabold">
+                    <button onclick="setMaxWithdraw()" class="absolute right-2 top-2 bg-amber-500/20 text-amber-300 text-[10px] font-bold px-2 py-1 rounded-lg">MAX</button>
                 </div>
             </div>
 
             <div class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-2.5 text-[11px] text-amber-300">
-                <i class="fa-solid fa-circle-info mr-1"></i> Instant automated payout on TON blockchain.
+                <i class="fa-solid fa-shield-halved mr-1"></i> Cashout requests are processed directly to your Telebirr / Bank account.
             </div>
 
             <button onclick="processWithdrawal()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-extrabold text-sm shadow-neon-gold active:scale-98 transition">
@@ -356,22 +389,22 @@
     <script>
         // --- TELEGRAM WEB APP INTEGRATION ---
         const tg = window.Telegram?.WebApp;
-        let tonConnectUI = null;
 
         const state = {
-            balance: 10.00,
-            betAmount: 1.00,
-            walletAddress: null,
+            balance: 100.00,
+            betAmount: 10.00,
+            soundEnabled: true,
             isSpinning: false,
-            selectedDepositAmount: 10.00,
-            symbols: ['🍎', '🍌', '🍒', '🍇', '🍊', '💎'],
+            selectedDepositMethod: 'telebirr',
+            selectedWithdrawMethod: 'telebirr',
+            symbols: ['🍎', '🍌', '🥑', '🥭', '🍒', '💎'],
             multipliers: {
                 '💎': 50,
                 '🍒': 15,
-                '🍎': 8,
-                '🍇': 6,
-                '🍌': 4,
-                '🍊': 3
+                '🥭': 8,
+                '🥑': 6,
+                '🍎': 4,
+                '🍌': 3
             }
         };
 
@@ -384,7 +417,14 @@
             }
         }
 
+        function toggleSound() {
+            state.soundEnabled = !state.soundEnabled;
+            const btn = document.getElementById('soundBtn');
+            btn.innerHTML = state.soundEnabled ? `<i class="fa-solid fa-volume-high"></i>` : `<i class="fa-solid fa-volume-xmark text-rose-400"></i>`;
+        }
+
         function playSound(type) {
+            if (!state.soundEnabled) return;
             try {
                 initAudio();
                 if (Tone.context && Tone.context.state !== 'running') {
@@ -399,12 +439,10 @@
 
         // --- INITIALIZATION ---
         window.addEventListener('DOMContentLoaded', () => {
-            // Telegram SDK initialization
             if (tg) {
                 tg.ready();
                 tg.expand();
                 
-                // Fetch Telegram User Data if available
                 if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                     const u = tg.initDataUnsafe.user;
                     document.getElementById('userName').innerText = u.first_name || u.username || 'TgUser';
@@ -414,29 +452,11 @@
                 }
             }
 
-            // TON Connect Integration
-            try {
-                tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-                    manifestUrl: 'https://ton-connect.github.io/demo-dapp-with-react-ui/tonconnect-manifest.json',
-                    buttonRootId: 'ton-connect-button'
-                });
-
-                tonConnectUI.onStatusChange(wallet => {
-                    if (wallet) {
-                        state.walletAddress = wallet.account.address;
-                        addHistoryLog('Wallet', `Connected: ${state.walletAddress.substring(0, 6)}...`, 0);
-                    } else {
-                        state.walletAddress = null;
-                        addHistoryLog('Wallet', 'Wallet Disconnected', 0);
-                    }
-                });
-            } catch(e) {
-                console.log('TON Connect initialized in offline mode');
-            }
-
             updateBalanceUI();
+            selectDepositMethod('telebirr');
+            selectWithdrawMethod('telebirr');
             initDropCanvas();
-            addHistoryLog('System', 'Game initialized', 0);
+            addHistoryLog('System', 'Game ready. Currency set to Ethiopian Birr (ETB)', 0);
         });
 
         function updateBalanceUI() {
@@ -446,7 +466,7 @@
         function adjustBet(delta) {
             if (state.isSpinning) return;
             let newBet = state.betAmount + delta;
-            if (newBet >= 0.5 && newBet <= state.balance) {
+            if (newBet >= 5 && newBet <= state.balance) {
                 state.betAmount = newBet;
                 document.getElementById('currentBet').innerText = state.betAmount.toFixed(2);
             }
@@ -454,8 +474,8 @@
 
         function setMaxBet() {
             if (state.isSpinning) return;
-            if (state.balance >= 0.5) {
-                state.betAmount = Math.min(state.balance, 10.00);
+            if (state.balance >= 5) {
+                state.betAmount = Math.min(state.balance, 500.00);
                 document.getElementById('currentBet').innerText = state.betAmount.toFixed(2);
             }
         }
@@ -484,12 +504,190 @@
             }
         }
 
-        // --- SLOT MACHINE LOGIC ---
+        // --- DEPOSIT METHOD SELECTION & LOGIC ---
+        function selectDepositMethod(method) {
+            state.selectedDepositMethod = method;
+            
+            document.querySelectorAll('.dep-method-btn').forEach(btn => {
+                btn.className = "dep-method-btn border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold";
+            });
+
+            const detailsBox = document.getElementById('depositDetailsBox');
+
+            if (method === 'telebirr') {
+                document.getElementById('depTabTelebirr').className = "dep-method-btn border-2 border-sky-500 bg-sky-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
+                detailsBox.innerHTML = `
+                    <div class="text-sky-400 font-bold flex items-center justify-between">
+                        <span><i class="fa-solid fa-mobile-screen-button mr-1"></i> Telebirr Deposit Info</span>
+                        <span class="text-[10px] bg-sky-500/20 px-1.5 py-0.5 rounded">Mobile Transfer</span>
+                    </div>
+                    <div class="text-slate-300">Transfer deposit to Telebirr phone number:</div>
+                    <div class="flex items-center justify-between bg-slate-900 border border-slate-800 p-2 rounded-xl font-mono text-amber-400 font-bold">
+                        <span>+251917393624</span>
+                        <button onclick="copyText('+251917393624')" class="text-sky-400 text-xs hover:text-sky-300"><i class="fa-solid fa-copy"></i> Copy</button>
+                    </div>
+                `;
+            } else if (method === 'sinqee') {
+                document.getElementById('depTabSinqee').className = "dep-method-btn border-2 border-purple-500 bg-purple-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
+                detailsBox.innerHTML = `
+                    <div class="text-purple-400 font-bold flex items-center justify-between">
+                        <span><i class="fa-solid fa-building-columns mr-1"></i> Sinqee Bank Deposit</span>
+                        <span class="text-[10px] bg-purple-500/20 px-1.5 py-0.5 rounded">Bank Transfer</span>
+                    </div>
+                    <div class="text-slate-300">Account Number:</div>
+                    <div class="flex items-center justify-between bg-slate-900 border border-slate-800 p-2 rounded-xl font-mono text-amber-400 font-bold">
+                        <span>1000123456789</span>
+                        <button onclick="copyText('1000123456789')" class="text-purple-400 text-xs hover:text-purple-300"><i class="fa-solid fa-copy"></i> Copy</button>
+                    </div>
+                    <div class="text-[10px] text-slate-400">Account Name: Fruit Drop Game Official</div>
+                `;
+            } else if (method === 'coop') {
+                document.getElementById('depTabCoop').className = "dep-method-btn border-2 border-blue-500 bg-blue-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
+                detailsBox.innerHTML = `
+                    <div class="text-blue-400 font-bold flex items-center justify-between">
+                        <span><i class="fa-solid fa-landmark mr-1"></i> Oromia Cooperative Bank</span>
+                        <span class="text-[10px] bg-blue-500/20 px-1.5 py-0.5 rounded">Coop Bank</span>
+                    </div>
+                    <div class="text-slate-300">Account Number:</div>
+                    <div class="flex items-center justify-between bg-slate-900 border border-slate-800 p-2 rounded-xl font-mono text-amber-400 font-bold">
+                        <span>1000987654321</span>
+                        <button onclick="copyText('1000987654321')" class="text-blue-400 text-xs hover:text-blue-300"><i class="fa-solid fa-copy"></i> Copy</button>
+                    </div>
+                    <div class="text-[10px] text-slate-400">Account Name: Fruit Drop Game Official</div>
+                `;
+            }
+        }
+
+        function copyText(text) {
+            document.execCommand('copy');
+            if (tg && tg.showAlert) tg.showAlert(`Copied: ${text}`);
+            else alert(`Copied: ${text}`);
+        }
+
+        function submitDepositRequest() {
+            const amt = parseFloat(document.getElementById('depositAmountInput').value);
+            const refText = document.getElementById('depositRefInput').value.trim();
+
+            if (isNaN(amt) || amt < 50) {
+                if (tg && tg.showAlert) tg.showAlert('Minimum deposit amount is 50 ETB');
+                else alert('Minimum deposit amount is 50 ETB');
+                return;
+            }
+            if (!refText || refText.length < 5) {
+                if (tg && tg.showAlert) tg.showAlert('Please paste the SMS reference text or Transaction ID');
+                else alert('Please paste the SMS reference text or Transaction ID');
+                return;
+            }
+
+            closeModal('depositModal');
+            addHistoryLog('Deposit Pending', `${state.selectedDepositMethod.toUpperCase()} Ref: ${refText.substring(0, 15)}...`, amt);
+
+            if (tg && tg.showAlert) tg.showAlert(`Deposit submitted! Verification in progress for ${amt.toFixed(2)} ETB.`);
+
+            // Instant Mock Verification simulation
+            setTimeout(() => {
+                state.balance += amt;
+                updateBalanceUI();
+                addHistoryLog('Deposit Approved', `${state.selectedDepositMethod.toUpperCase()} Verified`, amt);
+                playSound('win');
+                if (tg && tg.showAlert) tg.showAlert(`🎉 Deposit of ${amt.toFixed(2)} ETB successfully verified and credited!`);
+            }, 3000);
+        }
+
+        // --- WITHDRAW METHOD SELECTION & LOGIC ---
+        function selectWithdrawMethod(method) {
+            state.selectedWithdrawMethod = method;
+
+            document.querySelectorAll('.with-method-btn').forEach(btn => {
+                btn.className = "with-method-btn border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold";
+            });
+
+            const fieldsBox = document.getElementById('withdrawFieldsBox');
+
+            if (method === 'telebirr') {
+                document.getElementById('withTabTelebirr').className = "with-method-btn border-2 border-sky-500 bg-sky-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
+                fieldsBox.innerHTML = `
+                    <div>
+                        <label class="text-xs font-semibold text-slate-400 block mb-1">Telebirr Phone Number</label>
+                        <input type="text" id="withdrawPhone" placeholder="09... / 07... or +251..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-sky-500 font-mono">
+                    </div>
+                `;
+            } else if (method === 'sinqee') {
+                document.getElementById('withTabSinqee').className = "with-method-btn border-2 border-purple-500 bg-purple-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
+                fieldsBox.innerHTML = `
+                    <div>
+                        <label class="text-xs font-semibold text-slate-400 block mb-1">Sinqee Bank Account Number</label>
+                        <input type="text" id="withdrawBankAcc" placeholder="1000..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-purple-500 font-mono">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-400 block mb-1">Account Holder Full Name</label>
+                        <input type="text" id="withdrawAccName" placeholder="Abebe Bikila" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-purple-500">
+                    </div>
+                `;
+            } else if (method === 'coop') {
+                document.getElementById('withTabCoop').className = "with-method-btn border-2 border-blue-500 bg-blue-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
+                fieldsBox.innerHTML = `
+                    <div>
+                        <label class="text-xs font-semibold text-slate-400 block mb-1">Oromia Cooperative Bank Account</label>
+                        <input type="text" id="withdrawBankAcc" placeholder="1000..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-blue-500 font-mono">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-400 block mb-1">Account Holder Full Name</label>
+                        <input type="text" id="withdrawAccName" placeholder="Abebe Bikila" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                `;
+            }
+        }
+
+        function setMaxWithdraw() {
+            document.getElementById('withdrawAmount').value = state.balance.toFixed(2);
+        }
+
+        function processWithdrawal() {
+            const amt = parseFloat(document.getElementById('withdrawAmount').value);
+
+            if (isNaN(amt) || amt < 50.0) {
+                if (tg && tg.showAlert) tg.showAlert('Minimum withdrawal is 50.00 ETB');
+                else alert('Minimum withdrawal is 50.00 ETB');
+                return;
+            }
+            if (amt > state.balance) {
+                if (tg && tg.showAlert) tg.showAlert('Insufficient ETB balance');
+                else alert('Insufficient balance');
+                return;
+            }
+
+            if (state.selectedWithdrawMethod === 'telebirr') {
+                const phone = document.getElementById('withdrawPhone')?.value;
+                if (!phone || phone.length < 9) {
+                    if (tg && tg.showAlert) tg.showAlert('Please enter a valid Telebirr phone number');
+                    else alert('Please enter a valid Telebirr phone number');
+                    return;
+                }
+            } else {
+                const acc = document.getElementById('withdrawBankAcc')?.value;
+                const name = document.getElementById('withdrawAccName')?.value;
+                if (!acc || !name || acc.length < 8) {
+                    if (tg && tg.showAlert) tg.showAlert('Please fill in complete Bank Account details');
+                    else alert('Please fill in complete Bank Account details');
+                    return;
+                }
+            }
+
+            state.balance -= amt;
+            updateBalanceUI();
+            closeModal('withdrawModal');
+            addHistoryLog('Withdrawal Request', `${state.selectedWithdrawMethod.toUpperCase()} Payout`, -amt);
+            
+            if (tg && tg.showAlert) tg.showAlert(`Cashout request for ${amt.toFixed(2)} ETB submitted! Transfer in progress.`);
+        }
+
+        // --- SLOT MACHINE ENGINE ---
         function spinSlotMachine() {
             if (state.isSpinning) return;
             if (state.balance < state.betAmount) {
-                if (tg && tg.showAlert) tg.showAlert('Insufficient balance! Please deposit to continue.');
-                else alert('Insufficient balance!');
+                if (tg && tg.showAlert) tg.showAlert('Insufficient ETB balance! Please deposit to continue.');
+                else alert('Insufficient ETB balance!');
                 openModal('depositModal');
                 return;
             }
@@ -502,7 +700,7 @@
             spinBtn.disabled = true;
             spinBtn.classList.add('opacity-50');
 
-            document.getElementById('spinResultBox').innerHTML = `<span class="text-xs font-bold text-sky-400 pulse-glow">Spinning reels...</span>`;
+            document.getElementById('spinResultBox').innerHTML = `<span class="text-xs font-bold text-sky-400 pulse-glow">Spinning slot reels...</span>`;
             playSound('spin');
 
             const reels = [
@@ -545,10 +743,10 @@
             const rand = Math.random();
             if (rand < 0.05) return '💎';
             if (rand < 0.20) return '🍒';
-            if (rand < 0.40) return '🍎';
-            if (rand < 0.60) return '🍇';
-            if (rand < 0.80) return '🍌';
-            return '🍊';
+            if (rand < 0.40) return '🥭';
+            if (rand < 0.60) return '🥑';
+            if (rand < 0.80) return '🍎';
+            return '🍌';
         }
 
         function evaluateSlotResult(s1, s2, s3) {
@@ -559,11 +757,11 @@
                 const mult = state.multipliers[s1] || 5;
                 winAmount = state.betAmount * mult;
                 playSound(s1 === '💎' ? 'jackpot' : 'win');
-                resultHTML = `<span class="text-base font-black text-amber-400 glow-text-gold">🎉 JACKPOT WIN! +${winAmount.toFixed(2)} TON (${mult}x)</span>`;
+                resultHTML = `<span class="text-base font-black text-amber-400 glow-text-gold">🎉 JACKPOT WIN! +${winAmount.toFixed(2)} ETB (${mult}x)</span>`;
             } else if (s1 === s2 || s2 === s3 || s1 === s3) {
                 winAmount = state.betAmount * 1.5;
                 playSound('win');
-                resultHTML = `<span class="text-sm font-bold text-emerald-400">Match! +${winAmount.toFixed(2)} TON (1.5x)</span>`;
+                resultHTML = `<span class="text-sm font-bold text-emerald-400">Match! +${winAmount.toFixed(2)} ETB (1.5x)</span>`;
             } else {
                 resultHTML = `<span class="text-xs font-semibold text-slate-500">No match. Try again!</span>`;
             }
@@ -571,10 +769,10 @@
             if (winAmount > 0) {
                 state.balance += winAmount;
                 updateBalanceUI();
-                addHistoryLog('Slot Spin', `Won with [${s1}${s2}${s3}]`, winAmount);
+                addHistoryLog('Fruit Spin', `Won [${s1}${s2}${s3}]`, winAmount);
                 if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             } else {
-                addHistoryLog('Slot Spin', `Loss [${s1}${s2}${s3}]`, -state.betAmount);
+                addHistoryLog('Fruit Spin', `Loss [${s1}${s2}${s3}]`, -state.betAmount);
                 if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
             }
 
@@ -585,7 +783,7 @@
         let canvas, ctx;
         let fruits = [];
         let pegs = [];
-        let dropCost = 0.50;
+        let dropCost = 5.00;
 
         function initDropCanvas() {
             canvas = document.getElementById('dropCanvas');
@@ -618,7 +816,7 @@
 
         function dropFruitFromTop(e) {
             if (state.balance < dropCost) {
-                if (tg && tg.showAlert) tg.showAlert('Insufficient balance for Fruit Drop!');
+                if (tg && tg.showAlert) tg.showAlert('Insufficient ETB balance for Fruit Drop!');
                 else alert('Insufficient balance!');
                 openModal('depositModal');
                 return;
@@ -654,8 +852,8 @@
                 ctx.fill();
             });
 
-            // Draw Slots
-            const slots = [0.2, 1.5, 3.0, 1.5, 0.2];
+            // Draw Slots & Multipliers
+            const slots = [0.2, 1.5, 4.0, 1.5, 0.2];
             const slotWidth = canvas.width / slots.length;
 
             for (let i = 0; i < slots.length; i++) {
@@ -705,7 +903,7 @@
 
                     state.balance += reward;
                     updateBalanceUI();
-                    document.getElementById('dropScore').innerText = `${reward.toFixed(2)} TON`;
+                    document.getElementById('dropScore').innerText = `${reward.toFixed(2)} ETB`;
                     addHistoryLog('Fruit Drop', `Dropped ${f.symbol} (${mult}x)`, reward);
 
                     fruits.splice(i, 1);
@@ -715,94 +913,10 @@
             requestAnimationFrame(updateDropPhysics);
         }
 
-        // --- DEPOSIT & WITHDRAW ACTIONS ---
-        function setDepositAmount(amt) {
-            state.selectedDepositAmount = amt;
-            document.querySelectorAll('.dep-btn').forEach(btn => {
-                btn.classList.remove('border-emerald-500', 'text-emerald-400');
-                if (btn.innerText.includes(amt + ' TON')) {
-                    btn.classList.add('border-emerald-500', 'text-emerald-400');
-                }
-            });
-        }
-
-        function copyDepositAddress() {
-            const addr = "EQBvW8Z5huBkMJY532452345234";
-            document.execCommand('copy');
-            if (tg && tg.showAlert) tg.showAlert('Deposit address copied!');
-            else alert('Deposit address copied!');
-        }
-
-        async function confirmDeposit() {
-            const amt = state.selectedDepositAmount;
-
-            if (tonConnectUI && tonConnectUI.connected) {
-                const transaction = {
-                    validUntil: Math.floor(Date.now() / 1000) + 60,
-                    messages: [
-                        {
-                            address: "EQBvW8Z5huBkMJY532452345234",
-                            amount: (amt * 1000000000).toString()
-                        }
-                    ]
-                };
-                try {
-                    await tonConnectUI.sendTransaction(transaction);
-                    state.balance += amt;
-                    updateBalanceUI();
-                    closeModal('depositModal');
-                    addHistoryLog('Deposit', 'Web3 TON Transaction', amt);
-                } catch(e) {
-                    console.error(e);
-                }
-            } else {
-                // Simulation Fallback
-                state.balance += amt;
-                updateBalanceUI();
-                closeModal('depositModal');
-                addHistoryLog('Deposit', 'Direct TON Deposit', amt);
-                if (tg && tg.showAlert) tg.showAlert(`Successfully credited ${amt} TON!`);
-                else alert(`Deposit credited: ${amt} TON`);
-            }
-        }
-
-        function setMaxWithdraw() {
-            document.getElementById('withdrawAmount').value = state.balance.toFixed(2);
-        }
-
-        function processWithdrawal() {
-            const addr = document.getElementById('withdrawAddress').value;
-            const amt = parseFloat(document.getElementById('withdrawAmount').value);
-
-            if (!addr || addr.length < 10) {
-                if (tg && tg.showAlert) tg.showAlert('Enter a valid TON wallet address');
-                else alert('Invalid wallet address');
-                return;
-            }
-            if (isNaN(amt) || amt < 2.0) {
-                if (tg && tg.showAlert) tg.showAlert('Minimum withdrawal is 2.00 TON');
-                else alert('Minimum 2.00 TON withdrawal');
-                return;
-            }
-            if (amt > state.balance) {
-                if (tg && tg.showAlert) tg.showAlert('Insufficient wallet balance');
-                else alert('Insufficient balance');
-                return;
-            }
-
-            state.balance -= amt;
-            updateBalanceUI();
-            closeModal('withdrawModal');
-            addHistoryLog('Withdrawal', `Payout to ${addr.substring(0, 6)}...`, -amt);
-            
-            if (tg && tg.showAlert) tg.showAlert(`Withdrawal request for ${amt.toFixed(2)} TON processed!`);
-            else alert(`Withdrawal for ${amt.toFixed(2)} TON submitted!`);
-        }
-
         function addHistoryLog(type, details, amount) {
             const logList = document.getElementById('historyList');
             const isPositive = amount > 0;
-            const amtText = amount === 0 ? '' : `${isPositive ? '+' : ''}${amount.toFixed(2)} TON`;
+            const amtText = amount === 0 ? '' : `${isPositive ? '+' : ''}${amount.toFixed(2)} ETB`;
 
             const item = document.createElement('div');
             item.className = "flex items-center justify-between p-2.5 bg-slate-950/70 border border-slate-800/80 rounded-xl text-xs";
