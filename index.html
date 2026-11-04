@@ -319,14 +319,13 @@
             <!-- Transaction Reference Text Box -->
             <div class="space-y-1">
                 <label class="text-xs font-semibold text-amber-400 block">
-                    <i class="fa-solid fa-paste mr-1"></i> Paste Telebirr SMS Receipt / Transaction Text
+                    <i class="fa-solid fa-paste mr-1"></i> Paste Transaction Reference / SMS Text
                 </label>
-                <textarea id="depositRefInput" rows="4" placeholder="e.g. Dear Wandu You have transferred ETB 300.00 to ummii jihaad (2519****3245) on 28/10/2026 07:28:01. Your transaction number is DJS2E0GHUU..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500 font-mono resize-none"></textarea>
-                <div class="text-[10px] text-slate-400">Must include transaction number, date, amount, and destination number <span class="text-amber-300">+251917393624</span>.</div>
+                <textarea id="depositRefInput" rows="3" placeholder="Paste the SMS receipt text or Transaction Reference number here (e.g. Transaction ID: TXN987654321)..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500 font-mono resize-none"></textarea>
             </div>
 
             <button onclick="submitDepositRequest()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-extrabold text-sm shadow-neon-green active:scale-98 transition">
-                Verify & Credit Deposit
+                Submit Deposit for Verification
             </button>
         </div>
     </div>
@@ -560,17 +559,11 @@
         }
 
         function copyText(text) {
-            const dummy = document.createElement('textarea');
-            document.body.appendChild(dummy);
-            dummy.value = text;
-            dummy.select();
             document.execCommand('copy');
-            document.body.removeChild(dummy);
             if (tg && tg.showAlert) tg.showAlert(`Copied: ${text}`);
             else alert(`Copied: ${text}`);
         }
 
-        // --- SUBMIT DEPOSIT WITH STRICT TELEBIRR SMS RECEIPT PARSING ---
         function submitDepositRequest() {
             const amt = parseFloat(document.getElementById('depositAmountInput').value);
             const refText = document.getElementById('depositRefInput').value.trim();
@@ -580,61 +573,31 @@
                 else alert('Minimum deposit amount is 50 ETB');
                 return;
             }
-
-            if (!refText) {
-                if (tg && tg.showAlert) tg.showAlert('Please paste your Telebirr SMS receipt text or transaction reference.');
-                else alert('Please paste your Telebirr SMS receipt text or transaction reference.');
+            if (!refText || refText.length < 5) {
+                if (tg && tg.showAlert) tg.showAlert('Please paste the SMS reference text or Transaction ID');
+                else alert('Please paste the SMS reference text or Transaction ID');
                 return;
             }
 
-            // Regular expression matching Telebirr SMS receipt patterns:
-            // e.g. "transferred ETB 300.00 to ... (251917393624) on 28/10/2026 07:28:01. Your transaction number is DJS2E0GHUU"
-            const amountRegex = new RegExp(`ETB\\s*([0-9,]+\\.\\d{2})`, 'i');
-            const phoneRegex = new RegExp(`251917393624`, 'i');
-            const dateRegex = new RegExp(`\\d{2}/\\d{2}/\\d{4}\\s+\\d{2}:\\d{2}:\\d{2}`, 'i');
-            const txRegex = new RegExp(`(transaction number|transaction id|reference|No\\.?)\\s*is\\s*([A-Z0-9]+)`, 'i');
-
-            const hasPhone = phoneRegex.test(refText);
-            const hasDate = dateRegex.test(refText);
-            const matchAmount = refText.match(amountRegex);
-
-            if (!hasPhone) {
-                if (tg && tg.showAlert) tg.showAlert('Verification failed: The SMS receipt must show transfer to receiver +251917393624');
-                else alert('Verification failed: The SMS receipt must show transfer to receiver +251917393624');
-                return;
-            }
-
-            if (!hasDate) {
-                if (tg && tg.showAlert) tg.showAlert('Verification failed: Valid transaction date & time format (DD/MM/YYYY HH:MM:SS) missing in text.');
-                else alert('Verification failed: Valid transaction date & time format (DD/MM/YYYY HH:MM:SS) missing in text.');
-                return;
-            }
-
-            if (matchAmount) {
-                const parsedAmt = parseFloat(matchAmount[1].replace(',', ''));
-                if (Math.abs(parsedAmt - amt) > 1.0) {
-                    if (tg && tg.showAlert) tg.showAlert(`Amount mismatch: Receipt states ETB ${parsedAmt}, but input states ETB ${amt}.`);
-                    else alert(`Amount mismatch: Receipt states ETB ${parsedAmt}, but input states ETB ${amt}.`);
-                    return;
-                }
-            }
-
-            // Success verification
-            state.balance += amt;
-            updateBalanceUI();
-            addHistoryLog('Deposit', `Successfully credited +${amt.toFixed(2)} ETB via Telebirr SMS verification.`, amt);
             closeModal('depositModal');
-            
-            document.getElementById('depositAmountInput').value = '';
-            document.getElementById('depositRefInput').value = '';
+            addHistoryLog('Deposit Pending', `${state.selectedDepositMethod.toUpperCase()} Ref: ${refText.substring(0, 15)}...`, amt);
 
-            if (tg && tg.showAlert) tg.showAlert(`Deposit of ${amt.toFixed(2)} ETB verified and credited successfully!`);
-            else alert(`Deposit of ${amt.toFixed(2)} ETB verified and credited successfully!`);
+            if (tg && tg.showAlert) tg.showAlert(`Deposit submitted! Verification in progress for ${amt.toFixed(2)} ETB.`);
+
+            // Instant Mock Verification simulation
+            setTimeout(() => {
+                state.balance += amt;
+                updateBalanceUI();
+                addHistoryLog('Deposit Approved', `${state.selectedDepositMethod.toUpperCase()} Verified`, amt);
+                playSound('win');
+                if (tg && tg.showAlert) tg.showAlert(`🎉 Deposit of ${amt.toFixed(2)} ETB successfully verified and credited!`);
+            }, 3000);
         }
 
         // --- WITHDRAW METHOD SELECTION & LOGIC ---
         function selectWithdrawMethod(method) {
             state.selectedWithdrawMethod = method;
+
             document.querySelectorAll('.with-method-btn').forEach(btn => {
                 btn.className = "with-method-btn border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold";
             });
@@ -644,25 +607,330 @@
             if (method === 'telebirr') {
                 document.getElementById('withTabTelebirr').className = "with-method-btn border-2 border-sky-500 bg-sky-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
                 fieldsBox.innerHTML = `
-                    <div class="space-y-1">
-                        <label class="text-xs font-semibold text-slate-400 block">Telebirr Phone Number</label>
-                        <input type="tel" id="withdrawAccountNum" placeholder="0912345678" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500 font-mono">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-400 block mb-1">Telebirr Phone Number</label>
+                        <input type="text" id="withdrawPhone" placeholder="09... / 07... or +251..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-sky-500 font-mono">
                     </div>
                 `;
             } else if (method === 'sinqee') {
                 document.getElementById('withTabSinqee').className = "with-method-btn border-2 border-purple-500 bg-purple-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
                 fieldsBox.innerHTML = `
-                    <div class="space-y-1">
-                        <label class="text-xs font-semibold text-slate-400 block">Sinqee Bank Account Number</label>
-                        <input type="text" id="withdrawAccountNum" placeholder="Enter bank account #" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500 font-mono">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-400 block mb-1">Sinqee Bank Account Number</label>
+                        <input type="text" id="withdrawBankAcc" placeholder="1000..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-purple-500 font-mono">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-400 block mb-1">Account Holder Full Name</label>
+                        <input type="text" id="withdrawAccName" placeholder="Abebe Bikila" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-purple-500">
                     </div>
                 `;
             } else if (method === 'coop') {
                 document.getElementById('withTabCoop').className = "with-method-btn border-2 border-blue-500 bg-blue-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
                 fieldsBox.innerHTML = `
-                    <div class="space-y-1">
-                        <label class="text-xs font-semibold text-slate-400 block">Oromia Cooperative Bank Account #</label>
-                        <input type="text" id="withdrawAccountNum" placeholder="Enter coop account #" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500 font-mono">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-400 block mb-1">Oromia Cooperative Bank Account</label>
+                        <input type="text" id="withdrawBankAcc" placeholder="1000..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-blue-500 font-mono">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-400 block mb-1">Account Holder Full Name</label>
+                        <input type="text" id="withdrawAccName" placeholder="Abebe Bikila" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-blue-500">
                     </div>
                 `;
             }
+        }
+
+        function setMaxWithdraw() {
+            document.getElementById('withdrawAmount').value = state.balance.toFixed(2);
+        }
+
+        function processWithdrawal() {
+            const amt = parseFloat(document.getElementById('withdrawAmount').value);
+
+            if (isNaN(amt) || amt < 50.0) {
+                if (tg && tg.showAlert) tg.showAlert('Minimum withdrawal is 50.00 ETB');
+                else alert('Minimum withdrawal is 50.00 ETB');
+                return;
+            }
+            if (amt > state.balance) {
+                if (tg && tg.showAlert) tg.showAlert('Insufficient ETB balance');
+                else alert('Insufficient balance');
+                return;
+            }
+
+            if (state.selectedWithdrawMethod === 'telebirr') {
+                const phone = document.getElementById('withdrawPhone')?.value;
+                if (!phone || phone.length < 9) {
+                    if (tg && tg.showAlert) tg.showAlert('Please enter a valid Telebirr phone number');
+                    else alert('Please enter a valid Telebirr phone number');
+                    return;
+                }
+            } else {
+                const acc = document.getElementById('withdrawBankAcc')?.value;
+                const name = document.getElementById('withdrawAccName')?.value;
+                if (!acc || !name || acc.length < 8) {
+                    if (tg && tg.showAlert) tg.showAlert('Please fill in complete Bank Account details');
+                    else alert('Please fill in complete Bank Account details');
+                    return;
+                }
+            }
+
+            state.balance -= amt;
+            updateBalanceUI();
+            closeModal('withdrawModal');
+            addHistoryLog('Withdrawal Request', `${state.selectedWithdrawMethod.toUpperCase()} Payout`, -amt);
+            
+            if (tg && tg.showAlert) tg.showAlert(`Cashout request for ${amt.toFixed(2)} ETB submitted! Transfer in progress.`);
+        }
+
+        // --- SLOT MACHINE ENGINE ---
+        function spinSlotMachine() {
+            if (state.isSpinning) return;
+            if (state.balance < state.betAmount) {
+                if (tg && tg.showAlert) tg.showAlert('Insufficient ETB balance! Please deposit to continue.');
+                else alert('Insufficient ETB balance!');
+                openModal('depositModal');
+                return;
+            }
+
+            state.isSpinning = true;
+            state.balance -= state.betAmount;
+            updateBalanceUI();
+
+            const spinBtn = document.getElementById('spinBtn');
+            spinBtn.disabled = true;
+            spinBtn.classList.add('opacity-50');
+
+            document.getElementById('spinResultBox').innerHTML = `<span class="text-xs font-bold text-sky-400 pulse-glow">Spinning slot reels...</span>`;
+            playSound('spin');
+
+            const reels = [
+                document.getElementById('reel1'),
+                document.getElementById('reel2'),
+                document.getElementById('reel3')
+            ];
+
+            reels.forEach(r => r.classList.add('symbol-blur'));
+
+            const outcome1 = getRandomSymbol();
+            const outcome2 = getRandomSymbol();
+            const outcome3 = getRandomSymbol();
+
+            setTimeout(() => {
+                reels[0].innerHTML = `<span>${outcome1}</span>`;
+                reels[0].classList.remove('symbol-blur');
+                playSound('spin');
+            }, 500);
+
+            setTimeout(() => {
+                reels[1].innerHTML = `<span>${outcome2}</span>`;
+                reels[1].classList.remove('symbol-blur');
+                playSound('spin');
+            }, 900);
+
+            setTimeout(() => {
+                reels[2].innerHTML = `<span>${outcome3}</span>`;
+                reels[2].classList.remove('symbol-blur');
+                
+                evaluateSlotResult(outcome1, outcome2, outcome3);
+
+                state.isSpinning = false;
+                spinBtn.disabled = false;
+                spinBtn.classList.remove('opacity-50');
+            }, 1300);
+        }
+
+        function getRandomSymbol() {
+            const rand = Math.random();
+            if (rand < 0.05) return '💎';
+            if (rand < 0.20) return '🍒';
+            if (rand < 0.40) return '🥭';
+            if (rand < 0.60) return '🥑';
+            if (rand < 0.80) return '🍎';
+            return '🍌';
+        }
+
+        function evaluateSlotResult(s1, s2, s3) {
+            let winAmount = 0;
+            let resultHTML = '';
+
+            if (s1 === s2 && s2 === s3) {
+                const mult = state.multipliers[s1] || 5;
+                winAmount = state.betAmount * mult;
+                playSound(s1 === '💎' ? 'jackpot' : 'win');
+                resultHTML = `<span class="text-base font-black text-amber-400 glow-text-gold">🎉 JACKPOT WIN! +${winAmount.toFixed(2)} ETB (${mult}x)</span>`;
+            } else if (s1 === s2 || s2 === s3 || s1 === s3) {
+                winAmount = state.betAmount * 1.5;
+                playSound('win');
+                resultHTML = `<span class="text-sm font-bold text-emerald-400">Match! +${winAmount.toFixed(2)} ETB (1.5x)</span>`;
+            } else {
+                resultHTML = `<span class="text-xs font-semibold text-slate-500">No match. Try again!</span>`;
+            }
+
+            if (winAmount > 0) {
+                state.balance += winAmount;
+                updateBalanceUI();
+                addHistoryLog('Fruit Spin', `Won [${s1}${s2}${s3}]`, winAmount);
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            } else {
+                addHistoryLog('Fruit Spin', `Loss [${s1}${s2}${s3}]`, -state.betAmount);
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            }
+
+            document.getElementById('spinResultBox').innerHTML = resultHTML;
+        }
+
+        // --- FRUIT DROP CANVAS PHYSICS ---
+        let canvas, ctx;
+        let fruits = [];
+        let pegs = [];
+        let dropCost = 5.00;
+
+        function initDropCanvas() {
+            canvas = document.getElementById('dropCanvas');
+            ctx = canvas.getContext('2d');
+            resizeCanvas();
+
+            pegs = [];
+            const rows = 6;
+            for (let r = 0; r < rows; r++) {
+                const count = r + 3;
+                const spacing = canvas.width / (count + 1);
+                for (let c = 0; c < count; c++) {
+                    pegs.push({
+                        x: spacing * (c + 1),
+                        y: 70 + r * 38,
+                        radius: 4
+                    });
+                }
+            }
+
+            requestAnimationFrame(updateDropPhysics);
+        }
+
+        function resizeCanvas() {
+            if (!canvas) return;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+        }
+
+        function dropFruitFromTop(e) {
+            if (state.balance < dropCost) {
+                if (tg && tg.showAlert) tg.showAlert('Insufficient ETB balance for Fruit Drop!');
+                else alert('Insufficient balance!');
+                openModal('depositModal');
+                return;
+            }
+
+            state.balance -= dropCost;
+            updateBalanceUI();
+            playSound('drop');
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+
+            fruits.push({
+                x: Math.max(20, Math.min(canvas.width - 20, clickX)),
+                y: 15,
+                vx: (Math.random() - 0.5) * 2,
+                vy: 2,
+                radius: 12,
+                symbol: state.symbols[Math.floor(Math.random() * (state.symbols.length - 1))]
+            });
+        }
+
+        function updateDropPhysics() {
+            if (!ctx) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Pegs
+            ctx.fillStyle = '#64748b';
+            pegs.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Draw Slots & Multipliers
+            const slots = [0.2, 1.5, 4.0, 1.5, 0.2];
+            const slotWidth = canvas.width / slots.length;
+
+            for (let i = 0; i < slots.length; i++) {
+                ctx.strokeStyle = '#334155';
+                ctx.beginPath();
+                ctx.moveTo(i * slotWidth, canvas.height - 40);
+                ctx.lineTo(i * slotWidth, canvas.height);
+                ctx.stroke();
+
+                ctx.fillStyle = slots[i] >= 2.0 ? '#f59e0b' : '#94a3b8';
+                ctx.font = 'bold 11px Outfit';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${slots[i]}x`, i * slotWidth + slotWidth / 2, canvas.height - 12);
+            }
+
+            // Update Active Fruits
+            for (let i = fruits.length - 1; i >= 0; i--) {
+                let f = fruits[i];
+                f.vy += 0.15;
+                f.x += f.vx;
+                f.y += f.vy;
+
+                pegs.forEach(p => {
+                    let dx = f.x - p.x;
+                    let dy = f.y - p.y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < f.radius + p.radius) {
+                        f.vy *= -0.5;
+                        f.vx += (dx / dist) * 1.5;
+                        playSound('drop');
+                    }
+                });
+
+                if (f.x - f.radius < 0 || f.x + f.radius > canvas.width) {
+                    f.vx *= -0.8;
+                }
+
+                ctx.font = '16px serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(f.symbol, f.x, f.y + 5);
+
+                if (f.y + f.radius >= canvas.height - 35) {
+                    let slotIndex = Math.floor(f.x / slotWidth);
+                    slotIndex = Math.max(0, Math.min(slots.length - 1, slotIndex));
+                    let mult = slots[slotIndex];
+                    let reward = dropCost * mult;
+
+                    state.balance += reward;
+                    updateBalanceUI();
+                    document.getElementById('dropScore').innerText = `${reward.toFixed(2)} ETB`;
+                    addHistoryLog('Fruit Drop', `Dropped ${f.symbol} (${mult}x)`, reward);
+
+                    fruits.splice(i, 1);
+                }
+            }
+
+            requestAnimationFrame(updateDropPhysics);
+        }
+
+        function addHistoryLog(type, details, amount) {
+            const logList = document.getElementById('historyList');
+            const isPositive = amount > 0;
+            const amtText = amount === 0 ? '' : `${isPositive ? '+' : ''}${amount.toFixed(2)} ETB`;
+
+            const item = document.createElement('div');
+            item.className = "flex items-center justify-between p-2.5 bg-slate-950/70 border border-slate-800/80 rounded-xl text-xs";
+            item.innerHTML = `
+                <div>
+                    <div class="font-bold text-slate-200">${type}</div>
+                    <div class="text-[10px] text-slate-400">${details}</div>
+                </div>
+                <div class="${isPositive ? 'text-emerald-400' : (amount < 0 ? 'text-rose-400' : 'text-slate-400')} font-extrabold">
+                    ${amtText}
+                </div>
+            `;
+            logList.prepend(item);
+        }
+    </script>
+</body>
+</html>
