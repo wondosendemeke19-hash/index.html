@@ -249,7 +249,10 @@
         <!-- TAB 3: TRANSACTION & GAME HISTORY -->
         <section id="historyTab" class="hidden space-y-3">
             <div class="bg-slate-900/80 rounded-2xl p-3 border border-slate-800">
-                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Live Activity Log</h3>
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Live Activity Log</h3>
+                    <button onclick="clearUserStorage()" class="text-[10px] text-rose-400 hover:underline">Reset Progress</button>
+                </div>
                 <div id="historyList" class="space-y-2 max-h-[340px] overflow-y-auto pr-1">
                     <!-- Entries generated dynamically -->
                 </div>
@@ -319,13 +322,14 @@
             <!-- Transaction Reference Text Box -->
             <div class="space-y-1">
                 <label class="text-xs font-semibold text-amber-400 block">
-                    <i class="fa-solid fa-paste mr-1"></i> Paste Transaction Reference / SMS Text
+                    <i class="fa-solid fa-paste mr-1"></i> Paste Telebirr SMS Receipt / Transaction Text
                 </label>
-                <textarea id="depositRefInput" rows="3" placeholder="Paste the SMS receipt text or Transaction Reference number here (e.g. Transaction ID: TXN987654321)..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500 font-mono resize-none"></textarea>
+                <textarea id="depositRefInput" rows="4" placeholder="e.g. Dear Wandu You have transferred ETB 300.00 to ummii jihaad (2519****3245) on 28/10/2026 07:28:01. Your transaction number is DJS2E0GHUU..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500 font-mono resize-none"></textarea>
+                <div class="text-[10px] text-slate-400">Must include transaction number, date, amount, and destination number <span class="text-amber-300">+251917393624</span>.</div>
             </div>
 
             <button onclick="submitDepositRequest()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-extrabold text-sm shadow-neon-green active:scale-98 transition">
-                Submit Deposit for Verification
+                Verify & Credit Deposit
             </button>
         </div>
     </div>
@@ -397,6 +401,8 @@
             isSpinning: false,
             selectedDepositMethod: 'telebirr',
             selectedWithdrawMethod: 'telebirr',
+            usedTransactions: new Set(),
+            history: [],
             symbols: ['🍎', '🍌', '🥑', '🥭', '🍒', '💎'],
             multipliers: {
                 '💎': 50,
@@ -407,6 +413,53 @@
                 '🍌': 3
             }
         };
+
+        // --- LOCAL STORAGE PERSISTENCE ENGINE ---
+        function loadStoredData() {
+            try {
+                const savedBal = localStorage.getItem('etb_game_balance');
+                if (savedBal !== null) {
+                    state.balance = parseFloat(savedBal);
+                }
+
+                const savedTx = localStorage.getItem('etb_game_used_tx');
+                if (savedTx) {
+                    state.usedTransactions = new Set(JSON.parse(savedTx));
+                }
+
+                const savedHist = localStorage.getItem('etb_game_history');
+                if (savedHist) {
+                    state.history = JSON.parse(savedHist);
+                    renderStoredHistory();
+                } else {
+                    addHistoryLog('System', 'Game ready. Progress automatically saved!', 0);
+                }
+            } catch (e) {
+                console.error("Storage loading error:", e);
+            }
+        }
+
+        function saveStoredData() {
+            try {
+                localStorage.setItem('etb_game_balance', state.balance.toString());
+                localStorage.setItem('etb_game_used_tx', JSON.stringify(Array.from(state.usedTransactions)));
+                localStorage.setItem('etb_game_history', JSON.stringify(state.history));
+            } catch (e) {
+                console.error("Storage saving error:", e);
+            }
+        }
+
+        function clearUserStorage() {
+            if (confirm("Reset account balance and clear history?")) {
+                localStorage.clear();
+                state.balance = 100.00;
+                state.history = [];
+                state.usedTransactions = new Set();
+                document.getElementById('historyList').innerHTML = '';
+                updateBalanceUI();
+                addHistoryLog('System', 'Account reset to default balance.', 0);
+            }
+        }
 
         // --- AUDIO ENGINE ---
         let synth, polySynth;
@@ -452,15 +505,16 @@
                 }
             }
 
+            loadStoredData();
             updateBalanceUI();
             selectDepositMethod('telebirr');
             selectWithdrawMethod('telebirr');
             initDropCanvas();
-            addHistoryLog('System', 'Game ready. Currency set to Ethiopian Birr (ETB)', 0);
         });
 
         function updateBalanceUI() {
             document.getElementById('userBalance').innerText = state.balance.toFixed(2);
+            saveStoredData();
         }
 
         function adjustBet(delta) {
@@ -559,11 +613,17 @@
         }
 
         function copyText(text) {
+            const dummy = document.createElement('textarea');
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
             document.execCommand('copy');
+            document.body.removeChild(dummy);
             if (tg && tg.showAlert) tg.showAlert(`Copied: ${text}`);
             else alert(`Copied: ${text}`);
         }
 
+        // --- SUBMIT DEPOSIT WITH STRICT TELEBIRR SMS RECEIPT PARSING ---
         function submitDepositRequest() {
             const amt = parseFloat(document.getElementById('depositAmountInput').value);
             const refText = document.getElementById('depositRefInput').value.trim();
@@ -573,31 +633,71 @@
                 else alert('Minimum deposit amount is 50 ETB');
                 return;
             }
-            if (!refText || refText.length < 5) {
-                if (tg && tg.showAlert) tg.showAlert('Please paste the SMS reference text or Transaction ID');
-                else alert('Please paste the SMS reference text or Transaction ID');
+
+            if (!refText) {
+                if (tg && tg.showAlert) tg.showAlert('Please paste your Telebirr SMS receipt text or transaction reference.');
+                else alert('Please paste your Telebirr SMS receipt text or transaction reference.');
                 return;
             }
 
+            // Regular expressions for Telebirr SMS verification
+            const amountRegex = /ETB\s*([0-9,]+\.\d{2})/i;
+            const phoneRegex = /2519\*{4}3245|251917393624/i;
+            const dateRegex = /\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2}:\d{2}/i;
+            const txRegex = /(?:transaction number is|transaction id|receipt\/)\s*([A-Z0-9]{8,12})/i;
+
+            const hasPhone = phoneRegex.test(refText);
+            const hasDate = dateRegex.test(refText);
+            const matchAmount = refText.match(amountRegex);
+            const matchTx = refText.match(txRegex);
+
+            if (!hasPhone) {
+                const alertMsg = 'Verification failed: The SMS receipt must show transfer to receiver +251917393624';
+                if (tg && tg.showAlert) tg.showAlert(alertMsg); else alert(alertMsg);
+                return;
+            }
+
+            if (!hasDate) {
+                const alertMsg = 'Verification failed: Valid transaction date & time format (DD/MM/YYYY HH:MM:SS) missing in text.';
+                if (tg && tg.showAlert) tg.showAlert(alertMsg); else alert(alertMsg);
+                return;
+            }
+
+            if (matchAmount) {
+                const parsedAmt = parseFloat(matchAmount[1].replace(',', ''));
+                if (Math.abs(parsedAmt - amt) > 1.0) {
+                    const alertMsg = `Amount mismatch: Receipt states ETB ${parsedAmt}, but input states ETB ${amt}.`;
+                    if (tg && tg.showAlert) tg.showAlert(alertMsg); else alert(alertMsg);
+                    return;
+                }
+            }
+
+            if (matchTx) {
+                const txNo = matchTx[1];
+                if (state.usedTransactions.has(txNo)) {
+                    const alertMsg = `Transaction ID ${txNo} has already been used! Duplicate deposits are not allowed.`;
+                    if (tg && tg.showAlert) tg.showAlert(alertMsg); else alert(alertMsg);
+                    return;
+                }
+                state.usedTransactions.add(txNo);
+            }
+
+            // Success verification
+            state.balance += amt;
+            updateBalanceUI();
+            addHistoryLog('Deposit', `Successfully credited +${amt.toFixed(2)} ETB via Telebirr SMS verification.`, amt);
             closeModal('depositModal');
-            addHistoryLog('Deposit Pending', `${state.selectedDepositMethod.toUpperCase()} Ref: ${refText.substring(0, 15)}...`, amt);
+            
+            document.getElementById('depositAmountInput').value = '';
+            document.getElementById('depositRefInput').value = '';
 
-            if (tg && tg.showAlert) tg.showAlert(`Deposit submitted! Verification in progress for ${amt.toFixed(2)} ETB.`);
-
-            // Instant Mock Verification simulation
-            setTimeout(() => {
-                state.balance += amt;
-                updateBalanceUI();
-                addHistoryLog('Deposit Approved', `${state.selectedDepositMethod.toUpperCase()} Verified`, amt);
-                playSound('win');
-                if (tg && tg.showAlert) tg.showAlert(`🎉 Deposit of ${amt.toFixed(2)} ETB successfully verified and credited!`);
-            }, 3000);
+            const successMsg = `Deposit of ${amt.toFixed(2)} ETB verified and credited successfully!`;
+            if (tg && tg.showAlert) tg.showAlert(successMsg); else alert(successMsg);
         }
 
         // --- WITHDRAW METHOD SELECTION & LOGIC ---
         function selectWithdrawMethod(method) {
             state.selectedWithdrawMethod = method;
-
             document.querySelectorAll('.with-method-btn').forEach(btn => {
                 btn.className = "with-method-btn border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold";
             });
@@ -607,87 +707,72 @@
             if (method === 'telebirr') {
                 document.getElementById('withTabTelebirr').className = "with-method-btn border-2 border-sky-500 bg-sky-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
                 fieldsBox.innerHTML = `
-                    <div>
-                        <label class="text-xs font-semibold text-slate-400 block mb-1">Telebirr Phone Number</label>
-                        <input type="text" id="withdrawPhone" placeholder="09... / 07... or +251..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-sky-500 font-mono">
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-slate-400 block">Telebirr Phone Number</label>
+                        <input type="tel" id="withdrawAccountNum" placeholder="0912345678" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500 font-mono">
                     </div>
                 `;
             } else if (method === 'sinqee') {
                 document.getElementById('withTabSinqee').className = "with-method-btn border-2 border-purple-500 bg-purple-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
                 fieldsBox.innerHTML = `
-                    <div>
-                        <label class="text-xs font-semibold text-slate-400 block mb-1">Sinqee Bank Account Number</label>
-                        <input type="text" id="withdrawBankAcc" placeholder="1000..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-purple-500 font-mono">
-                    </div>
-                    <div>
-                        <label class="text-xs font-semibold text-slate-400 block mb-1">Account Holder Full Name</label>
-                        <input type="text" id="withdrawAccName" placeholder="Abebe Bikila" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-purple-500">
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-slate-400 block">Sinqee Bank Account Number</label>
+                        <input type="text" id="withdrawAccountNum" placeholder="Enter bank account #" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500 font-mono">
                     </div>
                 `;
             } else if (method === 'coop') {
                 document.getElementById('withTabCoop').className = "with-method-btn border-2 border-blue-500 bg-blue-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
                 fieldsBox.innerHTML = `
-                    <div>
-                        <label class="text-xs font-semibold text-slate-400 block mb-1">Oromia Cooperative Bank Account</label>
-                        <input type="text" id="withdrawBankAcc" placeholder="1000..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-blue-500 font-mono">
-                    </div>
-                    <div>
-                        <label class="text-xs font-semibold text-slate-400 block mb-1">Account Holder Full Name</label>
-                        <input type="text" id="withdrawAccName" placeholder="Abebe Bikila" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-blue-500">
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-slate-400 block">Oromia Cooperative Bank Account #</label>
+                        <input type="text" id="withdrawAccountNum" placeholder="Enter coop account #" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500 font-mono">
                     </div>
                 `;
             }
         }
 
         function setMaxWithdraw() {
-            document.getElementById('withdrawAmount').value = state.balance.toFixed(2);
+            document.getElementById('withdrawAmount').value = Math.max(0, state.balance).toFixed(2);
         }
 
         function processWithdrawal() {
             const amt = parseFloat(document.getElementById('withdrawAmount').value);
+            const accField = document.getElementById('withdrawAccountNum');
+            const accVal = accField ? accField.value.trim() : '';
 
-            if (isNaN(amt) || amt < 50.0) {
-                if (tg && tg.showAlert) tg.showAlert('Minimum withdrawal is 50.00 ETB');
-                else alert('Minimum withdrawal is 50.00 ETB');
+            if (isNaN(amt) || amt < 50) {
+                if (tg && tg.showAlert) tg.showAlert('Minimum withdrawal amount is 50.00 ETB');
+                else alert('Minimum withdrawal amount is 50.00 ETB');
                 return;
             }
+
             if (amt > state.balance) {
-                if (tg && tg.showAlert) tg.showAlert('Insufficient ETB balance');
-                else alert('Insufficient balance');
+                if (tg && tg.showAlert) tg.showAlert('Insufficient balance for withdrawal.');
+                else alert('Insufficient balance for withdrawal.');
                 return;
             }
 
-            if (state.selectedWithdrawMethod === 'telebirr') {
-                const phone = document.getElementById('withdrawPhone')?.value;
-                if (!phone || phone.length < 9) {
-                    if (tg && tg.showAlert) tg.showAlert('Please enter a valid Telebirr phone number');
-                    else alert('Please enter a valid Telebirr phone number');
-                    return;
-                }
-            } else {
-                const acc = document.getElementById('withdrawBankAcc')?.value;
-                const name = document.getElementById('withdrawAccName')?.value;
-                if (!acc || !name || acc.length < 8) {
-                    if (tg && tg.showAlert) tg.showAlert('Please fill in complete Bank Account details');
-                    else alert('Please fill in complete Bank Account details');
-                    return;
-                }
+            if (!accVal || accVal.length < 7) {
+                if (tg && tg.showAlert) tg.showAlert('Please enter a valid destination account number / phone number.');
+                else alert('Please enter a valid destination account number / phone number.');
+                return;
             }
 
             state.balance -= amt;
             updateBalanceUI();
+            addHistoryLog('Withdrawal', `Cashout of ${amt.toFixed(2)} ETB dispatched to ${state.selectedWithdrawMethod.toUpperCase()} (${accVal}).`, -amt);
             closeModal('withdrawModal');
-            addHistoryLog('Withdrawal Request', `${state.selectedWithdrawMethod.toUpperCase()} Payout`, -amt);
-            
-            if (tg && tg.showAlert) tg.showAlert(`Cashout request for ${amt.toFixed(2)} ETB submitted! Transfer in progress.`);
+
+            const successMsg = `Withdrawal request of ${amt.toFixed(2)} ETB submitted successfully! Funds will arrive shortly.`;
+            if (tg && tg.showAlert) tg.showAlert(successMsg); else alert(successMsg);
         }
 
-        // --- SLOT MACHINE ENGINE ---
+        // --- SLOT MACHINE SPINNING ENGINE ---
         function spinSlotMachine() {
             if (state.isSpinning) return;
             if (state.balance < state.betAmount) {
-                if (tg && tg.showAlert) tg.showAlert('Insufficient ETB balance! Please deposit to continue.');
-                else alert('Insufficient ETB balance!');
+                if (tg && tg.showAlert) tg.showAlert('Insufficient balance! Please deposit ETB to play.');
+                else alert('Insufficient balance! Please deposit ETB to play.');
                 openModal('depositModal');
                 return;
             }
@@ -696,240 +781,180 @@
             state.balance -= state.betAmount;
             updateBalanceUI();
 
-            const spinBtn = document.getElementById('spinBtn');
-            spinBtn.disabled = true;
-            spinBtn.classList.add('opacity-50');
-
-            document.getElementById('spinResultBox').innerHTML = `<span class="text-xs font-bold text-sky-400 pulse-glow">Spinning slot reels...</span>`;
             playSound('spin');
+            document.getElementById('spinBtn').disabled = true;
+            document.getElementById('spinResultBox').innerHTML = `<span class="text-sm font-bold text-amber-400 animate-pulse">Spinning reels... 🎰</span>`;
 
-            const reels = [
-                document.getElementById('reel1'),
-                document.getElementById('reel2'),
-                document.getElementById('reel3')
-            ];
-
-            reels.forEach(r => r.classList.add('symbol-blur'));
-
-            const outcome1 = getRandomSymbol();
-            const outcome2 = getRandomSymbol();
-            const outcome3 = getRandomSymbol();
+            // Random outcome generation
+            const r1 = state.symbols[Math.floor(Math.random() * state.symbols.length)];
+            const r2 = state.symbols[Math.floor(Math.random() * state.symbols.length)];
+            const r3 = state.symbols[Math.floor(Math.random() * state.symbols.length)];
 
             setTimeout(() => {
-                reels[0].innerHTML = `<span>${outcome1}</span>`;
-                reels[0].classList.remove('symbol-blur');
-                playSound('spin');
-            }, 500);
+                document.getElementById('reel1').innerHTML = `<span>${r1}</span>`;
+                document.getElementById('reel2').innerHTML = `<span>${r2}</span>`;
+                document.getElementById('reel3').innerHTML = `<span>${r3}</span>`;
 
-            setTimeout(() => {
-                reels[1].innerHTML = `<span>${outcome2}</span>`;
-                reels[1].classList.remove('symbol-blur');
-                playSound('spin');
-            }, 900);
+                let winAmount = 0;
+                let msg = "";
 
-            setTimeout(() => {
-                reels[2].innerHTML = `<span>${outcome3}</span>`;
-                reels[2].classList.remove('symbol-blur');
-                
-                evaluateSlotResult(outcome1, outcome2, outcome3);
+                if (r1 === r2 && r2 === r3) {
+                    const mult = state.multipliers[r1] || 5;
+                    winAmount = state.betAmount * mult;
+                    if (r1 === '💎') {
+                        playSound('jackpot');
+                        msg = `💎 JACKPOT! Matched 3x Gems! Won ${winAmount.toFixed(2)} ETB! 💎`;
+                    } else {
+                        playSound('win');
+                        msg = `🎉 BIG WIN! Matched 3x ${r1}! Won ${winAmount.toFixed(2)} ETB!`;
+                    }
+                } else if (r1 === r2 || r2 === r3 || r1 === r3) {
+                    winAmount = state.betAmount * 1.5;
+                    playSound('win');
+                    msg = `✨ Small Win! Matched 2 symbols! Won ${winAmount.toFixed(2)} ETB`;
+                } else {
+                    msg = `No match. Try again!`;
+                }
+
+                if (winAmount > 0) {
+                    state.balance += winAmount;
+                    updateBalanceUI();
+                    addHistoryLog('Spin Win', msg, winAmount);
+                    document.getElementById('spinResultBox').innerHTML = `<span class="text-sm font-extrabold text-emerald-400">${msg}</span>`;
+                } else {
+                    addHistoryLog('Spin Loss', `Lost ${state.betAmount.toFixed(2)} ETB on slot spin.`, -state.betAmount);
+                    document.getElementById('spinResultBox').innerHTML = `<span class="text-sm font-bold text-slate-400">${msg}</span>`;
+                }
 
                 state.isSpinning = false;
-                spinBtn.disabled = false;
-                spinBtn.classList.remove('opacity-50');
-            }, 1300);
+                document.getElementById('spinBtn').disabled = false;
+            }, 1000);
         }
 
-        function getRandomSymbol() {
-            const rand = Math.random();
-            if (rand < 0.05) return '💎';
-            if (rand < 0.20) return '🍒';
-            if (rand < 0.40) return '🥭';
-            if (rand < 0.60) return '🥑';
-            if (rand < 0.80) return '🍎';
-            return '🍌';
-        }
-
-        function evaluateSlotResult(s1, s2, s3) {
-            let winAmount = 0;
-            let resultHTML = '';
-
-            if (s1 === s2 && s2 === s3) {
-                const mult = state.multipliers[s1] || 5;
-                winAmount = state.betAmount * mult;
-                playSound(s1 === '💎' ? 'jackpot' : 'win');
-                resultHTML = `<span class="text-base font-black text-amber-400 glow-text-gold">🎉 JACKPOT WIN! +${winAmount.toFixed(2)} ETB (${mult}x)</span>`;
-            } else if (s1 === s2 || s2 === s3 || s1 === s3) {
-                winAmount = state.betAmount * 1.5;
-                playSound('win');
-                resultHTML = `<span class="text-sm font-bold text-emerald-400">Match! +${winAmount.toFixed(2)} ETB (1.5x)</span>`;
-            } else {
-                resultHTML = `<span class="text-xs font-semibold text-slate-500">No match. Try again!</span>`;
-            }
-
-            if (winAmount > 0) {
-                state.balance += winAmount;
-                updateBalanceUI();
-                addHistoryLog('Fruit Spin', `Won [${s1}${s2}${s3}]`, winAmount);
-                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            } else {
-                addHistoryLog('Fruit Spin', `Loss [${s1}${s2}${s3}]`, -state.betAmount);
-                if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-            }
-
-            document.getElementById('spinResultBox').innerHTML = resultHTML;
-        }
-
-        // --- FRUIT DROP CANVAS PHYSICS ---
-        let canvas, ctx;
-        let fruits = [];
-        let pegs = [];
-        let dropCost = 5.00;
+        // --- FRUIT DROP PHYSICS MINIGAME CANVAS ---
+        let dropCtx, dropCanvas;
+        let fruitDrops = [];
+        let basketX = 150;
+        let dropScore = 0;
 
         function initDropCanvas() {
-            canvas = document.getElementById('dropCanvas');
-            ctx = canvas.getContext('2d');
-            resizeCanvas();
+            dropCanvas = document.getElementById('dropCanvas');
+            if (!dropCanvas) return;
+            dropCtx = dropCanvas.getContext('2d');
+            dropCanvas.width = 320;
+            dropCanvas.height = 400;
+            basketX = dropCanvas.width / 2;
 
-            pegs = [];
-            const rows = 6;
-            for (let r = 0; r < rows; r++) {
-                const count = r + 3;
-                const spacing = canvas.width / (count + 1);
-                for (let c = 0; c < count; c++) {
-                    pegs.push({
-                        x: spacing * (c + 1),
-                        y: 70 + r * 38,
-                        radius: 4
-                    });
-                }
-            }
+            dropCanvas.addEventListener('touchmove', (e) => {
+                const rect = dropCanvas.getBoundingClientRect();
+                const rootX = e.touches[0].clientX - rect.left;
+                basketX = Math.max(30, Math.min(dropCanvas.width - 30, rootX * (dropCanvas.width / rect.width)));
+            });
+            dropCanvas.addEventListener('mousemove', (e) => {
+                const rect = dropCanvas.getBoundingClientRect();
+                const rootX = e.clientX - rect.left;
+                basketX = Math.max(30, Math.min(dropCanvas.width - 30, rootX * (dropCanvas.width / rect.width)));
+            });
 
-            requestAnimationFrame(updateDropPhysics);
-        }
-
-        function resizeCanvas() {
-            if (!canvas) return;
-            const rect = canvas.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
+            requestAnimationFrame(updateDropGame);
         }
 
         function dropFruitFromTop(e) {
-            if (state.balance < dropCost) {
-                if (tg && tg.showAlert) tg.showAlert('Insufficient ETB balance for Fruit Drop!');
-                else alert('Insufficient balance!');
+            if (state.balance < 5.0) {
+                if (tg && tg.showAlert) tg.showAlert('Insufficient balance! Need 5.00 ETB to play Fruit Drop.');
+                else alert('Insufficient balance! Need 5.00 ETB to play Fruit Drop.');
                 openModal('depositModal');
                 return;
             }
 
-            state.balance -= dropCost;
+            state.balance -= 5.0;
             updateBalanceUI();
             playSound('drop');
-            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
 
-            const rect = canvas.getBoundingClientRect();
-            const clickX = e.clientX - rect.left;
+            const symbolsList = ['🍎', '🍌', '🥭', '🥑', '🍒', '💎'];
+            const sym = symbolsList[Math.floor(Math.random() * symbolsList.length)];
+            const spawnX = Math.random() * (dropCanvas.width - 60) + 30;
 
-            fruits.push({
-                x: Math.max(20, Math.min(canvas.width - 20, clickX)),
-                y: 15,
-                vx: (Math.random() - 0.5) * 2,
-                vy: 2,
-                radius: 12,
-                symbol: state.symbols[Math.floor(Math.random() * (state.symbols.length - 1))]
-            });
+            fruitDrops.push({ x: spawnX, y: 20, symbol: sym, speed: 2.5 + Math.random() * 2.0 });
         }
 
-        function updateDropPhysics() {
-            if (!ctx) return;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        function updateDropGame() {
+            if (!dropCtx || !dropCanvas) return;
+            dropCtx.clearRect(0, 0, dropCanvas.width, dropCanvas.height);
 
-            // Draw Pegs
-            ctx.fillStyle = '#64748b';
-            pegs.forEach(p => {
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fill();
-            });
+            // Draw Basket
+            dropCtx.fillStyle = '#f59e0b';
+            dropCtx.beginPath();
+            dropCtx.roundRect(basketX - 30, dropCanvas.height - 30, 60, 20, 8);
+            dropCtx.fill();
+            dropCtx.fillStyle = '#fff';
+            dropCtx.font = '14px Outfit';
+            dropCtx.textAlign = 'center';
+            dropCtx.fillText('🧺', basketX, dropCanvas.height - 15);
 
-            // Draw Slots & Multipliers
-            const slots = [0.2, 1.5, 4.0, 1.5, 0.2];
-            const slotWidth = canvas.width / slots.length;
+            // Update & Draw Fruits
+            for (let i = fruitDrops.length - 1; i >= 0; i--) {
+                let f = fruitDrops[i];
+                f.y += f.speed;
 
-            for (let i = 0; i < slots.length; i++) {
-                ctx.strokeStyle = '#334155';
-                ctx.beginPath();
-                ctx.moveTo(i * slotWidth, canvas.height - 40);
-                ctx.lineTo(i * slotWidth, canvas.height);
-                ctx.stroke();
+                dropCtx.font = '24px Outfit';
+                dropCtx.textAlign = 'center';
+                dropCtx.fillText(f.symbol, f.x, f.y);
 
-                ctx.fillStyle = slots[i] >= 2.0 ? '#f59e0b' : '#94a3b8';
-                ctx.font = 'bold 11px Outfit';
-                ctx.textAlign = 'center';
-                ctx.fillText(`${slots[i]}x`, i * slotWidth + slotWidth / 2, canvas.height - 12);
-            }
-
-            // Update Active Fruits
-            for (let i = fruits.length - 1; i >= 0; i--) {
-                let f = fruits[i];
-                f.vy += 0.15;
-                f.x += f.vx;
-                f.y += f.vy;
-
-                pegs.forEach(p => {
-                    let dx = f.x - p.x;
-                    let dy = f.y - p.y;
-                    let dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < f.radius + p.radius) {
-                        f.vy *= -0.5;
-                        f.vx += (dx / dist) * 1.5;
-                        playSound('drop');
-                    }
-                });
-
-                if (f.x - f.radius < 0 || f.x + f.radius > canvas.width) {
-                    f.vx *= -0.8;
-                }
-
-                ctx.font = '16px serif';
-                ctx.textAlign = 'center';
-                ctx.fillText(f.symbol, f.x, f.y + 5);
-
-                if (f.y + f.radius >= canvas.height - 35) {
-                    let slotIndex = Math.floor(f.x / slotWidth);
-                    slotIndex = Math.max(0, Math.min(slots.length - 1, slotIndex));
-                    let mult = slots[slotIndex];
-                    let reward = dropCost * mult;
-
+                // Check collision with basket
+                if (f.y >= dropCanvas.height - 35 && f.y <= dropCanvas.height - 10 && Math.abs(f.x - basketX) < 35) {
+                    let reward = f.symbol === '💎' ? 50.0 : (f.symbol === '🍒' ? 15.0 : 8.0);
                     state.balance += reward;
                     updateBalanceUI();
+                    dropScore = reward;
                     document.getElementById('dropScore').innerText = `${reward.toFixed(2)} ETB`;
-                    addHistoryLog('Fruit Drop', `Dropped ${f.symbol} (${mult}x)`, reward);
-
-                    fruits.splice(i, 1);
+                    playSound('win');
+                    addHistoryLog('Fruit Drop', `Caught ${f.symbol}! Won ${reward.toFixed(2)} ETB`, reward);
+                    fruitDrops.splice(i, 1);
+                } else if (f.y > dropCanvas.height) {
+                    fruitDrops.splice(i, 1);
                 }
             }
 
-            requestAnimationFrame(updateDropPhysics);
+            requestAnimationFrame(updateDropGame);
         }
 
-        function addHistoryLog(type, details, amount) {
-            const logList = document.getElementById('historyList');
-            const isPositive = amount > 0;
-            const amtText = amount === 0 ? '' : `${isPositive ? '+' : ''}${amount.toFixed(2)} ETB`;
+        // --- ACTIVITY & TRANSACTION HISTORY LOG ---
+        function addHistoryLog(type, desc, amount) {
+            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            
+            const logEntry = { type, desc, amount, timeStr };
+            state.history.unshift(logEntry);
+            if (state.history.length > 50) state.history.pop(); // keep last 50 entries
 
-            const item = document.createElement('div');
-            item.className = "flex items-center justify-between p-2.5 bg-slate-950/70 border border-slate-800/80 rounded-xl text-xs";
-            item.innerHTML = `
-                <div>
-                    <div class="font-bold text-slate-200">${type}</div>
-                    <div class="text-[10px] text-slate-400">${details}</div>
-                </div>
-                <div class="${isPositive ? 'text-emerald-400' : (amount < 0 ? 'text-rose-400' : 'text-slate-400')} font-extrabold">
-                    ${amtText}
-                </div>
-            `;
-            logList.prepend(item);
+            saveStoredData();
+            renderStoredHistory();
+        }
+
+        function renderStoredHistory() {
+            const list = document.getElementById('historyList');
+            if (!list) return;
+            
+            list.innerHTML = '';
+            state.history.forEach(item => {
+                const isPos = item.amount >= 0;
+                const el = document.createElement('div');
+                el.className = "bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between text-xs";
+                el.innerHTML = `
+                    <div>
+                        <div class="font-bold text-white flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full ${isPos ? 'bg-emerald-500' : 'bg-rose-500'}"></span>
+                            ${item.type}
+                        </div>
+                        <div class="text-[10px] text-slate-400 mt-0.5">${item.desc}</div>
+                        <div class="text-[9px] text-slate-500">${item.timeStr}</div>
+                    </div>
+                    <div class="font-extrabold ${isPos ? 'text-emerald-400' : 'text-rose-400'}">
+                        ${isPos ? '+' : ''}${item.amount !== 0 ? item.amount.toFixed(2) + ' ETB' : ''}
+                    </div>
+                `;
+                list.appendChild(el);
+            });
         }
     </script>
 </body>
