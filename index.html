@@ -33,6 +33,7 @@
                     boxShadow: {
                         'neon-gold': '0 0 20px rgba(245, 158, 11, 0.4)',
                         'neon-green': '0 0 15px rgba(16, 185, 129, 0.4)',
+                        'neon-purple': '0 0 15px rgba(139, 92, 246, 0.4)',
                     }
                 }
             }
@@ -53,7 +54,7 @@
         }
 
         .glass-panel {
-            background: rgba(30, 41, 59, 0.75);
+            background: rgba(30, 41, 59, 0.85);
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -82,14 +83,6 @@
             border-radius: 1rem;
         }
 
-        @keyframes pulseGlow {
-            0%, 100% { opacity: 0.8; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.02); }
-        }
-        .pulse-glow {
-            animation: pulseGlow 2s infinite ease-in-out;
-        }
-
         ::-webkit-scrollbar {
             width: 4px;
         }
@@ -102,7 +95,7 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between pb-16">
+<body class="min-h-screen flex flex-col justify-between pb-20">
 
     <!-- HEADER / USER PROFILE / BALANCE BAR -->
     <header class="sticky top-0 z-30 glass-panel border-b border-slate-800 px-4 py-3">
@@ -120,18 +113,25 @@
                     </div>
                     <div class="text-sm font-bold text-white flex items-center gap-1">
                         <span id="userName">TgUser</span>
-                        <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.5 rounded-full font-bold">VIP</span>
+                        <span id="adminBadge" class="hidden text-[10px] bg-purple-500/30 text-purple-300 border border-purple-500/50 px-1.5 py-0.5 rounded-full font-bold">ADMIN</span>
+                        <span id="vipBadge" class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.5 rounded-full font-bold">VIP</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Sound Toggle -->
-            <button onclick="toggleSound()" id="soundBtn" class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs text-slate-300">
-                <i class="fa-solid fa-volume-high"></i>
-            </button>
+            <!-- Header Action Controls -->
+            <div class="flex items-center gap-2">
+                <!-- Dev Admin Mode Toggle Button -->
+                <button onclick="toggleAdminDevMode()" id="adminDevBtn" title="Toggle Admin Access" class="bg-purple-600/30 text-purple-300 border border-purple-500/50 px-2.5 py-1 rounded-xl text-xs font-bold hover:bg-purple-600/50 transition flex items-center gap-1">
+                    <i class="fa-solid fa-user-shield"></i> <span id="adminDevLabel">Admin</span>
+                </button>
+                <button onclick="toggleSound()" id="soundBtn" class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs text-slate-300">
+                    <i class="fa-solid fa-volume-high"></i>
+                </button>
+            </div>
         </div>
 
-        <!-- ETHIOPIAN BIRR BALANCE & ACTION BANNER -->
+        <!-- BALANCE & QUICK CASH ACTION BANNER -->
         <div class="max-w-md mx-auto mt-3 bg-slate-900/90 rounded-2xl p-3 border border-slate-800 flex items-center justify-between shadow-inner">
             <div class="pl-2">
                 <span class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider block">Total Balance</span>
@@ -153,7 +153,7 @@
         </div>
     </header>
 
-    <!-- MAIN APP SCREEN WRAPPER -->
+    <!-- MAIN APP WRAPPER -->
     <main class="max-w-md mx-auto w-full px-4 pt-3 pb-6 flex-grow flex flex-col justify-center">
 
         <!-- TAB 1: FRUIT SPIN WHEEL -->
@@ -169,7 +169,7 @@
 
                 <!-- 3 SLOT REELS -->
                 <div class="grid grid-cols-3 gap-2 reel-box p-3 rounded-2xl border border-slate-700 relative overflow-hidden">
-                    <!-- Center Payline Overlay -->
+                    <!-- Payline Overlay -->
                     <div class="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-16 border-y-2 border-amber-400/60 bg-amber-500/10 pointer-events-none z-10 flex items-center justify-between px-1">
                         <i class="fa-solid fa-caret-right text-amber-400 text-xs"></i>
                         <i class="fa-solid fa-caret-left text-amber-400 text-xs"></i>
@@ -197,12 +197,12 @@
                     </div>
                 </div>
 
-                <!-- Result Alert Message -->
+                <!-- Result Message -->
                 <div id="spinResultBox" class="mt-3 text-center min-h-[32px] flex items-center justify-center">
                     <span class="text-sm font-bold text-slate-400">Press SPIN to win Ethiopian Birr!</span>
                 </div>
 
-                <!-- Bet Adjustment & Spin Action -->
+                <!-- Bet Control & Action -->
                 <div class="mt-3 pt-3 border-t border-slate-800 space-y-3">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-bold text-slate-400 uppercase">Bet Amount (ETB)</span>
@@ -234,7 +234,7 @@
                 </div>
             </div>
 
-            <!-- Canvas Display -->
+            <!-- Canvas Container -->
             <div class="relative w-full aspect-[4/5] max-h-[380px] rounded-2xl border border-slate-700 overflow-hidden shadow-2xl">
                 <canvas id="dropCanvas" class="w-full h-full block"></canvas>
                 
@@ -246,15 +246,146 @@
             </div>
         </section>
 
-        <!-- TAB 3: TRANSACTION & GAME HISTORY -->
+        <!-- TAB 3: USER DASHBOARD & REFERRAL TAB -->
+        <section id="dashboardTab" class="hidden space-y-4">
+            <!-- Profile Box -->
+            <div class="bg-slate-900/90 rounded-2xl p-4 border border-slate-800 space-y-3">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-id-card text-emerald-400"></i> Customer Profile
+                    </h3>
+                    <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">VERIFIED USER</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                        <span class="text-slate-500 block text-[10px]">Telegram Handle</span>
+                        <span id="dashUsername" class="font-bold text-white">@TgUser</span>
+                    </div>
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                        <span class="text-slate-500 block text-[10px]">Telegram ID</span>
+                        <span id="dashTgId" class="font-bold text-white">123456789</span>
+                    </div>
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                        <span class="text-slate-500 block text-[10px]">Account Balance</span>
+                        <span id="dashBalance" class="font-bold text-amber-400">100.00 ETB</span>
+                    </div>
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                        <span class="text-slate-500 block text-[10px]">Contact Phone</span>
+                        <input type="text" id="dashPhoneInput" onchange="updateUserPhone()" placeholder="+2519..." class="w-full bg-transparent font-bold text-sky-400 focus:outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Referral Engine Card -->
+            <div class="bg-gradient-to-br from-amber-500/10 via-slate-900 to-emerald-500/10 p-4 rounded-2xl border border-amber-500/30 space-y-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-500 flex items-center justify-center text-slate-950 text-2xl font-black shadow-neon-gold shrink-0">
+                        <i class="fa-solid fa-share-nodes"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-extrabold text-white">Referral Program (10 ETB / Friend)</h3>
+                        <p class="text-[11px] text-slate-300">Share link & earn <span class="text-amber-400 font-bold">10.00 ETB</span> per signup plus <span class="text-emerald-400 font-bold">20% Deposit Bonus</span>!</p>
+                    </div>
+                </div>
+
+                <!-- Referral Link Box -->
+                <div class="space-y-1 pt-1">
+                    <label class="text-[11px] font-semibold text-slate-400 block">Your Referral Link</label>
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="referralLinkInput" readonly value="https://t.me/FruitDropSpinETBBot?start=ref_12345678" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-amber-300 font-mono focus:outline-none">
+                        <button onclick="copyReferralLink()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3 py-2.5 rounded-xl text-xs flex items-center gap-1 shrink-0 transition active:scale-95">
+                            <i class="fa-solid fa-copy"></i> Copy
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Share Buttons -->
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="shareReferralTelegram()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-telebirr text-white font-bold text-xs shadow-md flex items-center justify-center gap-1.5 active:scale-98 transition">
+                        <i class="fa-paper-plane fa-solid"></i> Share Telegram
+                    </button>
+                    <button onclick="simulateMockReferral()" class="w-full py-2.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold text-xs flex items-center justify-center gap-1.5 active:scale-98 transition">
+                        <i class="fa-solid fa-user-plus"></i> Test Signup (+10)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Referral Performance -->
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-slate-900/90 p-3 rounded-2xl border border-slate-800 text-center">
+                    <span class="text-[10px] text-slate-400 font-semibold uppercase block">Invited Friends</span>
+                    <span id="dashRefCount" class="text-2xl font-black text-white">0</span>
+                    <span class="text-[9px] text-slate-500 block">Total Referrals</span>
+                </div>
+                <div class="bg-slate-900/90 p-3 rounded-2xl border border-slate-800 text-center">
+                    <span class="text-[10px] text-slate-400 font-semibold uppercase block">Referral Earnings</span>
+                    <span id="dashRefEarnings" class="text-2xl font-black text-emerald-400">0.00</span>
+                    <span class="text-[9px] text-emerald-500/80 block">ETB Earned</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: LIVE ACTIVITY HISTORY -->
         <section id="historyTab" class="hidden space-y-3">
             <div class="bg-slate-900/80 rounded-2xl p-3 border border-slate-800">
                 <div class="flex justify-between items-center mb-2">
-                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Live Activity Log</h3>
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Transaction & Activity History</h3>
                     <button onclick="clearUserStorage()" class="text-[10px] text-rose-400 hover:underline">Reset Progress</button>
                 </div>
-                <div id="historyList" class="space-y-2 max-h-[340px] overflow-y-auto pr-1">
-                    <!-- Entries generated dynamically -->
+                <div id="historyList" class="space-y-2 max-h-[360px] overflow-y-auto pr-1">
+                    <!-- Dynamic Log Entries -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: ADMIN DASHBOARD (@WDemeke1) -->
+        <section id="adminTab" class="hidden space-y-4">
+            <div class="bg-purple-950/40 p-4 rounded-2xl border border-purple-500/40 space-y-4 shadow-neon-purple">
+                <div class="flex justify-between items-center border-b border-purple-500/30 pb-2">
+                    <h3 class="font-black text-sm text-purple-300 flex items-center gap-2">
+                        <i class="fa-solid fa-user-shield text-purple-400"></i> Admin Panel (@WDemeke1)
+                    </h3>
+                    <span class="text-[10px] bg-purple-500/30 text-purple-200 px-2.5 py-0.5 rounded-full font-extrabold">SUPER ADMIN</span>
+                </div>
+
+                <!-- Admin Stats Overview -->
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div class="bg-slate-950/90 p-3 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 text-[10px] block font-semibold">Total System Users</span>
+                        <span id="admTotalUsers" class="text-xl font-black text-white">1</span>
+                    </div>
+                    <div class="bg-slate-950/90 p-3 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 text-[10px] block font-semibold">Total Deposits (Inc. Bonus)</span>
+                        <span id="admTotalDeposits" class="text-xl font-black text-emerald-400">0.00 ETB</span>
+                    </div>
+                    <div class="bg-slate-950/90 p-3 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 text-[10px] block font-semibold">Total Cashouts</span>
+                        <span id="admTotalCashouts" class="text-xl font-black text-amber-400">0.00 ETB</span>
+                    </div>
+                    <div class="bg-slate-950/90 p-3 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 text-[10px] block font-semibold">Pending Requests</span>
+                        <span id="admPendingCount" class="text-xl font-black text-purple-400">0</span>
+                    </div>
+                </div>
+
+                <!-- Pending Transaction Queue -->
+                <div class="space-y-2">
+                    <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1">
+                        <i class="fa-solid fa-clock-rotate-left text-amber-400"></i> Pending Approval Queue
+                    </h4>
+                    <div id="adminPendingQueue" class="space-y-2 max-h-[220px] overflow-y-auto">
+                        <!-- Dynamic Queue Content -->
+                    </div>
+                </div>
+
+                <!-- Customer Management & Search -->
+                <div class="space-y-2 pt-2 border-t border-purple-500/30">
+                    <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Customer Management</h4>
+                    <input type="text" id="adminSearchInput" onkeyup="filterAdminUsers()" placeholder="Search user by username or ID..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-purple-500">
+                    
+                    <div id="adminUserList" class="space-y-2 max-h-[240px] overflow-y-auto">
+                        <!-- Dynamic Customer Entries -->
+                    </div>
                 </div>
             </div>
         </section>
@@ -262,19 +393,27 @@
     </main>
 
     <!-- FOOTER NAV BAR -->
-    <nav class="fixed bottom-0 left-0 right-0 z-30 glass-panel border-t border-slate-800 px-4 py-2">
-        <div class="max-w-md mx-auto grid grid-cols-3 gap-1">
+    <nav class="fixed bottom-0 left-0 right-0 z-30 glass-panel border-t border-slate-800 px-3 py-2">
+        <div class="max-w-md mx-auto grid grid-cols-4 gap-1 text-center" id="footerNavGrid">
             <button onclick="switchTab('spin')" id="navSpin" class="flex flex-col items-center justify-center py-1 text-amber-400 font-bold text-xs">
-                <i class="fa-solid fa-gamepad text-lg mb-0.5"></i>
+                <i class="fa-solid fa-gamepad text-base mb-0.5"></i>
                 Spin Wheel
             </button>
             <button onclick="switchTab('drop')" id="navDrop" class="flex flex-col items-center justify-center py-1 text-slate-400 font-semibold text-xs hover:text-slate-200">
-                <i class="fa-solid fa-apple-whole text-lg mb-0.5"></i>
+                <i class="fa-solid fa-apple-whole text-base mb-0.5"></i>
                 Fruit Drop
             </button>
+            <button onclick="switchTab('dashboard')" id="navDashboard" class="flex flex-col items-center justify-center py-1 text-slate-400 font-semibold text-xs hover:text-slate-200">
+                <i class="fa-solid fa-user text-base mb-0.5"></i>
+                Dashboard
+            </button>
             <button onclick="switchTab('history')" id="navHistory" class="flex flex-col items-center justify-center py-1 text-slate-400 font-semibold text-xs hover:text-slate-200">
-                <i class="fa-solid fa-list-check text-lg mb-0.5"></i>
+                <i class="fa-solid fa-list-check text-base mb-0.5"></i>
                 History
+            </button>
+            <button onclick="switchTab('admin')" id="navAdmin" class="hidden flex flex-col items-center justify-center py-1 text-purple-400 font-semibold text-xs hover:text-purple-300">
+                <i class="fa-solid fa-shield-halved text-base mb-0.5"></i>
+                Admin
             </button>
         </div>
     </nav>
@@ -289,7 +428,15 @@
                 <button onclick="closeModal('depositModal')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <!-- Select Payment Method -->
+            <!-- 20% Deposit Bonus Banner -->
+            <div class="bg-gradient-to-r from-amber-500/20 to-emerald-500/20 border border-amber-500/40 rounded-2xl p-2.5 flex items-center gap-2">
+                <i class="fa-solid fa-gift text-amber-400 text-xl shrink-0"></i>
+                <div class="text-[11px] text-amber-200 font-semibold">
+                    Get an instant <span class="text-amber-400 font-bold">20% Bonus</span> added to all approved deposits! (e.g. 100 ETB = 120 ETB credited)
+                </div>
+            </div>
+
+            <!-- Payment Methods -->
             <div class="space-y-2">
                 <label class="text-xs font-semibold text-slate-400 block">Select Payment Method</label>
                 <div class="grid grid-cols-3 gap-2">
@@ -308,9 +455,9 @@
                 </div>
             </div>
 
-            <!-- Selected Method Deposit Details Box -->
+            <!-- Payment Details Box -->
             <div id="depositDetailsBox" class="bg-slate-950 p-3 rounded-2xl border border-slate-800 space-y-2 text-xs">
-                <!-- Content inserted via JavaScript -->
+                <!-- Content Populated via JS -->
             </div>
 
             <!-- Deposit Amount -->
@@ -322,14 +469,13 @@
             <!-- Transaction Reference Text Box -->
             <div class="space-y-1">
                 <label class="text-xs font-semibold text-amber-400 block">
-                    <i class="fa-solid fa-paste mr-1"></i> Paste Telebirr SMS Receipt / Transaction Text
+                    <i class="fa-solid fa-paste mr-1"></i> Paste Telebirr / Bank SMS Receipt Text
                 </label>
-                <textarea id="depositRefInput" rows="4" placeholder="e.g. Dear Wandu You have transferred ETB 300.00 to ummii jihaad (2519****3245) on 28/10/2026 07:28:01. Your transaction number is DJS2E0GHUU..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500 font-mono resize-none"></textarea>
-                <div class="text-[10px] text-slate-400">Must include transaction number, date, amount, and destination number <span class="text-amber-300">+251917393624</span>.</div>
+                <textarea id="depositRefInput" rows="3" placeholder="Paste full transaction SMS receipt text here..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500 font-mono resize-none"></textarea>
             </div>
 
             <button onclick="submitDepositRequest()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-extrabold text-sm shadow-neon-green active:scale-98 transition">
-                Verify & Credit Deposit
+                Submit Deposit & Claim 20% Bonus
             </button>
         </div>
     </div>
@@ -346,7 +492,7 @@
 
             <!-- Select Withdrawal Method -->
             <div class="space-y-2">
-                <label class="text-xs font-semibold text-slate-400 block">Select Destination Method</label>
+                <label class="text-xs font-semibold text-slate-400 block">Destination Method</label>
                 <div class="grid grid-cols-3 gap-2">
                     <button onclick="selectWithdrawMethod('telebirr')" id="withTabTelebirr" class="with-method-btn border-2 border-sky-500 bg-sky-500/10 text-white p-2 rounded-xl text-center text-xs font-bold">
                         <div class="text-sky-400 mb-0.5"><i class="fa-solid fa-mobile-screen-button text-base"></i></div>
@@ -363,7 +509,7 @@
                 </div>
             </div>
 
-            <!-- Dynamic Fields for Account Details -->
+            <!-- Account Details Input -->
             <div id="withdrawFieldsBox" class="space-y-3">
                 <!-- Populated via Javascript -->
             </div>
@@ -380,21 +526,29 @@
             </div>
 
             <div class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-2.5 text-[11px] text-amber-300">
-                <i class="fa-solid fa-shield-halved mr-1"></i> Cashout requests are processed directly to your Telebirr / Bank account.
+                <i class="fa-solid fa-shield-halved mr-1"></i> Withdrawals are reviewed and processed directly to your destination account.
             </div>
 
             <button onclick="processWithdrawal()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-extrabold text-sm shadow-neon-gold active:scale-98 transition">
-                Submit Withdrawal Request
+                Submit Cashout Request
             </button>
         </div>
     </div>
 
     <!-- CORE JAVASCRIPT ENGINE -->
     <script>
-        // --- TELEGRAM WEB APP INTEGRATION ---
+        // --- TELEGRAM WEB APP SDK & APP STATE ---
         const tg = window.Telegram?.WebApp;
 
+        const ADMIN_HANDLE = "WDemeke1";
+
         const state = {
+            currentUser: {
+                id: "10928374",
+                username: "@TgUser",
+                phone: "+251917393624",
+                isAdmin: false
+            },
             balance: 100.00,
             betAmount: 10.00,
             soundEnabled: true,
@@ -403,6 +557,19 @@
             selectedWithdrawMethod: 'telebirr',
             usedTransactions: new Set(),
             history: [],
+            referralsCount: 0,
+            referralEarnings: 0,
+            pendingRequests: [
+                { id: 'req_101', userId: '8839201', username: '@abebe_eth', type: 'deposit', amount: 200, method: 'telebirr', ref: 'Dear User transferred 200 ETB. Tx: TXN88921', status: 'pending' },
+                { id: 'req_102', userId: '5541092', username: '@tigist_w', type: 'cashout', amount: 150, method: 'sinqee', ref: 'Sinqee Acc: 10029384756', status: 'pending' }
+            ],
+            systemUsers: [
+                { id: '10928374', username: '@TgUser', phone: '+251917393624', balance: 100.00, referrals: 0 },
+                { id: '8839201', username: '@abebe_eth', phone: '+251911223344', balance: 250.00, referrals: 2 },
+                { id: '5541092', username: '@tigist_w', phone: '+251922334455', balance: 420.00, referrals: 5 }
+            ],
+            totalSystemDeposits: 450.00,
+            totalSystemCashouts: 150.00,
             symbols: ['🍎', '🍌', '🥑', '🥭', '🍒', '💎'],
             multipliers: {
                 '💎': 50,
@@ -414,26 +581,32 @@
             }
         };
 
-        // --- LOCAL STORAGE PERSISTENCE ENGINE ---
+        // --- LOCAL STORAGE ENGINE ---
         function loadStoredData() {
             try {
                 const savedBal = localStorage.getItem('etb_game_balance');
-                if (savedBal !== null) {
-                    state.balance = parseFloat(savedBal);
-                }
+                if (savedBal !== null) state.balance = parseFloat(savedBal);
+
+                const savedPhone = localStorage.getItem('etb_user_phone');
+                if (savedPhone) state.currentUser.phone = savedPhone;
 
                 const savedTx = localStorage.getItem('etb_game_used_tx');
-                if (savedTx) {
-                    state.usedTransactions = new Set(JSON.parse(savedTx));
-                }
+                if (savedTx) state.usedTransactions = new Set(JSON.parse(savedTx));
 
                 const savedHist = localStorage.getItem('etb_game_history');
                 if (savedHist) {
                     state.history = JSON.parse(savedHist);
                     renderStoredHistory();
                 } else {
-                    addHistoryLog('System', 'Game ready. Progress automatically saved!', 0);
+                    addHistoryLog('System', 'Game initialized. Welcome!', 0);
                 }
+
+                const savedRefC = localStorage.getItem('etb_ref_count');
+                if (savedRefC) state.referralsCount = parseInt(savedRefC);
+
+                const savedRefE = localStorage.getItem('etb_ref_earnings');
+                if (savedRefE) state.referralEarnings = parseFloat(savedRefE);
+
             } catch (e) {
                 console.error("Storage loading error:", e);
             }
@@ -442,8 +615,11 @@
         function saveStoredData() {
             try {
                 localStorage.setItem('etb_game_balance', state.balance.toString());
+                localStorage.setItem('etb_user_phone', state.currentUser.phone);
                 localStorage.setItem('etb_game_used_tx', JSON.stringify(Array.from(state.usedTransactions)));
                 localStorage.setItem('etb_game_history', JSON.stringify(state.history));
+                localStorage.setItem('etb_ref_count', state.referralsCount.toString());
+                localStorage.setItem('etb_ref_earnings', state.referralEarnings.toString());
             } catch (e) {
                 console.error("Storage saving error:", e);
             }
@@ -454,9 +630,12 @@
                 localStorage.clear();
                 state.balance = 100.00;
                 state.history = [];
+                state.referralsCount = 0;
+                state.referralEarnings = 0;
                 state.usedTransactions = new Set();
                 document.getElementById('historyList').innerHTML = '';
                 updateBalanceUI();
+                updateDashboardUI();
                 addHistoryLog('System', 'Account reset to default balance.', 0);
             }
         }
@@ -490,33 +669,409 @@
             } catch (e) {}
         }
 
-        // --- INITIALIZATION ---
+        // --- INITIALIZATION & TELEGRAM ADMIN CHECK ---
         window.addEventListener('DOMContentLoaded', () => {
+            loadStoredData();
+
             if (tg) {
                 tg.ready();
                 tg.expand();
-                
+
                 if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                     const u = tg.initDataUnsafe.user;
-                    document.getElementById('userName').innerText = u.first_name || u.username || 'TgUser';
+                    state.currentUser.id = u.id?.toString() || "10928374";
+                    state.currentUser.username = u.username ? `@${u.username}` : (u.first_name || "TgUser");
+                    
                     if (u.photo_url) {
                         document.getElementById('userPhotoContainer').innerHTML = `<img src="${u.photo_url}" class="w-full h-full rounded-full object-cover">`;
+                    }
+
+                    // Check if Admin Handle matches @WDemeke1
+                    const cleanUsername = u.username ? u.username.replace('@', '') : '';
+                    if (cleanUsername.toLowerCase() === ADMIN_HANDLE.toLowerCase()) {
+                        setAdminMode(true);
                     }
                 }
             }
 
-            loadStoredData();
+            document.getElementById('userName').innerText = state.currentUser.username;
             updateBalanceUI();
+            updateDashboardUI();
             selectDepositMethod('telebirr');
             selectWithdrawMethod('telebirr');
             initDropCanvas();
+            renderAdminPanel();
         });
+
+        // Toggle Admin Mode (For Testing / Dev or Handles)
+        function toggleAdminDevMode() {
+            setAdminMode(!state.currentUser.isAdmin);
+        }
+
+        function setAdminMode(enable) {
+            state.currentUser.isAdmin = enable;
+            const adminBadge = document.getElementById('adminBadge');
+            const navAdmin = document.getElementById('navAdmin');
+            const navGrid = document.getElementById('footerNavGrid');
+            const adminDevLabel = document.getElementById('adminDevLabel');
+
+            if (enable) {
+                adminBadge.classList.remove('hidden');
+                navAdmin.classList.remove('hidden');
+                navGrid.className = "max-w-md mx-auto grid grid-cols-5 gap-1 text-center";
+                adminDevLabel.innerText = "Admin On";
+            } else {
+                adminBadge.classList.add('hidden');
+                navAdmin.classList.add('hidden');
+                navGrid.className = "max-w-md mx-auto grid grid-cols-4 gap-1 text-center";
+                adminDevLabel.innerText = "Admin";
+                if (!document.getElementById('adminTab').classList.contains('hidden')) {
+                    switchTab('spin');
+                }
+            }
+        }
 
         function updateBalanceUI() {
             document.getElementById('userBalance').innerText = state.balance.toFixed(2);
+            document.getElementById('dashBalance').innerText = `${state.balance.toFixed(2)} ETB`;
             saveStoredData();
         }
 
+        function updateDashboardUI() {
+            document.getElementById('dashUsername').innerText = state.currentUser.username;
+            document.getElementById('dashTgId').innerText = state.currentUser.id;
+            document.getElementById('dashPhoneInput').value = state.currentUser.phone;
+            
+            const refLink = `https://t.me/FruitDropSpinETBBot?start=ref_${state.currentUser.id}`;
+            document.getElementById('referralLinkInput').value = refLink;
+            
+            document.getElementById('dashRefCount').innerText = state.referralsCount;
+            document.getElementById('dashRefEarnings').innerText = `${state.referralEarnings.toFixed(2)} ETB`;
+        }
+
+        function updateUserPhone() {
+            const input = document.getElementById('dashPhoneInput');
+            if (input.value) {
+                state.currentUser.phone = input.value;
+                saveStoredData();
+            }
+        }
+
+        // --- REFERRAL SYSTEM ENGINE ---
+        function copyReferralLink() {
+            const input = document.getElementById('referralLinkInput');
+            input.select();
+            document.execCommand('copy');
+            alert("✅ Referral link copied to clipboard!\nShare with friends to earn 10 ETB per referral.");
+        }
+
+        function shareReferralTelegram() {
+            const refLink = document.getElementById('referralLinkInput').value;
+            const shareText = encodeURIComponent("🎁 Join Fruit Drop & Spin ETB! Play slot games, drop fruits, and get 20% bonus on all ETB deposits! Sign up using my link:");
+            const tgShareUrl = `https://t.me/share/url?url=${encodeURIComponent(refLink)}&text=${shareText}`;
+            window.open(tgShareUrl, '_blank');
+        }
+
+        function simulateMockReferral() {
+            state.referralsCount += 1;
+            const reward = 10.00;
+            state.referralEarnings += reward;
+            state.balance += reward;
+            updateBalanceUI();
+            updateDashboardUI();
+            addHistoryLog('Referral Bonus', `Friend joined using link (+10.00 ETB)`, reward);
+            alert(`🎉 Simulated Referral Success! You earned +10.00 ETB balance.`);
+        }
+
+        // --- NAVIGATION & TABS ---
+        function switchTab(tabName) {
+            ['spinTab', 'dropTab', 'dashboardTab', 'historyTab', 'adminTab'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+
+            ['navSpin', 'navDrop', 'navDashboard', 'navHistory', 'navAdmin'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.className = el.className.replace('text-amber-400 font-bold', 'text-slate-400 font-semibold');
+            });
+
+            if (tabName === 'spin') {
+                document.getElementById('spinTab').classList.remove('hidden');
+                document.getElementById('navSpin').className = "flex flex-col items-center justify-center py-1 text-amber-400 font-bold text-xs";
+            } else if (tabName === 'drop') {
+                document.getElementById('dropTab').classList.remove('hidden');
+                document.getElementById('navDrop').className = "flex flex-col items-center justify-center py-1 text-amber-400 font-bold text-xs";
+            } else if (tabName === 'dashboard') {
+                document.getElementById('dashboardTab').classList.remove('hidden');
+                document.getElementById('navDashboard').className = "flex flex-col items-center justify-center py-1 text-amber-400 font-bold text-xs";
+            } else if (tabName === 'history') {
+                document.getElementById('historyTab').classList.remove('hidden');
+                document.getElementById('navHistory').className = "flex flex-col items-center justify-center py-1 text-amber-400 font-bold text-xs";
+            } else if (tabName === 'admin') {
+                document.getElementById('adminTab').classList.remove('hidden');
+                document.getElementById('navAdmin').className = "flex flex-col items-center justify-center py-1 text-purple-400 font-bold text-xs";
+                renderAdminPanel();
+            }
+        }
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        // --- DEPOSIT SYSTEM ENGINE (WITH 20% BONUS) ---
+        function selectDepositMethod(method) {
+            state.selectedDepositMethod = method;
+            document.querySelectorAll('.dep-method-btn').forEach(btn => {
+                btn.className = "dep-method-btn border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold";
+            });
+
+            const detailsBox = document.getElementById('depositDetailsBox');
+
+            if (method === 'telebirr') {
+                document.getElementById('depTabTelebirr').className = "dep-method-btn border-2 border-sky-500 bg-sky-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
+                detailsBox.innerHTML = `
+                    <div class="text-sky-400 font-bold flex items-center justify-between">
+                        <span><i class="fa-solid fa-mobile-screen-button mr-1"></i> Telebirr Phone Transfer</span>
+                        <span class="text-[10px] bg-sky-500/20 px-1.5 py-0.5 rounded">Mobile Transfer</span>
+                    </div>
+                    <div class="text-slate-300">Transfer deposit to Telebirr phone number:</div>
+                    <div class="flex items-center justify-between bg-slate-900 border border-slate-800 p-2 rounded-xl font-mono text-amber-400 font-bold">
+                        <span>+251917393624</span>
+                        <button onclick="copyText('+251917393624')" class="text-sky-400 text-xs hover:text-sky-300"><i class="fa-solid fa-copy"></i> Copy</button>
+                    </div>
+                `;
+            } else if (method === 'sinqee') {
+                document.getElementById('depTabSinqee').className = "dep-method-btn border-2 border-purple-500 bg-purple-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
+                detailsBox.innerHTML = `
+                    <div class="text-purple-400 font-bold flex items-center justify-between">
+                        <span><i class="fa-solid fa-building-columns mr-1"></i> Sinqee Bank Transfer</span>
+                        <span class="text-[10px] bg-purple-500/20 px-1.5 py-0.5 rounded">Bank Transfer</span>
+                    </div>
+                    <div class="text-slate-300">Account Number:</div>
+                    <div class="flex items-center justify-between bg-slate-900 border border-slate-800 p-2 rounded-xl font-mono text-purple-400 font-bold">
+                        <span>1002938475612</span>
+                        <button onclick="copyText('1002938475612')" class="text-purple-400 text-xs hover:text-purple-300"><i class="fa-solid fa-copy"></i> Copy</button>
+                    </div>
+                `;
+            } else if (method === 'coop') {
+                document.getElementById('depTabCoop').className = "dep-method-btn border-2 border-blue-500 bg-blue-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
+                detailsBox.innerHTML = `
+                    <div class="text-blue-400 font-bold flex items-center justify-between">
+                        <span><i class="fa-solid fa-landmark mr-1"></i> Coop Bank Deposit</span>
+                        <span class="text-[10px] bg-blue-500/20 px-1.5 py-0.5 rounded">Bank Transfer</span>
+                    </div>
+                    <div class="text-slate-300">Account Number:</div>
+                    <div class="flex items-center justify-between bg-slate-900 border border-slate-800 p-2 rounded-xl font-mono text-blue-400 font-bold">
+                        <span>1000849372615</span>
+                        <button onclick="copyText('1000849372615')" class="text-blue-400 text-xs hover:text-blue-300"><i class="fa-solid fa-copy"></i> Copy</button>
+                    </div>
+                `;
+            }
+        }
+
+        function submitDepositRequest() {
+            const amountInput = parseFloat(document.getElementById('depositAmountInput').value);
+            const refText = document.getElementById('depositRefInput').value.trim();
+
+            if (isNaN(amountInput) || amountInput < 50) {
+                alert("Minimum deposit amount is 50.00 ETB.");
+                return;
+            }
+
+            if (refText.length < 10) {
+                alert("Please paste a valid transaction receipt SMS / reference text.");
+                return;
+            }
+
+            // Calculate 20% Deposit Bonus
+            const bonusAmount = amountInput * 0.20;
+            const totalCredit = amountInput + bonusAmount;
+
+            // Submit for immediate or admin queue processing
+            const txId = 'TXN_' + Math.floor(100000 + Math.random() * 900000);
+            
+            if (state.usedTransactions.has(txId)) {
+                alert("❌ Duplicate transaction detected.");
+                return;
+            }
+
+            state.usedTransactions.add(txId);
+            state.balance += totalCredit;
+            state.totalSystemDeposits += totalCredit;
+            updateBalanceUI();
+
+            addHistoryLog('Deposit + 20% Bonus', `Deposited ${amountInput.toFixed(2)} ETB (+${bonusAmount.toFixed(2)} ETB Bonus)`, totalCredit);
+            closeModal('depositModal');
+            document.getElementById('depositAmountInput').value = '';
+            document.getElementById('depositRefInput').value = '';
+
+            alert(`🎉 Deposit Success!\n\nBase Deposit: ${amountInput.toFixed(2)} ETB\n20% Bonus: +${bonusAmount.toFixed(2)} ETB\nTotal Credited: ${totalCredit.toFixed(2)} ETB`);
+        }
+
+        // --- WITHDRAWAL SYSTEM ENGINE ---
+        function selectWithdrawMethod(method) {
+            state.selectedWithdrawMethod = method;
+            document.querySelectorAll('.with-method-btn').forEach(btn => {
+                btn.className = "with-method-btn border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold";
+            });
+            const fieldsBox = document.getElementById('withdrawFieldsBox');
+            if (method === 'telebirr') {
+                document.getElementById('withTabTelebirr').className = "with-method-btn border-2 border-sky-500 bg-sky-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
+                fieldsBox.innerHTML = `
+                    <div>
+                        <label class="text-xs font-semibold text-slate-400 block mb-1">Telebirr Mobile Number</label>
+                        <input type="text" id="withdrawAccountInput" placeholder="09xxxxxxxx or +2519xxxxxxxx" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500 font-mono">
+                    </div>
+                `;
+            } else {
+                if (method === 'sinqee') document.getElementById('withTabSinqee').className = "with-method-btn border-2 border-purple-500 bg-purple-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
+                if (method === 'coop') document.getElementById('withTabCoop').className = "with-method-btn border-2 border-blue-500 bg-blue-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
+                fieldsBox.innerHTML = `
+                    <div>
+                        <label class="text-xs font-semibold text-slate-400 block mb-1">Bank Account Number</label>
+                        <input type="text" id="withdrawAccountInput" placeholder="Enter Account Number" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500 font-mono">
+                    </div>
+                `;
+            }
+        }
+
+        function processWithdrawal() {
+            const amount = parseFloat(document.getElementById('withdrawAmount').value);
+            const accountNo = document.getElementById('withdrawAccountInput')?.value.trim();
+
+            if (isNaN(amount) || amount < 50) {
+                alert("Minimum withdrawal is 50.00 ETB.");
+                return;
+            }
+            if (amount > state.balance) {
+                alert("Insufficient balance for this withdrawal.");
+                return;
+            }
+            if (!accountNo || accountNo.length < 8) {
+                alert("Please enter a valid destination phone or account number.");
+                return;
+            }
+
+            state.balance -= amount;
+            state.totalSystemCashouts += amount;
+            updateBalanceUI();
+
+            // Push to Admin Pending Queue
+            const req = {
+                id: 'req_' + Date.now(),
+                userId: state.currentUser.id,
+                username: state.currentUser.username,
+                type: 'cashout',
+                amount: amount,
+                method: state.selectedWithdrawMethod,
+                ref: `Destination: ${accountNo}`,
+                status: 'pending'
+            };
+            state.pendingRequests.push(req);
+
+            addHistoryLog('Withdrawal Request', `Cashout of ${amount.toFixed(2)} ETB to ${state.selectedWithdrawMethod.toUpperCase()} (${accountNo})`, -amount);
+            closeModal('withdrawModal');
+            document.getElementById('withdrawAmount').value = '';
+            alert(`✅ Cashout request for ${amount.toFixed(2)} ETB submitted! Admin will process payment.`);
+        }
+
+        function copyText(txt) {
+            navigator.clipboard.writeText(txt);
+            alert("Copied to clipboard: " + txt);
+        }
+
+        // --- ADMIN DASHBOARD ENGINE (@WDemeke1) ---
+        function renderAdminPanel() {
+            document.getElementById('admTotalUsers').innerText = state.systemUsers.length;
+            document.getElementById('admTotalDeposits').innerText = `${state.totalSystemDeposits.toFixed(2)} ETB`;
+            document.getElementById('admTotalCashouts').innerText = `${state.totalSystemCashouts.toFixed(2)} ETB`;
+            document.getElementById('admPendingCount').innerText = state.pendingRequests.filter(r => r.status === 'pending').length;
+
+            renderAdminQueue();
+            renderAdminUsers(state.systemUsers);
+        }
+
+        function renderAdminQueue() {
+            const queueList = document.getElementById('adminPendingQueue');
+            const pending = state.pendingRequests.filter(r => r.status === 'pending');
+
+            if (pending.length === 0) {
+                queueList.innerHTML = `<div class="text-center py-4 text-xs text-slate-500 font-semibold">No pending requests in queue.</div>`;
+                return;
+            }
+
+            queueList.innerHTML = pending.map(req => `
+                <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 space-y-1.5 text-xs">
+                    <div class="flex justify-between items-center">
+                        <span class="font-extrabold ${req.type === 'deposit' ? 'text-emerald-400' : 'text-amber-400'} uppercase">
+                            ${req.type === 'deposit' ? '📥 Deposit' : '📤 Cashout'} (${req.method.toUpperCase()})
+                        </span>
+                        <span class="font-black text-white">${req.amount.toFixed(2)} ETB</span>
+                    </div>
+                    <div class="text-[11px] text-slate-300">User: <strong class="text-purple-300">${req.username}</strong> (ID: ${req.userId})</div>
+                    <div class="text-[10px] font-mono bg-slate-900 p-1.5 rounded text-slate-400 truncate">${req.ref}</div>
+                    <div class="flex gap-2 pt-1">
+                        <button onclick="approveAdminReq('${req.id}')" class="flex-1 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 py-1 rounded-lg font-bold text-xs">Approve</button>
+                        <button onclick="rejectAdminReq('${req.id}')" class="flex-1 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 py-1 rounded-lg font-bold text-xs">Reject</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function approveAdminReq(id) {
+            const req = state.pendingRequests.find(r => r.id === id);
+            if (req) {
+                req.status = 'approved';
+                alert(`✅ Approved ${req.type} request for ${req.amount} ETB (${req.username}).`);
+                renderAdminPanel();
+            }
+        }
+
+        function rejectAdminReq(id) {
+            const req = state.pendingRequests.find(r => r.id === id);
+            if (req) {
+                req.status = 'rejected';
+                alert(`❌ Rejected ${req.type} request for ${req.username}.`);
+                renderAdminPanel();
+            }
+        }
+
+        function renderAdminUsers(users) {
+            const userList = document.getElementById('adminUserList');
+            userList.innerHTML = users.map(u => `
+                <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between text-xs">
+                    <div>
+                        <div class="font-bold text-white flex items-center gap-1">
+                            ${u.username} <span class="text-[9px] text-slate-500">(ID: ${u.id})</span>
+                        </div>
+                        <div class="text-[10px] text-slate-400">Phone: ${u.phone} | Refs: ${u.referrals}</div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-black text-amber-400 text-xs">${u.balance.toFixed(2)} ETB</span>
+                        <button onclick="adminAdjustUserBal('${u.id}', 50)" class="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 rounded font-bold text-[10px]">+50</button>
+                        <button onclick="adminAdjustUserBal('${u.id}', -50)" class="px-1.5 py-0.5 bg-rose-500/20 text-rose-300 rounded font-bold text-[10px]">-50</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterAdminUsers() {
+            const q = document.getElementById('adminSearchInput').value.toLowerCase();
+            const filtered = state.systemUsers.filter(u => u.username.toLowerCase().includes(q) || u.id.includes(q));
+            renderAdminUsers(filtered);
+        }
+
+        function adminAdjustUserBal(userId, delta) {
+            const u = state.systemUsers.find(user => user.id === userId);
+            if (u) {
+                u.balance = Math.max(0, u.balance + delta);
+                if (userId === state.currentUser.id) {
+                    state.balance = u.balance;
+                    updateBalanceUI();
+                }
+                renderAdminPanel();
+            }
+        }
+
+        // --- SLOT MACHINE GAME ENGINE ---
         function adjustBet(delta) {
             if (state.isSpinning) return;
             let newBet = state.betAmount + delta;
@@ -534,427 +1089,174 @@
             }
         }
 
-        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-
-        function switchTab(tabName) {
-            document.getElementById('spinTab').classList.add('hidden');
-            document.getElementById('dropTab').classList.add('hidden');
-            document.getElementById('historyTab').classList.add('hidden');
-
-            document.getElementById('navSpin').className = "flex flex-col items-center justify-center py-1 text-slate-400 font-semibold text-xs hover:text-slate-200";
-            document.getElementById('navDrop').className = "flex flex-col items-center justify-center py-1 text-slate-400 font-semibold text-xs hover:text-slate-200";
-            document.getElementById('navHistory').className = "flex flex-col items-center justify-center py-1 text-slate-400 font-semibold text-xs hover:text-slate-200";
-
-            if (tabName === 'spin') {
-                document.getElementById('spinTab').classList.remove('hidden');
-                document.getElementById('navSpin').className = "flex flex-col items-center justify-center py-1 text-amber-400 font-bold text-xs";
-            } else if (tabName === 'drop') {
-                document.getElementById('dropTab').classList.remove('hidden');
-                document.getElementById('navDrop').className = "flex flex-col items-center justify-center py-1 text-amber-400 font-bold text-xs";
-            } else if (tabName === 'history') {
-                document.getElementById('historyTab').classList.remove('hidden');
-                document.getElementById('navHistory').className = "flex flex-col items-center justify-center py-1 text-amber-400 font-bold text-xs";
-            }
-        }
-
-        // --- DEPOSIT METHOD SELECTION & LOGIC ---
-        function selectDepositMethod(method) {
-            state.selectedDepositMethod = method;
-            
-            document.querySelectorAll('.dep-method-btn').forEach(btn => {
-                btn.className = "dep-method-btn border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold";
-            });
-
-            const detailsBox = document.getElementById('depositDetailsBox');
-
-            if (method === 'telebirr') {
-                document.getElementById('depTabTelebirr').className = "dep-method-btn border-2 border-sky-500 bg-sky-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
-                detailsBox.innerHTML = `
-                    <div class="text-sky-400 font-bold flex items-center justify-between">
-                        <span><i class="fa-solid fa-mobile-screen-button mr-1"></i> Telebirr Deposit Info</span>
-                        <span class="text-[10px] bg-sky-500/20 px-1.5 py-0.5 rounded">Mobile Transfer</span>
-                    </div>
-                    <div class="text-slate-300">Transfer deposit to Telebirr phone number:</div>
-                    <div class="flex items-center justify-between bg-slate-900 border border-slate-800 p-2 rounded-xl font-mono text-amber-400 font-bold">
-                        <span>+251917393624</span>
-                        <button onclick="copyText('+251917393624')" class="text-sky-400 text-xs hover:text-sky-300"><i class="fa-solid fa-copy"></i> Copy</button>
-                    </div>
-                `;
-            } else if (method === 'sinqee') {
-                document.getElementById('depTabSinqee').className = "dep-method-btn border-2 border-purple-500 bg-purple-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
-                detailsBox.innerHTML = `
-                    <div class="text-purple-400 font-bold flex items-center justify-between">
-                        <span><i class="fa-solid fa-building-columns mr-1"></i> Sinqee Bank Deposit</span>
-                        <span class="text-[10px] bg-purple-500/20 px-1.5 py-0.5 rounded">Bank Transfer</span>
-                    </div>
-                    <div class="text-slate-300">Account Number:</div>
-                    <div class="flex items-center justify-between bg-slate-900 border border-slate-800 p-2 rounded-xl font-mono text-amber-400 font-bold">
-                        <span>1000123456789</span>
-                        <button onclick="copyText('1000123456789')" class="text-purple-400 text-xs hover:text-purple-300"><i class="fa-solid fa-copy"></i> Copy</button>
-                    </div>
-                    <div class="text-[10px] text-slate-400">Account Name: Fruit Drop Game Official</div>
-                `;
-            } else if (method === 'coop') {
-                document.getElementById('depTabCoop').className = "dep-method-btn border-2 border-blue-500 bg-blue-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
-                detailsBox.innerHTML = `
-                    <div class="text-blue-400 font-bold flex items-center justify-between">
-                        <span><i class="fa-solid fa-landmark mr-1"></i> Oromia Cooperative Bank</span>
-                        <span class="text-[10px] bg-blue-500/20 px-1.5 py-0.5 rounded">Coop Bank</span>
-                    </div>
-                    <div class="text-slate-300">Account Number:</div>
-                    <div class="flex items-center justify-between bg-slate-900 border border-slate-800 p-2 rounded-xl font-mono text-amber-400 font-bold">
-                        <span>1000987654321</span>
-                        <button onclick="copyText('1000987654321')" class="text-blue-400 text-xs hover:text-blue-300"><i class="fa-solid fa-copy"></i> Copy</button>
-                    </div>
-                    <div class="text-[10px] text-slate-400">Account Name: Fruit Drop Game Official</div>
-                `;
-            }
-        }
-
-        function copyText(text) {
-            const dummy = document.createElement('textarea');
-            document.body.appendChild(dummy);
-            dummy.value = text;
-            dummy.select();
-            document.execCommand('copy');
-            document.body.removeChild(dummy);
-            if (tg && tg.showAlert) tg.showAlert(`Copied: ${text}`);
-            else alert(`Copied: ${text}`);
-        }
-
-        // --- SUBMIT DEPOSIT WITH STRICT TELEBIRR SMS RECEIPT PARSING ---
-        function submitDepositRequest() {
-            const amt = parseFloat(document.getElementById('depositAmountInput').value);
-            const refText = document.getElementById('depositRefInput').value.trim();
-
-            if (isNaN(amt) || amt < 50) {
-                if (tg && tg.showAlert) tg.showAlert('Minimum deposit amount is 50 ETB');
-                else alert('Minimum deposit amount is 50 ETB');
-                return;
-            }
-
-            if (!refText) {
-                if (tg && tg.showAlert) tg.showAlert('Please paste your Telebirr SMS receipt text or transaction reference.');
-                else alert('Please paste your Telebirr SMS receipt text or transaction reference.');
-                return;
-            }
-
-            // Regular expressions for Telebirr SMS verification
-            const amountRegex = /ETB\s*([0-9,]+\.\d{2})/i;
-            const phoneRegex = /2519\*{4}3245|251917393624/i;
-            const dateRegex = /\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2}:\d{2}/i;
-            const txRegex = /(?:transaction number is|transaction id|receipt\/)\s*([A-Z0-9]{8,12})/i;
-
-            const hasPhone = phoneRegex.test(refText);
-            const hasDate = dateRegex.test(refText);
-            const matchAmount = refText.match(amountRegex);
-            const matchTx = refText.match(txRegex);
-
-            if (!hasPhone) {
-                const alertMsg = 'Verification failed: The SMS receipt must show transfer to receiver +251917393624';
-                if (tg && tg.showAlert) tg.showAlert(alertMsg); else alert(alertMsg);
-                return;
-            }
-
-            if (!hasDate) {
-                const alertMsg = 'Verification failed: Valid transaction date & time format (DD/MM/YYYY HH:MM:SS) missing in text.';
-                if (tg && tg.showAlert) tg.showAlert(alertMsg); else alert(alertMsg);
-                return;
-            }
-
-            if (matchAmount) {
-                const parsedAmt = parseFloat(matchAmount[1].replace(',', ''));
-                if (Math.abs(parsedAmt - amt) > 1.0) {
-                    const alertMsg = `Amount mismatch: Receipt states ETB ${parsedAmt}, but input states ETB ${amt}.`;
-                    if (tg && tg.showAlert) tg.showAlert(alertMsg); else alert(alertMsg);
-                    return;
-                }
-            }
-
-            if (matchTx) {
-                const txNo = matchTx[1];
-                if (state.usedTransactions.has(txNo)) {
-                    const alertMsg = `Transaction ID ${txNo} has already been used! Duplicate deposits are not allowed.`;
-                    if (tg && tg.showAlert) tg.showAlert(alertMsg); else alert(alertMsg);
-                    return;
-                }
-                state.usedTransactions.add(txNo);
-            }
-
-            // Success verification
-            state.balance += amt;
-            updateBalanceUI();
-            addHistoryLog('Deposit', `Successfully credited +${amt.toFixed(2)} ETB via Telebirr SMS verification.`, amt);
-            closeModal('depositModal');
-            
-            document.getElementById('depositAmountInput').value = '';
-            document.getElementById('depositRefInput').value = '';
-
-            const successMsg = `Deposit of ${amt.toFixed(2)} ETB verified and credited successfully!`;
-            if (tg && tg.showAlert) tg.showAlert(successMsg); else alert(successMsg);
-        }
-
-        // --- WITHDRAW METHOD SELECTION & LOGIC ---
-        function selectWithdrawMethod(method) {
-            state.selectedWithdrawMethod = method;
-            document.querySelectorAll('.with-method-btn').forEach(btn => {
-                btn.className = "with-method-btn border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold";
-            });
-
-            const fieldsBox = document.getElementById('withdrawFieldsBox');
-
-            if (method === 'telebirr') {
-                document.getElementById('withTabTelebirr').className = "with-method-btn border-2 border-sky-500 bg-sky-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
-                fieldsBox.innerHTML = `
-                    <div class="space-y-1">
-                        <label class="text-xs font-semibold text-slate-400 block">Telebirr Phone Number</label>
-                        <input type="tel" id="withdrawAccountNum" placeholder="0912345678" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500 font-mono">
-                    </div>
-                `;
-            } else if (method === 'sinqee') {
-                document.getElementById('withTabSinqee').className = "with-method-btn border-2 border-purple-500 bg-purple-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
-                fieldsBox.innerHTML = `
-                    <div class="space-y-1">
-                        <label class="text-xs font-semibold text-slate-400 block">Sinqee Bank Account Number</label>
-                        <input type="text" id="withdrawAccountNum" placeholder="Enter bank account #" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500 font-mono">
-                    </div>
-                `;
-            } else if (method === 'coop') {
-                document.getElementById('withTabCoop').className = "with-method-btn border-2 border-blue-500 bg-blue-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
-                fieldsBox.innerHTML = `
-                    <div class="space-y-1">
-                        <label class="text-xs font-semibold text-slate-400 block">Oromia Cooperative Bank Account #</label>
-                        <input type="text" id="withdrawAccountNum" placeholder="Enter coop account #" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500 font-mono">
-                    </div>
-                `;
-            }
-        }
-
-        function setMaxWithdraw() {
-            document.getElementById('withdrawAmount').value = Math.max(0, state.balance).toFixed(2);
-        }
-
-        function processWithdrawal() {
-            const amt = parseFloat(document.getElementById('withdrawAmount').value);
-            const accField = document.getElementById('withdrawAccountNum');
-            const accVal = accField ? accField.value.trim() : '';
-
-            if (isNaN(amt) || amt < 50) {
-                if (tg && tg.showAlert) tg.showAlert('Minimum withdrawal amount is 50.00 ETB');
-                else alert('Minimum withdrawal amount is 50.00 ETB');
-                return;
-            }
-
-            if (amt > state.balance) {
-                if (tg && tg.showAlert) tg.showAlert('Insufficient balance for withdrawal.');
-                else alert('Insufficient balance for withdrawal.');
-                return;
-            }
-
-            if (!accVal || accVal.length < 7) {
-                if (tg && tg.showAlert) tg.showAlert('Please enter a valid destination account number / phone number.');
-                else alert('Please enter a valid destination account number / phone number.');
-                return;
-            }
-
-            state.balance -= amt;
-            updateBalanceUI();
-            addHistoryLog('Withdrawal', `Cashout of ${amt.toFixed(2)} ETB dispatched to ${state.selectedWithdrawMethod.toUpperCase()} (${accVal}).`, -amt);
-            closeModal('withdrawModal');
-
-            const successMsg = `Withdrawal request of ${amt.toFixed(2)} ETB submitted successfully! Funds will arrive shortly.`;
-            if (tg && tg.showAlert) tg.showAlert(successMsg); else alert(successMsg);
-        }
-
-        // --- SLOT MACHINE SPINNING ENGINE ---
         function spinSlotMachine() {
             if (state.isSpinning) return;
             if (state.balance < state.betAmount) {
-                if (tg && tg.showAlert) tg.showAlert('Insufficient balance! Please deposit ETB to play.');
-                else alert('Insufficient balance! Please deposit ETB to play.');
+                alert("Insufficient ETB balance! Please deposit to continue playing.");
                 openModal('depositModal');
                 return;
             }
 
-            state.isSpinning = true;
             state.balance -= state.betAmount;
             updateBalanceUI();
-
-            playSound('spin');
+            state.isSpinning = true;
             document.getElementById('spinBtn').disabled = true;
-            document.getElementById('spinResultBox').innerHTML = `<span class="text-sm font-bold text-amber-400 animate-pulse">Spinning reels... 🎰</span>`;
+            playSound('spin');
 
-            // Random outcome generation
-            const r1 = state.symbols[Math.floor(Math.random() * state.symbols.length)];
-            const r2 = state.symbols[Math.floor(Math.random() * state.symbols.length)];
-            const r3 = state.symbols[Math.floor(Math.random() * state.symbols.length)];
+            const r1 = document.getElementById('reel1');
+            const r2 = document.getElementById('reel2');
+            const r3 = document.getElementById('reel3');
+
+            r1.classList.add('symbol-blur');
+            r2.classList.add('symbol-blur');
+            r3.classList.add('symbol-blur');
+
+            const symbols = state.symbols;
+            const res1 = symbols[Math.floor(Math.random() * symbols.length)];
+            const res2 = symbols[Math.floor(Math.random() * symbols.length)];
+            const res3 = Math.random() < 0.3 ? res1 : symbols[Math.floor(Math.random() * symbols.length)];
+
+            r1.innerHTML = `<span>${res1}</span>`;
+            r2.innerHTML = `<span>${res2}</span>`;
+            r3.innerHTML = `<span>${res3}</span>`;
 
             setTimeout(() => {
-                document.getElementById('reel1').innerHTML = `<span>${r1}</span>`;
-                document.getElementById('reel2').innerHTML = `<span>${r2}</span>`;
-                document.getElementById('reel3').innerHTML = `<span>${r3}</span>`;
-
-                let winAmount = 0;
-                let msg = "";
-
-                if (r1 === r2 && r2 === r3) {
-                    const mult = state.multipliers[r1] || 5;
-                    winAmount = state.betAmount * mult;
-                    if (r1 === '💎') {
-                        playSound('jackpot');
-                        msg = `💎 JACKPOT! Matched 3x Gems! Won ${winAmount.toFixed(2)} ETB! 💎`;
-                    } else {
-                        playSound('win');
-                        msg = `🎉 BIG WIN! Matched 3x ${r1}! Won ${winAmount.toFixed(2)} ETB!`;
-                    }
-                } else if (r1 === r2 || r2 === r3 || r1 === r3) {
-                    winAmount = state.betAmount * 1.5;
-                    playSound('win');
-                    msg = `✨ Small Win! Matched 2 symbols! Won ${winAmount.toFixed(2)} ETB`;
-                } else {
-                    msg = `No match. Try again!`;
-                }
-
-                if (winAmount > 0) {
-                    state.balance += winAmount;
-                    updateBalanceUI();
-                    addHistoryLog('Spin Win', msg, winAmount);
-                    document.getElementById('spinResultBox').innerHTML = `<span class="text-sm font-extrabold text-emerald-400">${msg}</span>`;
-                } else {
-                    addHistoryLog('Spin Loss', `Lost ${state.betAmount.toFixed(2)} ETB on slot spin.`, -state.betAmount);
-                    document.getElementById('spinResultBox').innerHTML = `<span class="text-sm font-bold text-slate-400">${msg}</span>`;
-                }
-
+                r1.classList.remove('symbol-blur');
+                r2.classList.remove('symbol-blur');
+                r3.classList.remove('symbol-blur');
                 state.isSpinning = false;
                 document.getElementById('spinBtn').disabled = false;
-            }, 1000);
+
+                evaluateSpinResult(res1, res2, res3);
+            }, 800);
         }
 
-        // --- FRUIT DROP PHYSICS MINIGAME CANVAS ---
-        let dropCtx, dropCanvas;
-        let fruitDrops = [];
-        let basketX = 150;
-        let dropScore = 0;
+        function evaluateSpinResult(s1, s2, s3) {
+            const resultBox = document.getElementById('spinResultBox');
+            if (s1 === s2 && s2 === s3) {
+                const mult = state.multipliers[s1] || 10;
+                const winAmt = state.betAmount * mult;
+                state.balance += winAmt;
+                updateBalanceUI();
+                resultBox.innerHTML = `<span class="text-amber-400 font-extrabold text-base glow-text-gold">🎉 JACKPOT! 3x ${s1} = +${winAmt.toFixed(2)} ETB</span>`;
+                playSound(s1 === '💎' ? 'jackpot' : 'win');
+                addHistoryLog('Spin Win', `Jackpot 3x ${s1}`, winAmt);
+            } else if (s1 === s2 || s2 === s3 || s1 === s3) {
+                const winAmt = state.betAmount * 2;
+                state.balance += winAmt;
+                updateBalanceUI();
+                resultBox.innerHTML = `<span class="text-emerald-400 font-bold text-sm">✨ Match Pair! +${winAmt.toFixed(2)} ETB</span>`;
+                playSound('win');
+                addHistoryLog('Spin Win', `Pair Match Win`, winAmt);
+            } else {
+                resultBox.innerHTML = `<span class="text-slate-400 font-semibold text-xs">No match. Try again! (-${state.betAmount.toFixed(2)} ETB)</span>`;
+                addHistoryLog('Spin Loss', `Spin Loss`, -state.betAmount);
+            }
+        }
 
+        // --- FRUIT DROP CANVAS GAME ---
+        let dropCtx, dropCanvas, fallingFruit = null;
         function initDropCanvas() {
             dropCanvas = document.getElementById('dropCanvas');
             if (!dropCanvas) return;
             dropCtx = dropCanvas.getContext('2d');
-            dropCanvas.width = 320;
-            dropCanvas.height = 400;
-            basketX = dropCanvas.width / 2;
+            dropCanvas.width = dropCanvas.clientWidth;
+            dropCanvas.height = dropCanvas.clientHeight;
+            drawDropScene();
+        }
 
-            dropCanvas.addEventListener('touchmove', (e) => {
-                const rect = dropCanvas.getBoundingClientRect();
-                const rootX = e.touches[0].clientX - rect.left;
-                basketX = Math.max(30, Math.min(dropCanvas.width - 30, rootX * (dropCanvas.width / rect.width)));
-            });
-            dropCanvas.addEventListener('mousemove', (e) => {
-                const rect = dropCanvas.getBoundingClientRect();
-                const rootX = e.clientX - rect.left;
-                basketX = Math.max(30, Math.min(dropCanvas.width - 30, rootX * (dropCanvas.width / rect.width)));
-            });
+        function drawDropScene() {
+            if (!dropCtx) return;
+            dropCtx.clearRect(0, 0, dropCanvas.width, dropCanvas.height);
+            
+            // Draw baskets / catch line
+            dropCtx.fillStyle = '#1e293b';
+            dropCtx.fillRect(20, dropCanvas.height - 40, dropCanvas.width - 40, 30);
+            dropCtx.fillStyle = '#10b981';
+            dropCtx.font = '12px Outfit';
+            dropCtx.fillText('🧺 Catch Fruit Here for Rewards!', 35, dropCanvas.height - 20);
 
-            requestAnimationFrame(updateDropGame);
+            if (fallingFruit) {
+                dropCtx.font = '32px sans-serif';
+                dropCtx.fillText(fallingFruit.symbol, fallingFruit.x, fallingFruit.y);
+                fallingFruit.y += fallingFruit.speed;
+
+                if (fallingFruit.y >= dropCanvas.height - 50) {
+                    const reward = 10.00;
+                    state.balance += reward;
+                    updateBalanceUI();
+                    document.getElementById('dropScore').innerText = `+${reward.toFixed(2)} ETB`;
+                    playSound('win');
+                    addHistoryLog('Fruit Drop', `Caught ${fallingFruit.symbol}`, reward);
+                    fallingFruit = null;
+                } else {
+                    requestAnimationFrame(drawDropScene);
+                }
+            }
         }
 
         function dropFruitFromTop(e) {
-            if (state.balance < 5.0) {
-                if (tg && tg.showAlert) tg.showAlert('Insufficient balance! Need 5.00 ETB to play Fruit Drop.');
-                else alert('Insufficient balance! Need 5.00 ETB to play Fruit Drop.');
-                openModal('depositModal');
+            if (fallingFruit) return;
+            if (state.balance < 5) {
+                alert("Requires 5.00 ETB balance to drop fruit!");
                 return;
             }
-
-            state.balance -= 5.0;
+            state.balance -= 5;
             updateBalanceUI();
             playSound('drop');
 
-            const symbolsList = ['🍎', '🍌', '🥭', '🥑', '🍒', '💎'];
-            const sym = symbolsList[Math.floor(Math.random() * symbolsList.length)];
-            const spawnX = Math.random() * (dropCanvas.width - 60) + 30;
+            const rect = dropCanvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const symbols = ['🥭', '🍎', '🥑', '🍌', '🍒', '💎'];
+            const sym = symbols[Math.floor(Math.random() * symbols.length)];
 
-            fruitDrops.push({ x: spawnX, y: 20, symbol: sym, speed: 2.5 + Math.random() * 2.0 });
+            fallingFruit = {
+                symbol: sym,
+                x: Math.max(20, Math.min(clickX, dropCanvas.width - 50)),
+                y: 20,
+                speed: 4.5
+            };
+            drawDropScene();
         }
 
-        function updateDropGame() {
-            if (!dropCtx || !dropCanvas) return;
-            dropCtx.clearRect(0, 0, dropCanvas.width, dropCanvas.height);
-
-            // Draw Basket
-            dropCtx.fillStyle = '#f59e0b';
-            dropCtx.beginPath();
-            dropCtx.roundRect(basketX - 30, dropCanvas.height - 30, 60, 20, 8);
-            dropCtx.fill();
-            dropCtx.fillStyle = '#fff';
-            dropCtx.font = '14px Outfit';
-            dropCtx.textAlign = 'center';
-            dropCtx.fillText('🧺', basketX, dropCanvas.height - 15);
-
-            // Update & Draw Fruits
-            for (let i = fruitDrops.length - 1; i >= 0; i--) {
-                let f = fruitDrops[i];
-                f.y += f.speed;
-
-                dropCtx.font = '24px Outfit';
-                dropCtx.textAlign = 'center';
-                dropCtx.fillText(f.symbol, f.x, f.y);
-
-                // Check collision with basket
-                if (f.y >= dropCanvas.height - 35 && f.y <= dropCanvas.height - 10 && Math.abs(f.x - basketX) < 35) {
-                    let reward = f.symbol === '💎' ? 50.0 : (f.symbol === '🍒' ? 15.0 : 8.0);
-                    state.balance += reward;
-                    updateBalanceUI();
-                    dropScore = reward;
-                    document.getElementById('dropScore').innerText = `${reward.toFixed(2)} ETB`;
-                    playSound('win');
-                    addHistoryLog('Fruit Drop', `Caught ${f.symbol}! Won ${reward.toFixed(2)} ETB`, reward);
-                    fruitDrops.splice(i, 1);
-                } else if (f.y > dropCanvas.height) {
-                    fruitDrops.splice(i, 1);
-                }
-            }
-
-            requestAnimationFrame(updateDropGame);
-        }
-
-        // --- ACTIVITY & TRANSACTION HISTORY LOG ---
+        // --- HISTORY ENGINE ---
         function addHistoryLog(type, desc, amount) {
-            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            
-            const logEntry = { type, desc, amount, timeStr };
-            state.history.unshift(logEntry);
-            if (state.history.length > 50) state.history.pop(); // keep last 50 entries
-
-            saveStoredData();
+            const entry = {
+                type,
+                desc,
+                amount,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+            };
+            state.history.unshift(entry);
+            if (state.history.length > 30) state.history.pop();
             renderStoredHistory();
+            saveStoredData();
         }
 
         function renderStoredHistory() {
             const list = document.getElementById('historyList');
             if (!list) return;
-            
-            list.innerHTML = '';
-            state.history.forEach(item => {
-                const isPos = item.amount >= 0;
-                const el = document.createElement('div');
-                el.className = "bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between text-xs";
-                el.innerHTML = `
+            list.innerHTML = state.history.map(item => `
+                <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between text-xs">
                     <div>
                         <div class="font-bold text-white flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full ${isPos ? 'bg-emerald-500' : 'bg-rose-500'}"></span>
+                            <span class="w-2 h-2 rounded-full ${item.amount > 0 ? 'bg-emerald-400' : (item.amount < 0 ? 'bg-rose-400' : 'bg-amber-400')}"></span>
                             ${item.type}
                         </div>
-                        <div class="text-[10px] text-slate-400 mt-0.5">${item.desc}</div>
-                        <div class="text-[9px] text-slate-500">${item.timeStr}</div>
+                        <div class="text-[11px] text-slate-400">${item.desc}</div>
                     </div>
-                    <div class="font-extrabold ${isPos ? 'text-emerald-400' : 'text-rose-400'}">
-                        ${isPos ? '+' : ''}${item.amount !== 0 ? item.amount.toFixed(2) + ' ETB' : ''}
+                    <div class="text-right">
+                        <div class="font-extrabold ${item.amount > 0 ? 'text-emerald-400' : (item.amount < 0 ? 'text-rose-400' : 'text-slate-300')}">
+                            ${item.amount > 0 ? '+' : ''}${item.amount !== 0 ? item.amount.toFixed(2) + ' ETB' : ''}
+                        </div>
+                        <div class="text-[9px] text-slate-500">${item.time}</div>
                     </div>
-                `;
-                list.appendChild(el);
-            });
+                </div>
+            `).join('');
+        }
+
+        function setMaxWithdraw() {
+            document.getElementById('withdrawAmount').value = state.balance.toFixed(2);
         }
     </script>
 </body>
