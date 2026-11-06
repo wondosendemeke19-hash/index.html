@@ -65,13 +65,8 @@
             box-shadow: inset 0 0 18px rgba(0,0,0,0.9);
         }
 
-        .reel-strip {
-            transition: transform 0.1s linear;
-        }
-
-        .symbol-blur {
-            filter: blur(4px);
-            transform: scale(0.92);
+        .matrix-cell {
+            transition: all 0.2s ease;
         }
 
         .glow-text-gold {
@@ -121,9 +116,6 @@
 
             <!-- Header Action Controls -->
             <div class="flex items-center gap-2">
-                <button onclick="toggleAdminDevMode()" id="adminDevBtn" title="Toggle Admin Access" class="bg-purple-600/30 text-purple-300 border border-purple-500/50 px-2.5 py-1 rounded-xl text-xs font-bold hover:bg-purple-600/50 transition flex items-center gap-1">
-                    <i class="fa-solid fa-user-shield"></i> <span id="adminDevLabel">Admin</span>
-                </button>
                 <button onclick="toggleSound()" id="soundBtn" class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs text-slate-300">
                     <i class="fa-solid fa-volume-high"></i>
                 </button>
@@ -155,7 +147,7 @@
     <!-- MAIN APP WRAPPER -->
     <main class="max-w-md mx-auto w-full px-4 pt-3 pb-6 flex-grow flex flex-col justify-center">
 
-        <!-- TAB 1: FRUIT SPIN WHEEL -->
+        <!-- TAB 1: 3x3 MATRIX FRUIT SLOT MACHINE -->
         <section id="spinTab" class="space-y-4">
             <div class="relative bg-gradient-to-b from-slate-800 via-slate-900 to-slate-950 p-4 rounded-3xl border-2 border-amber-500/40 shadow-neon-gold">
                 
@@ -163,67 +155,43 @@
                 <div class="flex justify-between items-center bg-slate-950/80 rounded-xl p-2 mb-3 border border-slate-800 text-[11px] text-slate-300 font-semibold">
                     <span class="text-amber-400"><i class="fa-solid fa-gem mr-1"></i>3x 💎 Opal = 5x</span>
                     <span class="text-rose-400">3x 🥭 Mango = 3x</span>
-                    <span class="text-emerald-400">Line Match = 2x</span>
+                    <span class="text-emerald-400">3x Any = 2x</span>
                 </div>
 
-                <!-- 3x3 SLOT MATRIX GRID WITH SVG PAYLINE OVERLAY -->
-                <div class="relative grid grid-cols-3 gap-2 reel-box p-3 rounded-2xl border border-slate-700 overflow-hidden">
+                <!-- 3x3 MATRIX GRID -->
+                <div class="reel-box p-3 rounded-2xl border border-slate-700 relative">
                     <!-- SVG Payline Overlay -->
-                    <svg id="paylineSvg" class="absolute inset-0 w-full h-full pointer-events-none z-20 overflow-visible">
-                        <!-- Row 1 Payline -->
-                        <line id="line_row_0" x1="10%" y1="16%" x2="90%" y2="16%" stroke="#10b981" stroke-width="4" stroke-linecap="round" class="opacity-0 transition-opacity duration-300 drop-shadow-[0_0_8px_#10b981]" />
-                        <!-- Row 2 Payline -->
-                        <line id="line_row_1" x1="10%" y1="50%" x2="90%" y2="50%" stroke="#f59e0b" stroke-width="4" stroke-linecap="round" class="opacity-0 transition-opacity duration-300 drop-shadow-[0_0_8px_#f59e0b]" />
-                        <!-- Row 3 Payline -->
-                        <line id="line_row_2" x1="10%" y1="84%" x2="90%" y2="84%" stroke="#10b981" stroke-width="4" stroke-linecap="round" class="opacity-0 transition-opacity duration-300 drop-shadow-[0_0_8px_#10b981]" />
-                        <!-- Diagonal Top-Left to Bottom-Right -->
-                        <line id="line_diag_0" x1="15%" y1="15%" x2="85%" y2="85%" stroke="#ef4444" stroke-width="4" stroke-linecap="round" class="opacity-0 transition-opacity duration-300 drop-shadow-[0_0_8px_#ef4444]" />
-                        <!-- Diagonal Top-Right to Bottom-Left -->
-                        <line id="line_diag_1" x1="85%" y1="15%" x2="15%" y2="85%" stroke="#8b5cf6" stroke-width="4" stroke-linecap="round" class="opacity-0 transition-opacity duration-300 drop-shadow-[0_0_8px_#8b5cf6]" />
+                    <svg id="paylineSvg" class="absolute inset-0 w-full h-full pointer-events-none z-20 overflow-visible" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Dynamically drawn winning lines -->
                     </svg>
 
-                    <!-- Payline Indicator Guide Lines -->
-                    <div class="absolute inset-x-0 top-1/4 h-0.5 bg-amber-400/20 pointer-events-none"></div>
-                    <div class="absolute inset-x-0 top-1/2 h-0.5 bg-amber-400/30 pointer-events-none"></div>
-                    <div class="absolute inset-x-0 top-3/4 h-0.5 bg-amber-400/20 pointer-events-none"></div>
-
-                    <!-- Row 1, Col 1-3 -->
-                    <div id="cellBox_r0c0" class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center transition-colors">
-                        <div id="r0c0" class="text-4xl">🍎</div>
-                    </div>
-                    <div id="cellBox_r0c1" class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center transition-colors">
-                        <div id="r0c1" class="text-4xl">🥭</div>
-                    </div>
-                    <div id="cellBox_r0c2" class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center transition-colors">
-                        <div id="r0c2" class="text-4xl">🥑</div>
-                    </div>
-
-                    <!-- Row 2, Col 1-3 (Main Payline) -->
-                    <div id="cellBox_r1c0" class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center transition-colors">
-                        <div id="r1c0" class="text-4xl">🍌</div>
-                    </div>
-                    <div id="cellBox_r1c1" class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center transition-colors">
-                        <div id="r1c1" class="text-4xl">💎</div>
-                    </div>
-                    <div id="cellBox_r1c2" class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center transition-colors">
-                        <div id="r1c2" class="text-4xl">🍇</div>
-                    </div>
-
-                    <!-- Row 3, Col 1-3 -->
-                    <div id="cellBox_r2c0" class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center transition-colors">
-                        <div id="r2c0" class="text-4xl">🍎</div>
-                    </div>
-                    <div id="cellBox_r2c1" class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center transition-colors">
-                        <div id="r2c1" class="text-4xl">🥑</div>
-                    </div>
-                    <div id="cellBox_r2c2" class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center transition-colors">
-                        <div id="r2c2" class="text-4xl">🥭</div>
+                    <div class="grid grid-cols-3 gap-2 relative z-10" id="matrixGrid">
+                        <!-- Cell 0,0 -->
+                        <div id="cell-0-0" class="matrix-cell h-20 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-4xl">🍎</div>
+                        <!-- Cell 0,1 -->
+                        <div id="cell-0-1" class="matrix-cell h-20 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-4xl">🥭</div>
+                        <!-- Cell 0,2 -->
+                        <div id="cell-0-2" class="matrix-cell h-20 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-4xl">🥑</div>
+                        
+                        <!-- Cell 1,0 -->
+                        <div id="cell-1-0" class="matrix-cell h-20 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-4xl">💎</div>
+                        <!-- Cell 1,1 -->
+                        <div id="cell-1-1" class="matrix-cell h-20 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-4xl">🍋</div>
+                        <!-- Cell 1,2 -->
+                        <div id="cell-1-2" class="matrix-cell h-20 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-4xl">🍊</div>
+                        
+                        <!-- Cell 2,0 -->
+                        <div id="cell-2-0" class="matrix-cell h-20 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-4xl">🍇</div>
+                        <!-- Cell 2,1 -->
+                        <div id="cell-2-1" class="matrix-cell h-20 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-4xl">🍉</div>
+                        <!-- Cell 2,2 -->
+                        <div id="cell-2-2" class="matrix-cell h-20 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-4xl">🍓</div>
                     </div>
                 </div>
 
                 <!-- Result Message -->
                 <div id="spinResultBox" class="mt-3 text-center min-h-[32px] flex items-center justify-center">
-                    <span class="text-sm font-bold text-slate-400">Press SPIN to win Ethiopian Birr!</span>
+                    <span class="text-sm font-bold text-slate-400">Match 3 in rows or diagonals to win!</span>
                 </div>
 
                 <!-- Bet Control & Action -->
@@ -239,7 +207,7 @@
                     </div>
 
                     <button id="spinBtn" onclick="spinSlotMachine()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-xl uppercase tracking-wider shadow-neon-gold transition active:scale-98 flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-rotate text-2xl"></i> SPIN WHEEL
+                        <i class="fa-solid fa-rotate text-2xl"></i> SPIN 3x3 MATRIX
                     </button>
                 </div>
             </div>
@@ -362,7 +330,7 @@
             </div>
         </section>
 
-        <!-- TAB 5: ADMIN DASHBOARD (@WDemeke1) -->
+        <!-- TAB 5: ADMIN DASHBOARD (RESTRICTED TO @WDemeke1) -->
         <section id="adminTab" class="hidden space-y-4">
             <div class="bg-purple-950/40 p-4 rounded-2xl border border-purple-500/40 space-y-4 shadow-neon-purple">
                 <div class="flex justify-between items-center border-b border-purple-500/30 pb-2">
@@ -536,8 +504,8 @@
             <!-- Account Details Input -->
             <div id="withdrawFieldsBox" class="space-y-3">
                 <div class="space-y-1">
-                    <label class="text-xs font-semibold text-slate-400 block" id="withdrawAccountLabel">Telebirr Phone Number</label>
-                    <input type="text" id="withdrawAccountInput" placeholder="09xxxxxxxx or +2519xxxxxxxx" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500 font-bold">
+                    <label class="text-xs font-semibold text-slate-400 block">Account Phone Number / Number</label>
+                    <input type="text" id="withdrawAccountInput" placeholder="+2519..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500">
                 </div>
             </div>
 
@@ -547,7 +515,7 @@
                     <span>Min: 50.00 ETB</span>
                 </div>
                 <div class="relative">
-                    <input type="number" id="withdrawAmountInput" placeholder="Enter amount to withdraw" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500 font-extrabold">
+                    <input type="number" id="withdrawAmountInput" placeholder="50" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-amber-400 font-extrabold focus:outline-none focus:border-amber-500">
                 </div>
             </div>
 
@@ -557,62 +525,30 @@
         </div>
     </div>
 
-    <!-- APPLICATION JAVASCRIPT LOGIC -->
+    <!-- JAVASCRIPT APP LOGIC -->
     <script>
-        // --- State Management ---
-        let tg = window.Telegram?.WebApp;
-        let userData = {
-            id: '12345678',
-            username: 'TgUser',
-            firstName: 'Ethiopian',
-            lastName: 'Gamer',
-            balance: 100.00,
-            phone: '',
-            isAdmin: false,
-            refCount: 0,
-            refEarnings: 0
-        };
-
-        let currentBet = 10.00;
-        let isSpinning = false;
+        // --- SOUND FX (Tone.js) ---
         let soundEnabled = true;
-        let activeTab = 'spin';
-        let selectedDepositMethod = 'telebirr';
-        let selectedWithdrawMethod = 'telebirr';
-
-        // Local Storage DB Mock
-        let appState = {
-            users: [],
-            transactions: [],
-            history: []
-        };
-
-        const FRUIT_SYMBOLS = ['🍎', '🥭', '🥑', '🍌', '🍇', '💎'];
-
-        // --- Audio Synthesizer (Tone.js) ---
-        let synth, reelSynth, winSynth;
-        function initAudio() {
-            try {
-                synth = new Tone.Synth().toDestination();
-                reelSynth = new Tone.MembraneSynth().toDestination();
-                winSynth = new Tone.PolySynth(Tone.Synth).toDestination();
-            } catch (e) {
-                console.log("Audio init skipped", e);
-            }
+        let synth = null;
+        try {
+            synth = new Tone.Synth().toDestination();
+        } catch(e) {
+            console.warn("Audio init deferred");
         }
 
         function playSound(type) {
-            if (!soundEnabled) return;
+            if (!soundEnabled || !synth) return;
             try {
                 Tone.start();
                 if (type === 'spin') {
-                    reelSynth.triggerAttackRelease("C2", "8n");
+                    synth.triggerAttackRelease("C4", "16n");
                 } else if (type === 'win') {
-                    winSynth.triggerAttackRelease(["C4", "E4", "G4", "C5"], "4n");
+                    synth.triggerAttackRelease("G4", "8n");
+                    setTimeout(() => synth.triggerAttackRelease("C5", "4n"), 100);
                 } else if (type === 'click') {
-                    synth.triggerAttackRelease("G5", "32n");
+                    synth.triggerAttackRelease("E5", "32n");
                 } else if (type === 'drop') {
-                    reelSynth.triggerAttackRelease("F3", "16n");
+                    synth.triggerAttackRelease("A3", "16n");
                 }
             } catch(e) {}
         }
@@ -621,694 +557,700 @@
             soundEnabled = !soundEnabled;
             const btn = document.getElementById('soundBtn');
             btn.innerHTML = soundEnabled ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark text-rose-400"></i>';
-            playSound('click');
         }
 
-        // --- Initialization ---
-        window.addEventListener('DOMContentLoaded', () => {
-            if (tg) {
-                tg.ready();
-                tg.expand();
-                if (tg.initDataUnsafe?.user) {
-                    userData.id = tg.initDataUnsafe.user.id.toString();
-                    userData.username = tg.initDataUnsafe.user.username || 'User_' + userData.id;
-                    userData.firstName = tg.initDataUnsafe.user.first_name || '';
-                }
+        // --- GLOBAL APP STATE & USER STORAGE ---
+        const SYMBOLS = ['🍎', '🥭', '🥑', '💎', '🍋', '🍊', '🍇', '🍉', '🍓'];
+        
+        let currentUser = {
+            id: '12345678',
+            username: 'TgUser',
+            balance: 100.00,
+            phone: '',
+            refCount: 0,
+            refEarnings: 0,
+            history: []
+        };
+
+        let currentBet = 10.00;
+        let activeDepositMethod = 'telebirr';
+        let activeWithdrawMethod = 'telebirr';
+        let dropCanvasCtx = null;
+        let dropInterval = null;
+        let currentDropX = 150;
+        let fallingFruitY = 0;
+        let fallingFruitSymbol = '🥭';
+        let isDropping = false;
+
+        // Central LocalStorage DB
+        let usersDB = JSON.parse(localStorage.getItem('tg_fruit_users_db')) || {};
+        let pendingQueue = JSON.parse(localStorage.getItem('tg_fruit_pending_queue')) || [];
+
+        function initTelegramUser() {
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
+                const tg = window.Telegram.WebApp.initDataUnsafe.user;
+                currentUser.id = tg.id.toString();
+                currentUser.username = tg.username ? tg.username : (tg.first_name || 'User');
+            } else {
+                currentUser.id = '98765432';
+                currentUser.username = 'WDemeke1'; // Default or test handle
             }
 
-            loadUserData();
-            initDropCanvas();
+            // Load from DB if exists
+            if (usersDB[currentUser.id]) {
+                currentUser = usersDB[currentUser.id];
+            } else {
+                usersDB[currentUser.id] = currentUser;
+                saveDB();
+            }
+
             updateUI();
-            updateDepositDetails();
-        });
+        }
 
-        function loadUserData() {
-            const saved = localStorage.getItem('fruit_drop_user_' + userData.id);
-            if (saved) {
-                try {
-                    const parsed = JSON.parse(saved);
-                    userData = { ...userData, ...parsed };
-                } catch(e) {}
-            } else {
-                saveUserData();
-            }
+        function saveDB() {
+            usersDB[currentUser.id] = currentUser;
+            localStorage.setItem('tg_fruit_users_db', JSON.stringify(usersDB));
+            localStorage.setItem('tg_fruit_pending_queue', JSON.stringify(pendingQueue));
+        }
 
-            // STRICT REQUIREMENT 1: Allow ONLY "@WDemeke1" to be admin
-            if (userData.username === 'WDemeke1' || userData.username.toLowerCase() === 'wdemeke1') {
-                userData.isAdmin = true;
-            } else {
-                userData.isAdmin = false;
-            }
+        // --- ADMIN RESTRICTION LOGIC (@WDemeke1) ---
+        function checkAdminAccess() {
+            const isAdmin = currentUser.username.toLowerCase() === 'wdemeke1';
+            const adminTabBtn = document.getElementById('navAdmin');
+            const adminBadge = document.getElementById('adminBadge');
 
-            const globalState = localStorage.getItem('fruit_drop_global_state');
-            if (globalState) {
-                try {
-                    appState = JSON.parse(globalState);
-                } catch(e) {}
+            if (isAdmin) {
+                adminTabBtn.classList.remove('hidden');
+                adminBadge.classList.remove('hidden');
             } else {
-                syncGlobalState();
+                adminTabBtn.classList.add('hidden');
+                adminBadge.classList.add('hidden');
             }
         }
 
-        function saveUserData() {
-            // Re-verify admin status on save
-            if (userData.username === 'WDemeke1' || userData.username.toLowerCase() === 'wdemeke1') {
-                userData.isAdmin = true;
-            } else {
-                userData.isAdmin = false;
-            }
-            localStorage.setItem('fruit_drop_user_' + userData.id, JSON.stringify(userData));
-            syncGlobalState();
-        }
-
-        function syncGlobalState() {
-            let idx = appState.users.findIndex(u => u.id === userData.id);
-            if (idx >= 0) {
-                appState.users[idx] = userData;
-            } else {
-                appState.users.push(userData);
-            }
-            localStorage.setItem('fruit_drop_global_state', JSON.stringify(appState));
-        }
-
-        function updateUI() {
-            document.getElementById('userName').innerText = userData.username;
-            document.getElementById('dashUsername').innerText = '@' + userData.username;
-            document.getElementById('dashTgId').innerText = userData.id;
-            document.getElementById('userBalance').innerText = userData.balance.toFixed(2);
-            document.getElementById('dashBalance').innerText = userData.balance.toFixed(2) + ' ETB';
-            document.getElementById('dashPhoneInput').value = userData.phone || '';
-            document.getElementById('dashRefCount').innerText = userData.refCount;
-            document.getElementById('dashRefEarnings').innerText = userData.refEarnings.toFixed(2);
-            document.getElementById('referralLinkInput').value = `https://t.me/FruitDropSpinETBBot?start=ref_${userData.id}`;
-
-            // STRICT REQUIREMENT 1: Only @WDemeke1 sees Admin panel
-            if (userData.username === 'WDemeke1' || userData.username.toLowerCase() === 'wdemeke1') {
-                userData.isAdmin = true;
-                document.getElementById('adminBadge').classList.remove('hidden');
-                document.getElementById('navAdmin').classList.remove('hidden');
-                document.getElementById('adminDevLabel').innerText = 'Super Admin';
-                renderAdminPanel();
-            } else {
-                userData.isAdmin = false;
-                document.getElementById('adminBadge').classList.add('hidden');
-                document.getElementById('navAdmin').classList.add('hidden');
-            }
-
-            renderHistoryList();
-        }
-
-        function toggleAdminDevMode() {
-            // For testing convenience, allow switching to WDemeke1 or toggle
-            if (userData.username.toLowerCase() !== 'wdemeke1') {
-                userData.username = 'WDemeke1';
-                userData.isAdmin = true;
-                alert("Switched user context to @WDemeke1 (Super Admin)");
-            } else {
-                userData.username = 'TgUser';
-                userData.isAdmin = false;
-                alert("Switched user context to standard user @TgUser");
-            }
-            saveUserData();
-            updateUI();
-            if (userData.isAdmin) switchTab('admin');
-            else switchTab('spin');
-            playSound('click');
-        }
-
-        // --- Navigation ---
-        function switchTab(tab) {
-            if (tab === 'admin' && userData.username.toLowerCase() !== 'wdemeke1') {
-                alert("Access Denied. Only @WDemeke1 is authorized as Super Admin.");
-                return;
-            }
-
-            activeTab = tab;
+        // --- NAVIGATION TABS ---
+        function switchTab(tabId) {
             const tabs = ['spin', 'drop', 'dashboard', 'history', 'admin'];
             tabs.forEach(t => {
                 const sec = document.getElementById(t + 'Tab');
-                const nav = document.getElementById('nav' + t.charAt(0).toUpperCase() + t.slice(1));
+                const btn = document.getElementById('nav' + t.charAt(0).toUpperCase() + t.slice(1));
                 if (sec) sec.classList.add('hidden');
-                if (nav) {
-                    nav.className = "flex flex-col items-center justify-center py-1 text-slate-400 font-semibold text-xs hover:text-slate-200";
+                if (btn) {
+                    btn.classList.remove('text-amber-400', 'text-purple-400', 'font-bold');
+                    btn.classList.add('text-slate-400', 'font-semibold');
                 }
             });
 
-            const activeSec = document.getElementById(tab + 'Tab');
-            const activeNav = document.getElementById('nav' + tab.charAt(0).toUpperCase() + tab.slice(1));
+            const activeSec = document.getElementById(tabId + 'Tab');
+            const activeBtn = document.getElementById('nav' + tabId.charAt(0).toUpperCase() + tabId.slice(1));
+            
             if (activeSec) activeSec.classList.remove('hidden');
-            if (activeNav) {
-                if (tab === 'admin') {
-                    activeNav.className = "flex flex-col items-center justify-center py-1 text-purple-400 font-bold text-xs";
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-400', 'font-semibold');
+                if (tabId === 'admin') {
+                    activeBtn.classList.add('text-purple-400', 'font-bold');
                 } else {
-                    activeNav.className = "flex flex-col items-center justify-center py-1 text-amber-400 font-bold text-xs";
+                    activeBtn.classList.add('text-amber-400', 'font-bold');
                 }
             }
-            playSound('click');
-            if (tab === 'admin') renderAdminPanel();
-        }
 
-        // --- Modal Control ---
-        function openModal(id) {
-            document.getElementById(id).classList.remove('hidden');
-            playSound('click');
-        }
-
-        function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
+            if (tabId === 'drop') {
+                initDropCanvas();
+            }
+            if (tabId === 'admin') {
+                renderAdminDashboard();
+            }
             playSound('click');
         }
 
-        // --- Tab 1: 3x3 Matrix Slot Machine Logic ---
-        function adjustBet(amt) {
-            currentBet = Math.max(5, currentBet + amt);
-            document.getElementById('currentBet').innerText = currentBet.toFixed(2);
+        // --- UPDATE UI ELEMENTS ---
+        function updateUI() {
+            document.getElementById('userBalance').textContent = currentUser.balance.toFixed(2);
+            document.getElementById('dashBalance').textContent = currentUser.balance.toFixed(2) + ' ETB';
+            document.getElementById('userName').textContent = '@' + currentUser.username;
+            document.getElementById('dashUsername').textContent = '@' + currentUser.username;
+            document.getElementById('dashTgId').textContent = currentUser.id;
+            document.getElementById('dashRefCount').textContent = currentUser.refCount;
+            document.getElementById('dashRefEarnings').textContent = currentUser.refEarnings.toFixed(2);
+            document.getElementById('dashPhoneInput').value = currentUser.phone || '';
+            document.getElementById('referralLinkInput').value = `https://t.me/FruitDropSpinETBBot?start=ref_${currentUser.id}`;
+
+            renderHistoryList();
+            checkAdminAccess();
+            saveDB();
+        }
+
+        // --- 3x3 MATRIX SLOT MACHINE LOGIC ---
+        let matrixState = [
+            ['🍎', '🥭', '🥑'],
+            ['💎', '🍋', '🍊'],
+            ['🍇', '🍉', '🍓']
+        ];
+
+        function adjustBet(amount) {
+            currentBet += amount;
+            if (currentBet < 5) currentBet = 5;
+            if (currentBet > currentUser.balance && currentUser.balance >= 5) {
+                currentBet = Math.floor(currentUser.balance);
+            }
+            document.getElementById('currentBet').textContent = currentBet.toFixed(2);
             playSound('click');
         }
 
         function setMaxBet() {
-            currentBet = Math.min(userData.balance, 500);
-            if (currentBet < 5) currentBet = 5;
-            document.getElementById('currentBet').innerText = currentBet.toFixed(2);
+            currentBet = Math.max(5, Math.floor(currentUser.balance));
+            document.getElementById('currentBet').textContent = currentBet.toFixed(2);
             playSound('click');
         }
 
         function spinSlotMachine() {
-            if (isSpinning) return;
-            if (userData.balance < currentBet) {
-                alert("Insufficient balance! Please deposit ETB to continue playing.");
+            if (currentUser.balance < currentBet) {
+                alert("Insufficient balance! Please deposit ETB to continue.");
                 openModal('depositModal');
                 return;
             }
 
-            // Clear previous winning highlights
-            clearPaylineHighlights();
-
-            userData.balance -= currentBet;
-            saveUserData();
+            currentUser.balance -= currentBet;
             updateUI();
-            isSpinning = true;
             playSound('spin');
 
-            const btn = document.getElementById('spinBtn');
-            btn.disabled = true;
-            btn.classList.add('opacity-50');
+            const spinBtn = document.getElementById('spinBtn');
+            spinBtn.disabled = true;
+            document.getElementById('spinResultBox').innerHTML = `<span class="text-amber-400 animate-pulse font-bold">Spinning 3x3 Matrix...</span>`;
+            clearPaylines();
 
-            const resultBox = document.getElementById('spinResultBox');
-            resultBox.innerHTML = '<span class="text-amber-400 font-bold animate-pulse">Spinning 3x3 Matrix... 🎰</span>';
-
-            let interval = setInterval(() => {
+            // Shuffle animation effect
+            let shuffleCount = 0;
+            const shuffleInterval = setInterval(() => {
                 for (let r = 0; r < 3; r++) {
                     for (let c = 0; c < 3; c++) {
-                        let cell = document.getElementById(`r${r}c${c}`);
-                        if (cell) cell.innerText = FRUIT_SYMBOLS[Math.floor(Math.random()*FRUIT_SYMBOLS.length)];
+                        const randSym = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+                        matrixState[r][c] = randSym;
+                        document.getElementById(`cell-${r}-${c}`).textContent = randSym;
                     }
+                }
+                shuffleCount++;
+                if (shuffleCount > 10) {
+                    clearInterval(shuffleInterval);
+                    finalizeSpinOutcome();
                 }
             }, 80);
+        }
 
-            setTimeout(() => {
-                clearInterval(interval);
+        function finalizeSpinOutcome() {
+            // Rigged Odds: If balance > 3000 Birr, lower win chance significantly
+            let winProbability = currentUser.balance > 3000 ? 0.03 : 0.28;
+            let isWin = Math.random() < winProbability;
 
-                // STRICT WIN CHANCE: Decreased win probabilities across all users, especially very rare for >3000 ETB balances
-                let winChance = userData.balance > 3000 ? 0.03 : 0.18; // Very low 3% chance if >3000 birr, 18% standard
-                let forceWin = Math.random() < winChance;
-
-                let matrix = [];
-                if (forceWin) {
-                    let luckyFruit = FRUIT_SYMBOLS[Math.floor(Math.random()*FRUIT_SYMBOLS.length)];
-                    matrix = [
-                        [FRUIT_SYMBOLS[0], FRUIT_SYMBOLS[1], FRUIT_SYMBOLS[2]],
-                        [luckyFruit, luckyFruit, luckyFruit], // Row 1 guaranteed win
-                        [FRUIT_SYMBOLS[3], FRUIT_SYMBOLS[4], FRUIT_SYMBOLS[5]]
-                    ];
-                } else {
-                    // Ensure random layout without accidental automatic full row/diag matches unless desired
-                    for (let r = 0; r < 3; r++) {
-                        let row = [];
-                        for (let c = 0; c < 3; c++) {
-                            row.push(FRUIT_SYMBOLS[Math.floor(Math.random()*FRUIT_SYMBOLS.length)]);
-                        }
-                        matrix.push(row);
-                    }
+            if (isWin) {
+                // Force a winning line (e.g. Row 1 all matching)
+                const winSym = Math.random() < 0.3 ? '💎' : (Math.random() < 0.6 ? '🥭' : SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)]);
+                const winRow = Math.floor(Math.random() * 3);
+                for (let c = 0; c < 3; c++) {
+                    matrixState[winRow][c] = winSym;
+                    document.getElementById(`cell-${winRow}-${c}`).textContent = winSym;
                 }
-
-                // Render final matrix
+            } else {
+                // Random final state ensuring no easy 3-in-a-row unless lucky
                 for (let r = 0; r < 3; r++) {
                     for (let c = 0; c < 3; c++) {
-                        let cell = document.getElementById(`r${r}c${c}`);
-                        if (cell) cell.innerText = matrix[r][c];
+                        const randSym = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+                        matrixState[r][c] = randSym;
+                        document.getElementById(`cell-${r}-${c}`).textContent = randSym;
                     }
                 }
-
-                calculateMatrixWin(matrix);
-                isSpinning = false;
-                btn.disabled = false;
-                btn.classList.remove('opacity-50');
-            }, 1400);
-        }
-
-        function clearPaylineHighlights() {
-            ['line_row_0', 'line_row_1', 'line_row_2', 'line_diag_0', 'line_diag_1'].forEach(id => {
-                let el = document.getElementById(id);
-                if (el) el.classList.add('opacity-0');
-            });
-            for (let r = 0; r < 3; r++) {
-                for (let c = 0; c < 3; c++) {
-                    let box = document.getElementById(`cellBox_r${r}c${c}`);
-                    if (box) box.className = "h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center transition-colors";
-                }
             }
-        }
 
-        function calculateMatrixWin(m) {
-            let winAmt = 0;
-            let matchedLines = 0;
-            let winningLinesList = [];
+            // Evaluate Matrix Wins (Rows and Diagonals)
+            let totalWinAmount = 0;
+            let winningLines = [];
 
-            // Check 3 horizontal rows
+            // Check Rows
             for (let r = 0; r < 3; r++) {
-                if (m[r][0] === m[r][1] && m[r][1] === m[r][2]) {
-                    matchedLines++;
-                    winningLinesList.push({ type: 'row', index: r });
-                    let symbol = m[r][0];
-                    let multiplier = symbol === '💎' ? 5 : (symbol === '🥭' ? 3 : 2);
-                    winAmt += currentBet * multiplier;
+                if (matrixState[r][0] === matrixState[r][1] && matrixState[r][1] === matrixState[r][2]) {
+                    let sym = matrixState[r][0];
+                    let mult = (sym === '💎') ? 5 : (sym === '🥭' ? 3 : 2);
+                    totalWinAmount += currentBet * mult;
+                    winningLines.push({ type: 'row', index: r, multiplier: mult, symbol: sym });
                 }
             }
 
-            // Check Diagonal Top-Left to Bottom-Right (diag_0)
-            if (m[0][0] === m[1][1] && m[1][1] === m[2][2]) {
-                matchedLines++;
-                winningLinesList.push({ type: 'diag', index: 0 });
-                let symbol = m[1][1];
-                let multiplier = symbol === '💎' ? 5 : (symbol === '🥭' ? 3 : 2);
-                winAmt += currentBet * multiplier;
+            // Check Diagonals
+            if (matrixState[0][0] === matrixState[1][1] && matrixState[1][1] === matrixState[2][2]) {
+                let sym = matrixState[1][1];
+                let mult = (sym === '💎') ? 5 : (sym === '🥭' ? 3 : 2);
+                totalWinAmount += currentBet * mult;
+                winningLines.push({ type: 'diag1', multiplier: mult, symbol: sym });
+            }
+            if (matrixState[0][2] === matrixState[1][1] && matrixState[1][1] === matrixState[2][0]) {
+                let sym = matrixState[1][1];
+                let mult = (sym === '💎') ? 5 : (sym === '🥭' ? 3 : 2);
+                totalWinAmount += currentBet * mult;
+                winningLines.push({ type: 'diag2', multiplier: mult, symbol: sym });
             }
 
-            // Check Diagonal Top-Right to Bottom-Left (diag_1)
-            if (m[0][2] === m[1][1] && m[1][1] === m[2][0]) {
-                matchedLines++;
-                winningLinesList.push({ type: 'diag', index: 1 });
-                let symbol = m[1][1];
-                let multiplier = symbol === '💎' ? 5 : (symbol === '🥭' ? 3 : 2);
-                winAmt += currentBet * multiplier;
-            }
-
-            const resultBox = document.getElementById('spinResultBox');
-            if (matchedLines > 0) {
-                // Highlight winning paylines visually
-                winningLinesList.forEach(wl => {
-                    if (wl.type === 'row') {
-                        let lineEl = document.getElementById(`line_row_${wl.index}`);
-                        if (lineEl) lineEl.classList.remove('opacity-0');
-                        for (let c = 0; c < 3; c++) {
-                            let box = document.getElementById(`cellBox_r${wl.index}c${c}`);
-                            if (box) box.className = "h-20 overflow-hidden rounded-xl bg-emerald-950/80 border-2 border-emerald-400 relative flex items-center justify-center transition-colors shadow-[0_0_15px_rgba(16,185,129,0.5)]";
-                        }
-                    } else if (wl.type === 'diag') {
-                        let lineEl = document.getElementById(`line_diag_${wl.index}`);
-                        if (lineEl) lineEl.classList.remove('opacity-0');
-                        if (wl.index === 0) {
-                            for (let i = 0; i < 3; i++) {
-                                let box = document.getElementById(`cellBox_r${i}c${i}`);
-                                if (box) box.className = "h-20 overflow-hidden rounded-xl bg-purple-950/80 border-2 border-purple-400 relative flex items-center justify-center transition-colors shadow-[0_0_15px_rgba(139,92,246,0.5)]";
-                            }
-                        } else {
-                            for (let i = 0; i < 3; i++) {
-                                let box = document.getElementById(`cellBox_r${i}c${2-i}`);
-                                if (box) box.className = "h-20 overflow-hidden rounded-xl bg-amber-950/80 border-2 border-amber-400 relative flex items-center justify-center transition-colors shadow-[0_0_15px_rgba(245,158,11,0.5)]";
-                            }
-                        }
-                    }
-                });
-
-                userData.balance += winAmt;
-                saveUserData();
-                updateUI();
+            if (totalWinAmount > 0) {
+                currentUser.balance += totalWinAmount;
                 playSound('win');
-                resultBox.innerHTML = `<span class="text-emerald-400 font-extrabold text-base glow-text-gold">🎉 PAYLINE WIN! ${matchedLines} Line(s)! +${winAmt.toFixed(2)} ETB!</span>`;
-                logHistory(`3x3 Matrix Win: +${winAmt.toFixed(2)} ETB (${matchedLines} lines)`, 'win');
+                document.getElementById('spinResultBox').innerHTML = `<span class="text-emerald-400 font-extrabold text-base">🎉 WON ${totalWinAmount.toFixed(2)} ETB!</span>`;
+                logActivity(`Slot Win`, `Won ${totalWinAmount.toFixed(2)} ETB on 3x3 Matrix`, totalWinAmount);
+                drawWinningLines(winningLines);
             } else {
-                resultBox.innerHTML = `<span class="text-slate-400 font-bold">❌ No winning paylines. Try again!</span>`;
-                logHistory(`3x3 Matrix Spin: -${currentBet.toFixed(2)} ETB`, 'loss');
+                document.getElementById('spinResultBox').innerHTML = `<span class="text-slate-400 font-bold">No match. Try again!</span>`;
+                logActivity(`Slot Spin`, `Bet ${currentBet.toFixed(2)} ETB (No win)`, -currentBet);
+            }
+
+            document.getElementById('spinBtn').disabled = false;
+            updateUI();
+        }
+
+        function drawWinningLines(lines) {
+            const svg = document.getElementById('paylineSvg');
+            svg.innerHTML = '';
+            lines.forEach(line => {
+                const lineEl = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                lineEl.setAttribute('stroke', '#10b981');
+                lineEl.setAttribute('stroke-width', '4');
+                lineEl.setAttribute('stroke-linecap', 'round');
+                
+                if (line.type === 'row') {
+                    let yPos = (line.index * 33.33) + 16.66;
+                    lineEl.setAttribute('x1', '5%');
+                    lineEl.setAttribute('y1', `${yPos}%`);
+                    lineEl.setAttribute('x2', '95%');
+                    lineEl.setAttribute('y2', `${yPos}%`);
+                } else if (line.type === 'diag1') {
+                    lineEl.setAttribute('x1', '10%');
+                    lineEl.setAttribute('y1', '10%');
+                    lineEl.setAttribute('x2', '90%');
+                    lineEl.setAttribute('y2', '90%');
+                } else if (line.type === 'diag2') {
+                    lineEl.setAttribute('x1', '90%');
+                    lineEl.setAttribute('y1', '10%');
+                    lineEl.setAttribute('x2', '10%');
+                    lineEl.setAttribute('y2', '90%');
+                }
+                svg.appendChild(lineEl);
+            });
+        }
+
+        function clearPaylines() {
+            document.getElementById('paylineSvg').innerHTML = '';
+        }
+
+        // --- FRUIT DROP MINIGAME LOGIC ---
+        function initDropCanvas() {
+            const canvas = document.getElementById('dropCanvas');
+            if (!canvas) return;
+            dropCanvasCtx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+            drawDropScene();
+        }
+
+        function drawDropScene() {
+            if (!dropCanvasCtx) return;
+            const canvas = dropCanvasCtx.canvas;
+            dropCanvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw catcher basket at bottom
+            dropCanvasCtx.fillStyle = '#f59e0b';
+            dropCanvasCtx.fillRect(currentDropX - 35, canvas.height - 30, 70, 16);
+
+            // Draw falling fruit if active
+            if (isDropping) {
+                dropCanvasCtx.font = '32px sans-serif';
+                dropCanvasCtx.fillText(fallingFruitSymbol, currentDropX - 16, fallingFruitY);
             }
         }
 
-        // --- Tab 2: Fruit Drop Physics Minigame ---
-        let dropCtx, dropCanvas;
-        let fruitDrops = [];
-        let basketX = 150;
-
-        function initDropCanvas() {
-            dropCanvas = document.getElementById('dropCanvas');
-            if (!dropCanvas) return;
-            dropCtx = dropCanvas.getContext('2d');
-            dropCanvas.width = 320;
-            dropCanvas.height = 380;
-            basketX = dropCanvas.width / 2;
-
-            dropCanvas.addEventListener('mousemove', (e) => {
-                let rect = dropCanvas.getBoundingClientRect();
-                basketX = e.clientX - rect.left;
-            });
-            dropCanvas.addEventListener('touchmove', (e) => {
-                let rect = dropCanvas.getBoundingClientRect();
-                if (e.touches.length > 0) {
-                    basketX = e.touches[0].clientX - rect.left;
-                }
-            });
-
-            requestAnimationFrame(updateDropGame);
-        }
-
-        function dropFruitFromTop(e) {
-            if (userData.balance < 5.00) {
-                alert("Need at least 5.00 ETB to play Fruit Drop!");
+        function dropFruitFromTop(event) {
+            if (isDropping) return;
+            if (currentUser.balance < 5.00) {
+                alert("Insufficient balance for Fruit Drop! Minimum 5 ETB required.");
                 openModal('depositModal');
                 return;
             }
 
-            userData.balance -= 5.00;
-            saveUserData();
+            currentUser.balance -= 5.00;
             updateUI();
             playSound('drop');
 
-            // Reduce reward multiplier if balance > 3000 ETB
-            let multiplierReduction = userData.balance > 3000 ? 0.4 : 1.0;
+            const canvas = dropCanvasCtx.canvas;
+            const rect = canvas.getBoundingClientRect();
+            currentDropX = event.clientX - rect.left;
+            if (currentDropX < 40) currentDropX = 40;
+            if (currentDropX > canvas.width - 40) currentDropX = canvas.width - 40;
 
-            let randomFruit = FRUIT_SYMBOLS[Math.floor(Math.random() * FRUIT_SYMBOLS.length)];
-            let basePts = randomFruit === '💎' ? 25 : (randomFruit === '🥭' ? 10 : 5);
-            let finalPts = Math.max(2, Math.floor(basePts * multiplierReduction));
+            fallingFruitY = 40;
+            fallingFruitSymbol = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+            isDropping = true;
 
-            fruitDrops.push({
-                x: Math.random() * (dropCanvas.width - 40) + 20,
-                y: 20,
-                symbol: randomFruit,
-                speed: userData.balance > 3000 ? 5.5 : 3.0, // Faster and harder if balance > 3000
-                points: finalPts
-            });
-            logHistory(`Fruit Drop played (-5.00 ETB)`, 'loss');
-        }
+            // Speed multiplier higher if balance > 3000 (harder)
+            let speedMultiplier = currentUser.balance > 3000 ? 12 : 8;
 
-        function updateDropGame() {
-            if (!dropCtx) return;
-            dropCtx.clearRect(0, 0, dropCanvas.width, dropCanvas.height);
+            clearInterval(dropInterval);
+            dropInterval = setInterval(() => {
+                fallingFruitY += speedMultiplier;
+                drawDropScene();
 
-            dropCtx.fillStyle = '#f59e0b';
-            dropCtx.beginPath();
-            dropCtx.roundRect(basketX - 35, dropCanvas.height - 30, 70, 20, 8);
-            dropCtx.fill();
+                if (fallingFruitY >= canvas.height - 35) {
+                    clearInterval(dropInterval);
+                    isDropping = false;
 
-            for (let i = fruitDrops.length - 1; i >= 0; i--) {
-                let f = fruitDrops[i];
-                f.y += f.speed;
+                    // Calculate drop win
+                    let winChance = currentUser.balance > 3000 ? 0.05 : 0.35;
+                    let dropWin = Math.random() < winChance ? (Math.random() < 0.2 ? 25.00 : 10.00) : 0;
 
-                dropCtx.font = '26px sans-serif';
-                dropCtx.fillText(f.symbol, f.x - 12, f.y);
-
-                if (f.y >= dropCanvas.height - 35 && f.x >= basketX - 40 && f.x <= basketX + 40) {
-                    userData.balance += f.points;
-                    document.getElementById('dropScore').innerText = f.points.toFixed(2) + ' ETB';
-                    saveUserData();
+                    if (dropWin > 0) {
+                        currentUser.balance += dropWin;
+                        document.getElementById('dropScore').textContent = dropWin.toFixed(2) + ' ETB';
+                        playSound('win');
+                        logActivity('Fruit Drop Win', `Caught ${fallingFruitSymbol}, won ${dropWin.toFixed(2)} ETB`, dropWin);
+                    } else {
+                        document.getElementById('dropScore').textContent = '0.00 ETB';
+                        logActivity('Fruit Drop', `Dropped ${fallingFruitSymbol} (Missed)`, -5.00);
+                    }
                     updateUI();
-                    playSound('win');
-                    logHistory(`Fruit Drop Caught! +${f.points}.00 ETB`, 'win');
-                    fruitDrops.splice(i, 1);
-                } else if (f.y > dropCanvas.height) {
-                    fruitDrops.splice(i, 1);
                 }
-            }
-
-            requestAnimationFrame(updateDropGame);
+            }, 30);
         }
 
-        // --- Deposit & Withdraw Handling ---
-        function selectDepositMethod(method) {
-            selectedDepositMethod = method;
-            ['Telebirr', 'Sinqee', 'Coop'].forEach(m => {
-                const btn = document.getElementById('depTab' + m);
-                if (btn) btn.className = "dep-method-btn border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold";
-            });
-            const activeBtn = document.getElementById('depTab' + method.charAt(0).toUpperCase() + method.slice(1));
-            if (activeBtn) activeBtn.className = "dep-method-btn border-2 border-sky-500 bg-sky-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
-            updateDepositDetails();
+        // --- DEPOSIT & WITHDRAW MODAL FUNCTIONS ---
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+            if (modalId === 'depositModal') selectDepositMethod('telebirr');
+            if (modalId === 'withdrawModal') selectWithdrawMethod('telebirr');
             playSound('click');
         }
 
-        function updateDepositDetails() {
-            const box = document.getElementById('depositDetailsBox');
-            if (selectedDepositMethod === 'telebirr') {
-                box.innerHTML = `<div class="flex justify-between font-bold text-sky-400"><span>Telebirr Send To:</span><span>0911223344 (Demeke W.)</span></div><div class="text-[11px] text-slate-400">Transfer ETB via Telebirr app, then paste full SMS receipt below. +20% bonus added upon approval!</div>`;
-            } else if (selectedDepositMethod === 'sinqee') {
-                box.innerHTML = `<div class="flex justify-between font-bold text-purple-400"><span>Sinqee Account:</span><span>1000293847561 (Fruit Drop ETB)</span></div><div class="text-[11px] text-slate-400">Transfer via Sinqee Bank and paste confirmation text below.</div>`;
-            } else {
-                box.innerHTML = `<div class="flex justify-between font-bold text-blue-400"><span>Coop Account:</span><span>1002938475102 (Fruit Drop ETB)</span></div><div class="text-[11px] text-slate-400">Transfer via Cooperative Bank of Oromia and paste SMS receipt below.</div>`;
-            }
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+            playSound('click');
         }
 
-        function submitDepositRequest() {
-            let amount = parseFloat(document.getElementById('depositAmountInput').value);
-            let refText = document.getElementById('depositRefInput').value.trim();
+        function selectDepositMethod(method) {
+            activeDepositMethod = method;
+            ['telebirr', 'sinqee', 'coop'].forEach(m => {
+                const btn = document.getElementById('depTab' + m.charAt(0).toUpperCase() + m.slice(1));
+                if (btn) {
+                    btn.className = (m === method) ? 
+                        "dep-method-btn border-2 border-sky-500 bg-sky-500/10 text-white p-2 rounded-xl text-center text-xs font-bold" :
+                        "dep-method-btn border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold";
+                }
+            });
 
-            if (!amount || amount < 50) { alert("Minimum deposit is 50.00 ETB."); return; }
-            if (!refText) { alert("Please paste SMS receipt text."); return; }
-
-            let bonusAmount = amount * 1.20;
-            let tx = {
-                id: 'DEP_' + Date.now().toString().slice(-6),
-                userId: userData.id,
-                username: userData.username,
-                type: 'deposit',
-                amount: amount,
-                creditedAmount: bonusAmount,
-                method: selectedDepositMethod,
-                refText: refText,
-                status: 'pending',
-                date: new Date().toLocaleTimeString()
-            };
-
-            appState.transactions.unshift(tx);
-            saveUserData();
-            closeModal('depositModal');
-            alert(`Deposit submitted successfully! Pending verification by @WDemeke1.`);
-            logHistory(`Deposit requested: ${amount.toFixed(2)} ETB`, 'info');
-            document.getElementById('depositAmountInput').value = '';
-            document.getElementById('depositRefInput').value = '';
+            const box = document.getElementById('depositDetailsBox');
+            if (method === 'telebirr') {
+                box.innerHTML = `<span class="text-sky-400 font-bold block mb-1"><i class="fa-solid fa-mobile-screen-button mr-1"></i> Telebirr Commercial Account</span>
+                <p class="text-slate-300">Send deposit funds to: <strong class="text-amber-400 font-mono">0911223344</strong> (Wondossen Demeke)</p>
+                <p class="text-[10px] text-slate-400 mt-1">Includes instant +20% bonus upon admin approval.</p>`;
+            } else if (method === 'sinqee') {
+                box.innerHTML = `<span class="text-purple-400 font-bold block mb-1"><i class="fa-solid fa-building-columns mr-1"></i> Sinqee Bank Account</span>
+                <p class="text-slate-300">Account: <strong class="text-amber-400 font-mono">1002938485901</strong> (FruitDrop ETB)</p>`;
+            } else {
+                box.innerHTML = `<span class="text-blue-400 font-bold block mb-1"><i class="fa-solid fa-landmark mr-1"></i> Cooperative Bank of Oromia</span>
+                <p class="text-slate-300">Account: <strong class="text-amber-400 font-mono>1000495837261</strong> (Wondossen Demeke)</p>`;
+            }
         }
 
         function selectWithdrawMethod(method) {
-            selectedWithdrawMethod = method;
-            ['Telebirr', 'Sinqee', 'Coop'].forEach(m => {
-                const btn = document.getElementById('withTab' + m);
-                if (btn) btn.className = "with-method-btn border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold";
+            activeWithdrawMethod = method;
+            ['telebirr', 'sinqee', 'coop'].forEach(m => {
+                const btn = document.getElementById('withTab' + m.charAt(0).toUpperCase() + m.slice(1));
+                if (btn) {
+                    btn.className = (m === method) ? 
+                        "with-method-btn border-2 border-sky-500 bg-sky-500/10 text-white p-2 rounded-xl text-center text-xs font-bold" :
+                        "with-method-btn border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold";
+                }
             });
-            const activeBtn = document.getElementById('withTab' + method.charAt(0).toUpperCase() + method.slice(1));
-            if (activeBtn) activeBtn.className = "with-method-btn border-2 border-sky-500 bg-sky-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
-            playSound('click');
+        }
+
+        function submitDepositRequest() {
+            const amount = parseFloat(document.getElementById('depositAmountInput').value);
+            const receiptText = document.getElementById('depositRefInput').value.trim();
+
+            if (!amount || amount < 50) {
+                alert("Please enter a valid deposit amount (Minimum 50 ETB).");
+                return;
+            }
+            if (!receiptText) {
+                alert("Please paste your transaction SMS receipt text for verification.");
+                return;
+            }
+
+            let bonusAmount = amount * 1.20; // 20% bonus
+            const txObj = {
+                id: 'DEP-' + Math.floor(Math.random() * 900000 + 100000),
+                userId: currentUser.id,
+                username: currentUser.username,
+                type: 'Deposit',
+                method: activeDepositMethod,
+                amount: amount,
+                credited: bonusAmount,
+                receipt: receiptText,
+                status: 'Pending',
+                time: new Date().toLocaleTimeString()
+            };
+
+            pendingQueue.push(txObj);
+            saveDB();
+            closeModal('depositModal');
+            alert(`Deposit request submitted successfully! Your +20% bonus (${bonusAmount.toFixed(2)} ETB) will be credited after admin review.`);
+            logActivity('Deposit Request', `Requested ${amount} ETB via ${activeDepositMethod} (+20% bonus pending)`, 0);
         }
 
         function submitWithdrawRequest() {
-            let amount = parseFloat(document.getElementById('withdrawAmountInput').value);
-            let accountInfo = document.getElementById('withdrawAccountInput').value.trim();
+            const amount = parseFloat(document.getElementById('withdrawAmountInput').value);
+            const account = document.getElementById('withdrawAccountInput').value.trim();
 
-            if (!amount || amount < 50) { alert("Minimum cashout is 50.00 ETB."); return; }
-            if (userData.balance < amount) { alert("Insufficient balance!"); return; }
-            if (!accountInfo) { alert("Please enter your account number."); return; }
+            if (!amount || amount < 50) {
+                alert("Minimum withdrawal amount is 50.00 ETB.");
+                return;
+            }
+            if (amount > currentUser.balance) {
+                alert("Withdrawal amount exceeds your current account balance.");
+                return;
+            }
+            if (!account) {
+                alert("Please provide your destination phone or account number.");
+                return;
+            }
 
-            userData.balance -= amount;
-            let tx = {
-                id: 'WDR_' + Date.now().toString().slice(-6),
-                userId: userData.id,
-                username: userData.username,
-                type: 'withdraw',
+            currentUser.balance -= amount;
+            updateUI();
+
+            const txObj = {
+                id: 'WTH-' + Math.floor(Math.random() * 900000 + 100000),
+                userId: currentUser.id,
+                username: currentUser.username,
+                type: 'Cashout',
+                method: activeWithdrawMethod,
                 amount: amount,
-                method: selectedWithdrawMethod,
-                account: accountInfo,
-                status: 'pending',
-                date: new Date().toLocaleTimeString()
+                account: account,
+                status: 'Pending',
+                time: new Date().toLocaleTimeString()
             };
 
-            appState.transactions.unshift(tx);
-            saveUserData();
-            updateUI();
+            pendingQueue.push(txObj);
+            saveDB();
             closeModal('withdrawModal');
-            alert(`Cashout of ${amount.toFixed(2)} ETB submitted for approval from @WDemeke1.`);
-            logHistory(`Cashout requested: ${amount.toFixed(2)} ETB`, 'info');
-            document.getElementById('withdrawAmountInput').value = '';
+            alert(`Cashout request of ${amount.toFixed(2)} ETB submitted! Pending admin payout.`);
+            logActivity('Cashout Request', `Requested withdrawal of ${amount.toFixed(2)} ETB to ${account}`, -amount);
         }
 
-        // --- Referral & Logs ---
-        function updateUserPhone() {
-            userData.phone = document.getElementById('dashPhoneInput').value;
-            saveUserData();
-            logHistory('Phone updated.', 'info');
-        }
-
+        // --- REFERRAL & PROFILE ---
         function copyReferralLink() {
             const input = document.getElementById('referralLinkInput');
             input.select();
             navigator.clipboard.writeText(input.value);
-            alert("Referral link copied!");
+            alert("Referral link copied to clipboard!");
             playSound('click');
         }
 
         function shareReferralTelegram() {
-            let text = encodeURIComponent("Play Fruit Drop & Spin ETB on Telegram and win real Birr!");
-            window.open(`https://t.me/share/url?url=${encodeURIComponent(document.getElementById('referralLinkInput').value)}&text=${text}`, '_blank');
+            const text = encodeURIComponent("Play Fruit Drop & Spin ETB on Telegram and win Ethiopian Birr! Use my link:");
+            const url = encodeURIComponent(document.getElementById('referralLinkInput').value);
+            window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
         }
 
         function simulateMockReferral() {
-            userData.refCount += 1;
-            userData.refEarnings += 10.00;
-            userData.balance += 10.00;
-            saveUserData();
+            currentUser.refCount += 1;
+            currentUser.refEarnings += 10.00;
+            currentUser.balance += 10.00;
             updateUI();
-            playSound('win');
-            alert("Mock Referral successful! +10.00 ETB added.");
-            logHistory(`Referral bonus earned: +10.00 ETB`, 'win');
+            alert("Test referral simulated! +10.00 ETB added to your balance.");
+            logActivity('Referral Bonus', `Friend signup reward (+10.00 ETB)`, 10.00);
         }
 
-        function logHistory(text, type) {
-            appState.history.unshift({ text, type, date: new Date().toLocaleTimeString() });
-            if (appState.history.length > 50) appState.history.pop();
-            syncGlobalState();
-            renderHistoryList();
+        function updateUserPhone() {
+            currentUser.phone = document.getElementById('dashPhoneInput').value.trim();
+            saveDB();
+        }
+
+        function logActivity(title, desc, amount) {
+            currentUser.history.unshift({
+                title: title,
+                desc: desc,
+                amount: amount,
+                time: new Date().toLocaleTimeString()
+            });
+            if (currentUser.history.length > 30) currentUser.history.pop();
+            saveDB();
         }
 
         function renderHistoryList() {
             const list = document.getElementById('historyList');
             if (!list) return;
-            if (appState.history.length === 0) {
-                list.innerHTML = `<div class="text-center text-xs text-slate-500 py-4">No activity yet.</div>`;
+            if (currentUser.history.length === 0) {
+                list.innerHTML = `<div class="text-center text-xs text-slate-500 py-4">No recent activity logs found.</div>`;
                 return;
             }
-            let html = '';
-            appState.history.forEach(h => {
-                let color = h.type === 'win' ? 'text-emerald-400 font-bold' : (h.type === 'loss' ? 'text-rose-400' : 'text-slate-300');
-                html += `<div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center text-xs"><span class="${color}">${h.text}</span><span class="text-[10px] text-slate-500">${h.date}</span></div>`;
-            });
-            list.innerHTML = html;
+
+            list.innerHTML = currentUser.history.map(item => `
+                <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
+                    <div>
+                        <span class="font-bold text-white block">${item.title}</span>
+                        <span class="text-[10px] text-slate-400 block">${item.desc}</span>
+                        <span class="text-[9px] text-slate-500">${item.time}</span>
+                    </div>
+                    <span class="font-extrabold ${item.amount > 0 ? 'text-emerald-400' : (item.amount < 0 ? 'text-rose-400' : 'text-slate-400')}">
+                        ${item.amount > 0 ? '+' : ''}${item.amount !== 0 ? item.amount.toFixed(2) + ' ETB' : ''}
+                    </span>
+                </div>
+            `).join('');
         }
 
         function clearUserStorage() {
-            if (confirm("Reset local progress?")) { localStorage.clear(); location.reload(); }
+            if (confirm("Reset all game history and progress?")) {
+                currentUser.balance = 100.00;
+                currentUser.history = [];
+                currentUser.refCount = 0;
+                currentUser.refEarnings = 0;
+                updateUI();
+            }
         }
 
-        // --- STRICT REQUIREMENT 1: Exclusive Super Admin Panel (@WDemeke1) ---
-        function renderAdminPanel() {
-            if (userData.username.toLowerCase() !== 'wdemeke1') return;
+        // --- SUPER ADMIN DASHBOARD LOGIC (@WDemeke1) ---
+        function renderAdminDashboard() {
+            if (currentUser.username.toLowerCase() !== 'wdemeke1') return;
 
-            document.getElementById('admTotalUsers').innerText = appState.users.length || 1;
-            let totalDep = 0, totalWith = 0, pendingCount = 0;
+            let totalUsers = Object.keys(usersDB).length;
+            let totalDeposits = 0;
+            let totalCashouts = 0;
 
-            appState.transactions.forEach(t => {
-                if (t.status === 'approved') {
-                    if (t.type === 'deposit') totalDep += (t.creditedAmount || t.amount);
-                    if (t.type === 'withdraw') totalWith += t.amount;
-                }
-                if (t.status === 'pending') pendingCount++;
+            Object.values(usersDB).forEach(u => {
+                u.history.forEach(h => {
+                    if (h.title === 'Deposit Request') totalDeposits += Math.abs(h.amount);
+                    if (h.title === 'Cashout Request') totalCashouts += Math.abs(h.amount);
+                });
             });
 
-            document.getElementById('admTotalDeposits').innerText = totalDep.toFixed(2) + ' ETB';
-            document.getElementById('admTotalCashouts').innerText = totalWith.toFixed(2) + ' ETB';
-            document.getElementById('admPendingCount').innerText = pendingCount;
+            document.getElementById('admTotalUsers').textContent = totalUsers;
+            document.getElementById('admTotalDeposits').textContent = totalDeposits.toFixed(2) + ' ETB';
+            document.getElementById('admTotalCashouts').textContent = totalCashouts.toFixed(2) + ' ETB';
+            document.getElementById('admPendingCount').textContent = pendingQueue.length;
 
-            let queueHtml = '';
-            let pendingTxs = appState.transactions.filter(t => t.status === 'pending');
-            if (pendingTxs.length === 0) {
-                queueHtml = `<div class="text-center text-xs text-slate-500 py-3 bg-slate-950 rounded-xl">No pending requests.</div>`;
+            // Render Pending Queue
+            const queueEl = document.getElementById('adminPendingQueue');
+            if (pendingQueue.length === 0) {
+                queueEl.innerHTML = `<div class="text-center text-xs text-slate-500 py-3 bg-slate-950 rounded-xl">No pending deposits or withdrawals.</div>`;
             } else {
-                pendingTxs.forEach(tx => {
-                    queueHtml += `
-                        <div class="bg-slate-950 p-3 rounded-xl border border-purple-500/30 text-xs space-y-2">
-                            <div class="flex justify-between font-bold"><span class="text-purple-300">@${tx.username} (${tx.type.toUpperCase()})</span><span class="text-amber-400">${tx.amount.toFixed(2)} ETB</span></div>
-                            ${tx.refText ? `<div class="text-[10px] text-slate-400 font-mono bg-slate-900 p-1.5 rounded">SMS: ${tx.refText}</div>` : ''}
-                            ${tx.account ? `<div class="text-[10px] text-sky-400">Account: ${tx.account}</div>` : ''}
-                            <div class="flex gap-2 pt-1">
-                                <button onclick="adminApproveTx('${tx.id}')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg text-[11px]">Approve</button>
-                                <button onclick="adminRejectTx('${tx.id}')" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-bold py-1.5 rounded-lg text-[11px]">Reject</button>
-                            </div>
+                queueEl.innerHTML = pendingQueue.map((item, idx) => `
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-amber-400">${item.type} (${item.method})</span>
+                            <span class="text-slate-400">${item.time}</span>
                         </div>
-                    `;
+                        <div class="text-slate-300">
+                            User: <strong class="text-white">@${item.username}</strong> (${item.userId})<br>
+                            Amount: <strong class="text-emerald-400">${item.amount} ETB</strong> ${item.credited ? `(Credited: ${item.credited} w/ 20% bonus)` : ''}
+                            ${item.receipt ? `<br><span class="text-[10px] text-slate-400 font-mono bg-slate-900 p-1 block mt-1">Receipt: ${item.receipt}</span>` : ''}
+                            ${item.account ? `<br>Destination: <span class="text-sky-400">${item.account}</span>` : ''}
+                        </div>
+                        <div class="flex gap-2 pt-1">
+                            <button onclick="approveTransaction(${idx})" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg text-xs">Approve & Credit</button>
+                            <button onclick="rejectTransaction(${idx})" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-1.5 rounded-lg text-xs">Reject</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            renderAdminUserManagement('');
+        }
+
+        function approveTransaction(idx) {
+            const tx = pendingQueue[idx];
+            if (!usersDB[tx.userId]) usersDB[tx.userId] = { balance: 100.00, history: [] };
+
+            if (tx.type === 'Deposit') {
+                let credit = tx.credited || (tx.amount * 1.20);
+                usersDB[tx.userId].balance += credit;
+                usersDB[tx.userId].history.unshift({
+                    title: 'Deposit Approved',
+                    desc: `Approved ${tx.amount} ETB deposit + 20% bonus`,
+                    amount: credit,
+                    time: new Date().toLocaleTimeString()
+                });
+            } else if (tx.type === 'Cashout') {
+                usersDB[tx.userId].history.unshift({
+                    title: 'Cashout Approved',
+                    desc: `Payout of ${tx.amount} ETB processed successfully`,
+                    amount: 0,
+                    time: new Date().toLocaleTimeString()
                 });
             }
-            document.getElementById('adminPendingQueue').innerHTML = queueHtml;
-            renderAdminUserList(appState.users);
+
+            pendingQueue.splice(idx, 1);
+            saveDB();
+            renderAdminDashboard();
+            if (currentUser.id === tx.userId) currentUser = usersDB[currentUser.id];
+            updateUI();
+            alert("Transaction approved successfully!");
         }
 
-        function adminApproveTx(txId) {
-            let tx = appState.transactions.find(t => t.id === txId);
-            if (!tx) return;
-            tx.status = 'approved';
-            let targetUser = appState.users.find(u => u.id === tx.userId);
-            if (targetUser) {
-                if (tx.type === 'deposit') targetUser.balance += (tx.creditedAmount || tx.amount);
-                localStorage.setItem('fruit_drop_user_' + targetUser.id, JSON.stringify(targetUser));
+        function rejectTransaction(idx) {
+            const tx = pendingQueue[idx];
+            if (tx.type === 'Cashout' && usersDB[tx.userId]) {
+                usersDB[tx.userId].balance += tx.amount; // Refund
             }
-            syncGlobalState();
-            renderAdminPanel();
-            updateUI();
-            alert("Transaction approved.");
-            playSound('win');
-        }
-
-        function adminRejectTx(txId) {
-            let tx = appState.transactions.find(t => t.id === txId);
-            if (!tx) return;
-            tx.status = 'rejected';
-            if (tx.type === 'withdraw') {
-                let targetUser = appState.users.find(u => u.id === tx.userId);
-                if (targetUser) {
-                    targetUser.balance += tx.amount;
-                    localStorage.setItem('fruit_drop_user_' + targetUser.id, JSON.stringify(targetUser));
-                }
-            }
-            syncGlobalState();
-            renderAdminPanel();
-            updateUI();
+            pendingQueue.splice(idx, 1);
+            saveDB();
+            renderAdminDashboard();
             alert("Transaction rejected.");
-            playSound('click');
         }
 
-        function renderAdminUserList(users) {
-            const list = document.getElementById('adminUserList');
-            if (!list) return;
-            let html = '';
-            users.forEach(u => {
-                html += `
-                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
-                        <div>
-                            <div class="font-bold text-white">@${u.username} <span class="text-[10px] text-slate-500">(ID: ${u.id})</span></div>
-                            <div class="text-[10px] text-amber-400">Balance: ${u.balance.toFixed(2)} ETB ${u.balance > 3000 ? '<span class="text-rose-400 font-bold">(Rigged Odds Active)</span>' : ''}</div>
-                        </div>
-                        <button onclick="adminBonusUser('${u.id}')" class="bg-purple-600/30 border border-purple-500 text-purple-300 px-2.5 py-1 rounded-lg text-[10px] font-bold">Add Bonus</button>
+        function renderAdminUserManagement(filterQuery) {
+            const listEl = document.getElementById('adminUserList');
+            const users = Object.entries(usersDB);
+            
+            const filtered = users.filter(([id, u]) => 
+                u.username.toLowerCase().includes(filterQuery.toLowerCase()) || id.includes(filterQuery)
+            );
+
+            listEl.innerHTML = filtered.map(([id, u]) => `
+                <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
+                    <div>
+                        <span class="font-bold text-white">@${u.username}</span> <span class="text-[10px] text-slate-500">(${id})</span>
+                        <div class="text-[10px] text-amber-400 font-bold">Balance: ${u.balance.toFixed(2)} ETB</div>
                     </div>
-                `;
-            });
-            list.innerHTML = html;
-        }
-
-        function adminBonusUser(userId) {
-            let amtStr = prompt("Enter bonus ETB amount:");
-            let amt = parseFloat(amtStr);
-            if (amt && amt > 0) {
-                let targetUser = appState.users.find(u => u.id === userId);
-                if (targetUser) {
-                    targetUser.balance += amt;
-                    localStorage.setItem('fruit_drop_user_' + targetUser.id, JSON.stringify(targetUser));
-                    syncGlobalState();
-                    renderAdminPanel();
-                    updateUI();
-                    alert(`Credited ${amt.toFixed(2)} ETB to @${targetUser.username}`);
-                }
-            }
+                    <div class="flex items-center gap-1">
+                        <button onclick="adminAdjustBalance('${id}', 50)" class="px-2 py-1 bg-emerald-500/20 text-emerald-300 rounded font-bold text-[10px]">+50</button>
+                        <button onclick="adminAdjustBalance('${id}', -50)" class="px-2 py-1 bg-rose-500/20 text-rose-300 rounded font-bold text-[10px]">-50</button>
+                    </div>
+                </div>
+            `).join('');
         }
 
         function filterAdminUsers() {
-            let query = document.getElementById('adminSearchInput').value.toLowerCase();
-            let filtered = appState.users.filter(u => u.username.toLowerCase().includes(query) || u.id.includes(query));
-            renderAdminUserList(filtered);
+            const query = document.getElementById('adminSearchInput').value;
+            renderAdminUserManagement(query);
         }
+
+        function adminAdjustBalance(userId, amount) {
+            if (usersDB[userId]) {
+                usersDB[userId].balance += amount;
+                if (usersDB[userId].balance < 0) usersDB[userId].balance = 0;
+                usersDB[userId].history.unshift({
+                    title: 'Admin Adjustment',
+                    desc: `Admin adjusted balance by ${amount} ETB`,
+                    amount: amount,
+                    time: new Date().toLocaleTimeString()
+                });
+                saveDB();
+                renderAdminDashboard();
+                if (currentUser.id === userId) {
+                    currentUser = usersDB[userId];
+                    updateUI();
+                }
+                alert(`User balance adjusted by ${amount} ETB.`);
+            }
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            initTelegramUser();
+        });
     </script>
 </body>
 </html>
