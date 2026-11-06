@@ -161,48 +161,62 @@
                 
                 <!-- Payout Rates Header -->
                 <div class="flex justify-between items-center bg-slate-950/80 rounded-xl p-2 mb-3 border border-slate-800 text-[11px] text-slate-300 font-semibold">
-                    <span class="text-amber-400"><i class="fa-solid fa-gem mr-1"></i>3x 💎 Opal = 50x</span>
-                    <span class="text-rose-400">3x 🥭 Mango = 15x</span>
-                    <span class="text-emerald-400">Line Match = 5x</span>
+                    <span class="text-amber-400"><i class="fa-solid fa-gem mr-1"></i>3x 💎 Opal = 5x</span>
+                    <span class="text-rose-400">3x 🥭 Mango = 3x</span>
+                    <span class="text-emerald-400">Line Match = 2x</span>
                 </div>
 
-                <!-- 3x3 SLOT MATRIX GRID -->
-                <div class="grid grid-cols-3 gap-2 reel-box p-3 rounded-2xl border border-slate-700 relative overflow-hidden">
-                    <!-- Payline Indicator Lines -->
-                    <div class="absolute inset-x-0 top-1/4 h-0.5 bg-amber-400/30 pointer-events-none"></div>
-                    <div class="absolute inset-x-0 top-1/2 h-0.5 bg-amber-400/60 pointer-events-none"></div>
-                    <div class="absolute inset-x-0 top-3/4 h-0.5 bg-amber-400/30 pointer-events-none"></div>
+                <!-- 3x3 SLOT MATRIX GRID WITH SVG PAYLINE OVERLAY -->
+                <div class="relative grid grid-cols-3 gap-2 reel-box p-3 rounded-2xl border border-slate-700 overflow-hidden">
+                    <!-- SVG Payline Overlay -->
+                    <svg id="paylineSvg" class="absolute inset-0 w-full h-full pointer-events-none z-20 overflow-visible">
+                        <!-- Row 1 Payline -->
+                        <line id="line_row_0" x1="10%" y1="16%" x2="90%" y2="16%" stroke="#10b981" stroke-width="4" stroke-linecap="round" class="opacity-0 transition-opacity duration-300 drop-shadow-[0_0_8px_#10b981]" />
+                        <!-- Row 2 Payline -->
+                        <line id="line_row_1" x1="10%" y1="50%" x2="90%" y2="50%" stroke="#f59e0b" stroke-width="4" stroke-linecap="round" class="opacity-0 transition-opacity duration-300 drop-shadow-[0_0_8px_#f59e0b]" />
+                        <!-- Row 3 Payline -->
+                        <line id="line_row_2" x1="10%" y1="84%" x2="90%" y2="84%" stroke="#10b981" stroke-width="4" stroke-linecap="round" class="opacity-0 transition-opacity duration-300 drop-shadow-[0_0_8px_#10b981]" />
+                        <!-- Diagonal Top-Left to Bottom-Right -->
+                        <line id="line_diag_0" x1="15%" y1="15%" x2="85%" y2="85%" stroke="#ef4444" stroke-width="4" stroke-linecap="round" class="opacity-0 transition-opacity duration-300 drop-shadow-[0_0_8px_#ef4444]" />
+                        <!-- Diagonal Top-Right to Bottom-Left -->
+                        <line id="line_diag_1" x1="85%" y1="15%" x2="15%" y2="85%" stroke="#8b5cf6" stroke-width="4" stroke-linecap="round" class="opacity-0 transition-opacity duration-300 drop-shadow-[0_0_8px_#8b5cf6]" />
+                    </svg>
+
+                    <!-- Payline Indicator Guide Lines -->
+                    <div class="absolute inset-x-0 top-1/4 h-0.5 bg-amber-400/20 pointer-events-none"></div>
+                    <div class="absolute inset-x-0 top-1/2 h-0.5 bg-amber-400/30 pointer-events-none"></div>
+                    <div class="absolute inset-x-0 top-3/4 h-0.5 bg-amber-400/20 pointer-events-none"></div>
 
                     <!-- Row 1, Col 1-3 -->
-                    <div class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center">
+                    <div id="cellBox_r0c0" class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center transition-colors">
                         <div id="r0c0" class="text-4xl">🍎</div>
                     </div>
-                    <div class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center">
+                    <div id="cellBox_r0c1" class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center transition-colors">
                         <div id="r0c1" class="text-4xl">🥭</div>
                     </div>
-                    <div class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center">
+                    <div id="cellBox_r0c2" class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center transition-colors">
                         <div id="r0c2" class="text-4xl">🥑</div>
                     </div>
 
                     <!-- Row 2, Col 1-3 (Main Payline) -->
-                    <div class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center">
+                    <div id="cellBox_r1c0" class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center transition-colors">
                         <div id="r1c0" class="text-4xl">🍌</div>
                     </div>
-                    <div class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center">
+                    <div id="cellBox_r1c1" class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center transition-colors">
                         <div id="r1c1" class="text-4xl">💎</div>
                     </div>
-                    <div class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center">
+                    <div id="cellBox_r1c2" class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center transition-colors">
                         <div id="r1c2" class="text-4xl">🍇</div>
                     </div>
 
                     <!-- Row 3, Col 1-3 -->
-                    <div class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center">
+                    <div id="cellBox_r2c0" class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center transition-colors">
                         <div id="r2c0" class="text-4xl">🍎</div>
                     </div>
-                    <div class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center">
+                    <div id="cellBox_r2c1" class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center transition-colors">
                         <div id="r2c1" class="text-4xl">🥑</div>
                     </div>
-                    <div class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center">
+                    <div id="cellBox_r2c2" class="h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center transition-colors">
                         <div id="r2c2" class="text-4xl">🥭</div>
                     </div>
                 </div>
@@ -787,6 +801,9 @@
                 return;
             }
 
+            // Clear previous winning highlights
+            clearPaylineHighlights();
+
             userData.balance -= currentBet;
             saveUserData();
             updateUI();
@@ -812,22 +829,20 @@
             setTimeout(() => {
                 clearInterval(interval);
 
-                // STRICT REQUIREMENT 2: Rigged Probability for High Balances (>3000 ETB)
-                let matrix = [];
-                let winChance = userData.balance > 3000 ? 0.08 : 0.32; // Significantly reduced win probability for >3000 birr
-
+                // STRICT WIN CHANCE: Decreased win probabilities across all users, especially very rare for >3000 ETB balances
+                let winChance = userData.balance > 3000 ? 0.03 : 0.18; // Very low 3% chance if >3000 birr, 18% standard
                 let forceWin = Math.random() < winChance;
 
+                let matrix = [];
                 if (forceWin) {
                     let luckyFruit = FRUIT_SYMBOLS[Math.floor(Math.random()*FRUIT_SYMBOLS.length)];
-                    // Make middle row match
                     matrix = [
                         [FRUIT_SYMBOLS[0], FRUIT_SYMBOLS[1], FRUIT_SYMBOLS[2]],
-                        [luckyFruit, luckyFruit, luckyFruit],
+                        [luckyFruit, luckyFruit, luckyFruit], // Row 1 guaranteed win
                         [FRUIT_SYMBOLS[3], FRUIT_SYMBOLS[4], FRUIT_SYMBOLS[5]]
                     ];
                 } else {
-                    matrix = [];
+                    // Ensure random layout without accidental automatic full row/diag matches unless desired
                     for (let r = 0; r < 3; r++) {
                         let row = [];
                         for (let c = 0; c < 3; c++) {
@@ -852,44 +867,89 @@
             }, 1400);
         }
 
+        function clearPaylineHighlights() {
+            ['line_row_0', 'line_row_1', 'line_row_2', 'line_diag_0', 'line_diag_1'].forEach(id => {
+                let el = document.getElementById(id);
+                if (el) el.classList.add('opacity-0');
+            });
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 3; c++) {
+                    let box = document.getElementById(`cellBox_r${r}c${c}`);
+                    if (box) box.className = "h-20 overflow-hidden rounded-xl bg-slate-900 border border-slate-800 relative flex items-center justify-center transition-colors";
+                }
+            }
+        }
+
         function calculateMatrixWin(m) {
             let winAmt = 0;
             let matchedLines = 0;
+            let winningLinesList = [];
 
             // Check 3 horizontal rows
             for (let r = 0; r < 3; r++) {
                 if (m[r][0] === m[r][1] && m[r][1] === m[r][2]) {
                     matchedLines++;
+                    winningLinesList.push({ type: 'row', index: r });
                     let symbol = m[r][0];
-                    let multiplier = symbol === '💎' ? 50 : (symbol === '🥭' ? 15 : 5);
+                    let multiplier = symbol === '💎' ? 5 : (symbol === '🥭' ? 3 : 2);
                     winAmt += currentBet * multiplier;
                 }
             }
 
-            // Check 2 diagonals
+            // Check Diagonal Top-Left to Bottom-Right (diag_0)
             if (m[0][0] === m[1][1] && m[1][1] === m[2][2]) {
                 matchedLines++;
+                winningLinesList.push({ type: 'diag', index: 0 });
                 let symbol = m[1][1];
-                let multiplier = symbol === '💎' ? 60 : 20;
+                let multiplier = symbol === '💎' ? 5 : (symbol === '🥭' ? 3 : 2);
                 winAmt += currentBet * multiplier;
             }
+
+            // Check Diagonal Top-Right to Bottom-Left (diag_1)
             if (m[0][2] === m[1][1] && m[1][1] === m[2][0]) {
                 matchedLines++;
+                winningLinesList.push({ type: 'diag', index: 1 });
                 let symbol = m[1][1];
-                let multiplier = symbol === '💎' ? 60 : 20;
+                let multiplier = symbol === '💎' ? 5 : (symbol === '🥭' ? 3 : 2);
                 winAmt += currentBet * multiplier;
             }
 
             const resultBox = document.getElementById('spinResultBox');
             if (matchedLines > 0) {
+                // Highlight winning paylines visually
+                winningLinesList.forEach(wl => {
+                    if (wl.type === 'row') {
+                        let lineEl = document.getElementById(`line_row_${wl.index}`);
+                        if (lineEl) lineEl.classList.remove('opacity-0');
+                        for (let c = 0; c < 3; c++) {
+                            let box = document.getElementById(`cellBox_r${wl.index}c${c}`);
+                            if (box) box.className = "h-20 overflow-hidden rounded-xl bg-emerald-950/80 border-2 border-emerald-400 relative flex items-center justify-center transition-colors shadow-[0_0_15px_rgba(16,185,129,0.5)]";
+                        }
+                    } else if (wl.type === 'diag') {
+                        let lineEl = document.getElementById(`line_diag_${wl.index}`);
+                        if (lineEl) lineEl.classList.remove('opacity-0');
+                        if (wl.index === 0) {
+                            for (let i = 0; i < 3; i++) {
+                                let box = document.getElementById(`cellBox_r${i}c${i}`);
+                                if (box) box.className = "h-20 overflow-hidden rounded-xl bg-purple-950/80 border-2 border-purple-400 relative flex items-center justify-center transition-colors shadow-[0_0_15px_rgba(139,92,246,0.5)]";
+                            }
+                        } else {
+                            for (let i = 0; i < 3; i++) {
+                                let box = document.getElementById(`cellBox_r${i}c${2-i}`);
+                                if (box) box.className = "h-20 overflow-hidden rounded-xl bg-amber-950/80 border-2 border-amber-400 relative flex items-center justify-center transition-colors shadow-[0_0_15px_rgba(245,158,11,0.5)]";
+                            }
+                        }
+                    }
+                });
+
                 userData.balance += winAmt;
                 saveUserData();
                 updateUI();
                 playSound('win');
-                resultBox.innerHTML = `<span class="text-emerald-400 font-extrabold text-base glow-text-gold">🎉 MATRIX WIN! ${matchedLines} Line(s)! +${winAmt.toFixed(2)} ETB!</span>`;
-                logHistory(`3x3 Matrix Win: +${winAmt.toFixed(2)} ETB`, 'win');
+                resultBox.innerHTML = `<span class="text-emerald-400 font-extrabold text-base glow-text-gold">🎉 PAYLINE WIN! ${matchedLines} Line(s)! +${winAmt.toFixed(2)} ETB!</span>`;
+                logHistory(`3x3 Matrix Win: +${winAmt.toFixed(2)} ETB (${matchedLines} lines)`, 'win');
             } else {
-                resultBox.innerHTML = `<span class="text-slate-400 font-bold">❌ No matching lines. Try again!</span>`;
+                resultBox.innerHTML = `<span class="text-slate-400 font-bold">❌ No winning paylines. Try again!</span>`;
                 logHistory(`3x3 Matrix Spin: -${currentBet.toFixed(2)} ETB`, 'loss');
             }
         }
