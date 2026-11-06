@@ -943,14 +943,17 @@
             const box = document.getElementById('depositDetailsBox');
             if (method === 'telebirr') {
                 box.innerHTML = `<span class="text-sky-400 font-bold block mb-1"><i class="fa-solid fa-mobile-screen-button mr-1"></i> Telebirr Deposit Account</span>
-                <p class="text-slate-300">Send deposit funds via Telebirr to: <strong class="text-amber-400 font-mono text-sm">+251917393624</strong></p>
+                <p class="text-slate-300">Send deposit funds to Telebirr: <strong class="text-amber-400 font-mono text-sm">+251917393624</strong></p>
+                <p class="text-slate-300 mt-1">Payment Support / Admin: <a href="https://t.me/Kale177" target="_blank" class="text-sky-400 font-bold underline">@Kale177</a></p>
                 <p class="text-[10px] text-slate-400 mt-1">Includes instant +20% bonus upon admin verification.</p>`;
             } else if (method === 'sinqee') {
                 box.innerHTML = `<span class="text-purple-400 font-bold block mb-1"><i class="fa-solid fa-building-columns mr-1"></i> Sinqee Bank Account</span>
-                <p class="text-slate-300">Account: <strong class="text-amber-400 font-mono">1002938485901</strong></p>`;
+                <p class="text-slate-300">Account: <strong class="text-amber-400 font-mono">1002938485901</strong></p>
+                <p class="text-slate-300 mt-1">Payment Support / Admin: <a href="https://t.me/Kale177" target="_blank" class="text-sky-400 font-bold underline">@Kale177</a></p>`;
             } else {
                 box.innerHTML = `<span class="text-blue-400 font-bold block mb-1"><i class="fa-solid fa-landmark mr-1"></i> Cooperative Bank of Oromia</span>
-                <p class="text-slate-300">Account: <strong class="text-amber-400 font-mono">1000495837261</strong></p>`;
+                <p class="text-slate-300">Account: <strong class="text-amber-400 font-mono">1000495837261</strong></p>
+                <p class="text-slate-300 mt-1">Payment Support / Admin: <a href="https://t.me/Kale177" target="_blank" class="text-sky-400 font-bold underline">@Kale177</a></p>`;
             }
         }
 
@@ -967,26 +970,44 @@
         }
 
         function submitDepositRequest() {
-            const amount = parseFloat(document.getElementById('depositAmountInput').value);
+            let inputAmount = parseFloat(document.getElementById('depositAmountInput').value);
             const receiptText = document.getElementById('depositRefInput').value.trim();
 
-            if (!amount || amount < 50) {
-                alert("Please enter a valid deposit amount (Minimum 50 ETB).");
-                return;
-            }
             if (!receiptText) {
                 alert("Please paste your transaction SMS receipt text for verification.");
                 return;
             }
 
-            let bonusAmount = amount * 1.20; // 20% bonus
+            // Auto-parse Telebirr SMS receipt (e.g. amount and transaction ID)
+            const amountMatch = receiptText.match(/transferred\s+ETB\s+([\d,]+\.\d{2})/);
+            const parsedAmount = amountMatch ? parseFloat(amountMatch[1]) : inputAmount;
+
+            const txMatch = receiptText.match(/transaction number is\s+([A-Z0-9]+)/);
+            const transactionId = txMatch ? txMatch[1] : ('DEP-' + Math.floor(Math.random() * 900000 + 100000));
+
+            if (!parsedAmount || parsedAmount < 50) {
+                alert("Please enter or paste a valid deposit amount (Minimum 50 ETB).");
+                return;
+            }
+
+            // Check if transaction ID was already submitted (Duplicate Protection)
+            let isDuplicate = pendingQueue.some(item => item.receiptId === transactionId) || 
+                              Object.values(usersDB).some(u => u.history.some(h => h.desc && h.desc.includes(transactionId)));
+            
+            if (isDuplicate) {
+                alert(`Error: Transaction ID (${transactionId}) has already been submitted or processed!`);
+                return;
+            }
+
+            let bonusAmount = parsedAmount * 1.20; // 20% bonus calculation
             const txObj = {
-                id: 'DEP-' + Math.floor(Math.random() * 900000 + 100000),
+                id: transactionId,
+                receiptId: transactionId,
                 userId: currentUser.id,
                 username: currentUser.username,
                 type: 'Deposit',
                 method: activeDepositMethod,
-                amount: amount,
+                amount: parsedAmount,
                 credited: bonusAmount,
                 receipt: receiptText,
                 status: 'Pending',
@@ -996,8 +1017,8 @@
             pendingQueue.push(txObj);
             saveDB();
             closeModal('depositModal');
-            alert(`Deposit request submitted successfully! Your +20% bonus (${bonusAmount.toFixed(2)} ETB) will be credited after admin review.`);
-            logActivity('Deposit Request', `Requested ${amount} ETB via ${activeDepositMethod} (+20% bonus pending)`, 0);
+            alert(`Deposit receipt (${transactionId}) verified & submitted! Your +20% bonus (${bonusAmount.toFixed(2)} ETB) will be credited after admin review.`);
+            logActivity('Deposit Request', `Requested ${parsedAmount} ETB via ${activeDepositMethod} [Ref: ${transactionId}] (+20% bonus pending)`, 0);
         }
 
         function submitWithdrawRequest() {
@@ -1144,7 +1165,7 @@
                         </div>
                         <div class="text-slate-300">
                             User: <strong class="text-white">@${item.username}</strong> (${item.userId})<br>
-                            Amount: <strong class="text-emerald-400">${item.amount} ETB</strong> ${item.credited ? `(Credited: ${item.credited} w/ 20% bonus)` : ''}
+                            Amount: <strong class="text-emerald-400">${item.amount} ETB</strong> ${item.credited ? `(Credited: ${item.credited.toFixed(2)} w/ 20% bonus)` : ''}
                             ${item.receipt ? `<br><span class="text-[10px] text-slate-400 font-mono bg-slate-900 p-1 block mt-1">Receipt: ${item.receipt}</span>` : ''}
                             ${item.account ? `<br>Destination: <span class="text-sky-400">${item.account}</span>` : ''}
                         </div>
@@ -1168,7 +1189,7 @@
                 usersDB[tx.userId].balance += credit;
                 usersDB[tx.userId].history.unshift({
                     title: 'Deposit Approved',
-                    desc: `Approved ${tx.amount} ETB deposit + 20% bonus`,
+                    desc: `Approved ${tx.amount} ETB deposit [Ref: ${tx.receiptId || tx.id}] + 20% bonus`,
                     amount: credit,
                     time: new Date().toLocaleTimeString()
                 });
