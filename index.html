@@ -943,14 +943,17 @@
             const box = document.getElementById('depositDetailsBox');
             if (method === 'telebirr') {
                 box.innerHTML = `<span class="text-sky-400 font-bold block mb-1"><i class="fa-solid fa-mobile-screen-button mr-1"></i> Telebirr Commercial Account</span>
-                <p class="text-slate-300">Send deposit funds to: <strong class="text-amber-400 font-mono">0911223344</strong> (Wondossen Demeke)</p>
+                <p class="text-slate-300">Send deposit funds to Telebirr: <strong class="text-amber-400 font-mono">+251917393624</strong></p>
+                <p class="text-slate-300 mt-1">Admin Telegram: <a href="https://t.me/WDemeke1" target="_blank" class="text-sky-400 font-bold underline">@WDemeke1</a></p>
                 <p class="text-[10px] text-slate-400 mt-1">Includes instant +20% bonus upon admin approval.</p>`;
             } else if (method === 'sinqee') {
                 box.innerHTML = `<span class="text-purple-400 font-bold block mb-1"><i class="fa-solid fa-building-columns mr-1"></i> Sinqee Bank Account</span>
-                <p class="text-slate-300">Account: <strong class="text-amber-400 font-mono">1002938485901</strong> (FruitDrop ETB)</p>`;
+                <p class="text-slate-300">Account: <strong class="text-amber-400 font-mono">1002938485901</strong></p>
+                <p class="text-slate-300 mt-1">Admin Telegram: <a href="https://t.me/WDemeke1" target="_blank" class="text-sky-400 font-bold underline">@WDemeke1</a></p>`;
             } else {
                 box.innerHTML = `<span class="text-blue-400 font-bold block mb-1"><i class="fa-solid fa-landmark mr-1"></i> Cooperative Bank of Oromia</span>
-                <p class="text-slate-300">Account: <strong class="text-amber-400 font-mono>1000495837261</strong> (Wondossen Demeke)</p>`;
+                <p class="text-slate-300">Account: <strong class="text-amber-400 font-mono">1000495837261</strong></p>
+                <p class="text-slate-300 mt-1">Admin Telegram: <a href="https://t.me/WDemeke1" target="_blank" class="text-sky-400 font-bold underline">@WDemeke1</a></p>`;
             }
         }
 
@@ -996,7 +999,7 @@
             pendingQueue.push(txObj);
             saveDB();
             closeModal('depositModal');
-            alert(`Deposit request submitted successfully! Your +20% bonus (${bonusAmount.toFixed(2)} ETB) will be credited after admin review.`);
+            alert(`Deposit request submitted successfully! Your +20% bonus (${bonusAmount.toFixed(2)} ETB) will be credited after admin review by @WDemeke1.`);
             logActivity('Deposit Request', `Requested ${amount} ETB via ${activeDepositMethod} (+20% bonus pending)`, 0);
         }
 
@@ -1035,7 +1038,7 @@
             pendingQueue.push(txObj);
             saveDB();
             closeModal('withdrawModal');
-            alert(`Cashout request of ${amount.toFixed(2)} ETB submitted! Pending admin payout.`);
+            alert(`Cashout request of ${amount.toFixed(2)} ETB submitted! Pending payout by @WDemeke1.`);
             logActivity('Cashout Request', `Requested withdrawal of ${amount.toFixed(2)} ETB to ${account}`, -amount);
         }
 
