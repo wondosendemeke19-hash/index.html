@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fruit Drop & Spin ETB - Telegram Mini App</title>
+    <title>Spin & Digital Shop ETB - Telegram Mini App</title>
     
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -26,9 +26,7 @@
                         ethGreen: '#10b981',
                         ethYellow: '#f59e0b',
                         ethRed: '#ef4444',
-                        telebirr: '#0088cc',
-                        coopBank: '#0284c7',
-                        sinqee: '#8b5cf6'
+                        telebirr: '#0088cc'
                     },
                     boxShadow: {
                         'neon-gold': '0 0 20px rgba(245, 158, 11, 0.4)',
@@ -73,11 +71,6 @@
             text-shadow: 0 0 12px rgba(245, 158, 11, 0.8), 0 0 24px rgba(245, 158, 11, 0.4);
         }
 
-        #dropCanvas {
-            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
-            border-radius: 1rem;
-        }
-
         ::-webkit-scrollbar {
             width: 4px;
         }
@@ -104,7 +97,7 @@
                 </div>
                 <div>
                     <div class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider flex items-center gap-1">
-                        <span>Ethiopian Gamer</span> 🇪🇹
+                        <span>Ethiopian Store</span> 🇪🇹
                     </div>
                     <div class="text-sm font-bold text-white flex items-center gap-1">
                         <span id="userName">TgUser</span>
@@ -213,28 +206,21 @@
             </div>
         </section>
 
-        <!-- TAB 2: FRUIT DROP MINIGAME -->
-        <section id="dropTab" class="hidden space-y-3">
-            <div class="bg-slate-900/90 rounded-2xl p-3 border border-slate-800 flex justify-between items-center text-xs">
+        <!-- TAB 2: SHOP DATA (BOOKS & DESIGNS) -->
+        <section id="shopTab" class="hidden space-y-4">
+            <div class="flex justify-between items-center bg-slate-900/90 p-3 rounded-2xl border border-slate-800">
                 <div>
-                    <span class="text-slate-400">Drop Cost:</span>
-                    <span class="text-amber-400 font-bold ml-1">5.00 ETB</span>
+                    <h3 class="text-xs font-bold text-white uppercase tracking-wider"><i class="fa-solid fa-shop text-amber-400 mr-1"></i> Digital Assets Store</h3>
+                    <p class="text-[10px] text-slate-400">Preview & buy professional books & designs</p>
                 </div>
-                <div class="text-right">
-                    <span class="text-slate-400">Last Win:</span>
-                    <span id="dropScore" class="text-emerald-400 font-bold ml-1">0.00 ETB</span>
-                </div>
+                <button onclick="openModal('uploadProductModal')" id="uploadProductNavBtn" class="hidden bg-purple-600 hover:bg-purple-500 text-white font-bold px-2.5 py-1.5 rounded-xl text-[10px] flex items-center gap-1">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Add Product
+                </button>
             </div>
 
-            <!-- Canvas Container -->
-            <div class="relative w-full aspect-[4/5] max-h-[380px] rounded-2xl border border-slate-700 overflow-hidden shadow-2xl">
-                <canvas id="dropCanvas" class="w-full h-full block"></canvas>
-                
-                <div id="dropClickArea" onclick="dropFruitFromTop(event)" class="absolute inset-0 cursor-pointer flex flex-col justify-between p-2">
-                    <div class="text-center text-[10px] text-slate-300 bg-slate-950/80 rounded-full py-1 backdrop-blur-xs border border-slate-800 font-semibold">
-                        Tap anywhere at the top to drop Fruit 🥭
-                    </div>
-                </div>
+            <!-- Product Catalog Grid -->
+            <div id="productCatalogList" class="space-y-3 max-h-[420px] overflow-y-auto pr-1">
+                <!-- Dynamically populated products -->
             </div>
         </section>
 
@@ -284,7 +270,7 @@
                 <div class="space-y-1 pt-1">
                     <label class="text-[11px] font-semibold text-slate-400 block">Your Referral Link</label>
                     <div class="flex items-center gap-2">
-                        <input type="text" id="referralLinkInput" readonly value="https://t.me/FruitDropSpinETBBot?start=ref_12345678" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-amber-300 font-mono focus:outline-none">
+                        <input type="text" id="referralLinkInput" readonly value="https://t.me/SpinDigitalShopETBBot?start=ref_12345678" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-amber-300 font-mono focus:outline-none">
                         <button onclick="copyReferralLink()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3 py-2.5 rounded-xl text-xs flex items-center gap-1 shrink-0 transition active:scale-95">
                             <i class="fa-solid fa-copy"></i> Copy
                         </button>
@@ -314,11 +300,11 @@
             </div>
         </section>
 
-        <!-- TAB 4: LIVE ACTIVITY HISTORY -->
+        <!-- TAB 4: LIVE ACTIVITY & PURCHASE HISTORY -->
         <section id="historyTab" class="hidden space-y-3">
             <div class="bg-slate-900/80 rounded-2xl p-3 border border-slate-800">
                 <div class="flex justify-between items-center mb-2">
-                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Transaction & Activity History</h3>
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Purchases & Activity History</h3>
                     <button onclick="clearUserStorage()" class="text-[10px] text-rose-400 hover:underline">Reset Progress</button>
                 </div>
                 <div id="historyList" class="space-y-2 max-h-[360px] overflow-y-auto pr-1">
@@ -357,10 +343,10 @@
                     </div>
                 </div>
 
-                <!-- Pending Transaction Queue -->
+                <!-- Pending Transaction & Purchase Queue -->
                 <div class="space-y-2">
                     <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1">
-                        <i class="fa-solid fa-clock-rotate-left text-amber-400"></i> Pending Approval Queue
+                        <i class="fa-solid fa-clock-rotate-left text-amber-400"></i> Pending Approval Queue (Deposits & Store Orders)
                     </h4>
                     <div id="adminPendingQueue" class="space-y-2 max-h-[220px] overflow-y-auto">
                         <!-- Dynamic Queue Content -->
@@ -388,9 +374,9 @@
                 <i class="fa-solid fa-gamepad text-base mb-0.5"></i>
                 Spin Wheel
             </button>
-            <button onclick="switchTab('drop')" id="navDrop" class="flex flex-col items-center justify-center py-1 text-slate-400 font-semibold text-xs hover:text-slate-200">
-                <i class="fa-solid fa-apple-whole text-base mb-0.5"></i>
-                Fruit Drop
+            <button onclick="switchTab('shop')" id="navShop" class="flex flex-col items-center justify-center py-1 text-slate-400 font-semibold text-xs hover:text-slate-200">
+                <i class="fa-solid fa-book text-base mb-0.5"></i>
+                Shop Data
             </button>
             <button onclick="switchTab('dashboard')" id="navDashboard" class="flex flex-col items-center justify-center py-1 text-slate-400 font-semibold text-xs hover:text-slate-200">
                 <i class="fa-solid fa-user text-base mb-0.5"></i>
@@ -417,7 +403,6 @@
                 <button onclick="closeModal('depositModal')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <!-- 20% Deposit Bonus Banner -->
             <div class="bg-gradient-to-r from-amber-500/20 to-emerald-500/20 border border-amber-500/40 rounded-2xl p-2.5 flex items-center gap-2">
                 <i class="fa-solid fa-gift text-amber-400 text-xl shrink-0"></i>
                 <div class="text-[11px] text-amber-200 font-semibold">
@@ -425,40 +410,20 @@
                 </div>
             </div>
 
-            <!-- Payment Methods -->
-            <div class="space-y-2">
-                <label class="text-xs font-semibold text-slate-400 block">Select Payment Method</label>
-                <div class="grid grid-cols-3 gap-2">
-                    <button onclick="selectDepositMethod('telebirr')" id="depTabTelebirr" class="dep-method-btn border-2 border-sky-500 bg-sky-500/10 text-white p-2 rounded-xl text-center text-xs font-bold">
-                        <div class="text-sky-400 mb-0.5"><i class="fa-solid fa-mobile-screen-button text-base"></i></div>
-                        Telebirr
-                    </button>
-                    <button onclick="selectDepositMethod('sinqee')" id="depTabSinqee" class="dep-method-btn border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold">
-                        <div class="text-purple-400 mb-0.5"><i class="fa-solid fa-building-columns text-base"></i></div>
-                        Sinqee
-                    </button>
-                    <button onclick="selectDepositMethod('coop')" id="depTabCoop" class="dep-method-btn border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold">
-                        <div class="text-blue-400 mb-0.5"><i class="fa-solid fa-landmark text-base"></i></div>
-                        Coop Bank
-                    </button>
-                </div>
+            <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800 space-y-2 text-xs">
+                <span class="text-sky-400 font-bold block mb-1"><i class="fa-solid fa-mobile-screen-button mr-1"></i> Telebirr Deposit Account</span>
+                <p class="text-slate-300">Transfer to Wondu: <strong class="text-amber-400 font-mono text-sm">+251917393624</strong></p>
+                <p class="text-slate-300 mt-1">Payment Support / Admin: <a href="https://t.me/Kale177" target="_blank" class="text-sky-400 font-bold underline">@Kale177</a></p>
             </div>
 
-            <!-- Payment Details Box -->
-            <div id="depositDetailsBox" class="bg-slate-950 p-3 rounded-2xl border border-slate-800 space-y-2 text-xs">
-                <!-- Content Populated via JS -->
-            </div>
-
-            <!-- Deposit Amount -->
             <div class="space-y-1">
                 <label class="text-xs font-semibold text-slate-400 block">Deposit Amount (ETB)</label>
                 <input type="number" id="depositAmountInput" placeholder="Minimum 50 ETB" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-emerald-500 font-extrabold">
             </div>
 
-            <!-- Transaction Reference Text Box -->
             <div class="space-y-1">
                 <label class="text-xs font-semibold text-amber-400 block">
-                    <i class="fa-solid fa-paste mr-1"></i> Paste Telebirr SMS Receipt (e.g. "Dear Adam You have transferred...")
+                    <i class="fa-solid fa-paste mr-1"></i> Paste Telebirr SMS Receipt
                 </label>
                 <textarea id="depositRefInput" rows="4" placeholder="Dear Adam You have transferred ETB 100.00 to Wondu (2519****3624) on..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500 font-mono resize-none"></textarea>
             </div>
@@ -479,29 +444,9 @@
                 <button onclick="closeModal('withdrawModal')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <!-- Select Withdrawal Method -->
-            <div class="space-y-2">
-                <label class="text-xs font-semibold text-slate-400 block">Destination Method</label>
-                <div class="grid grid-cols-3 gap-2">
-                    <button onclick="selectWithdrawMethod('telebirr')" id="withTabTelebirr" class="with-method-btn border-2 border-sky-500 bg-sky-500/10 text-white p-2 rounded-xl text-center text-xs font-bold">
-                        <div class="text-sky-400 mb-0.5"><i class="fa-solid fa-mobile-screen-button text-base"></i></div>
-                        Telebirr
-                    </button>
-                    <button onclick="selectWithdrawMethod('sinqee')" id="withTabSinqee" class="with-method-btn border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold">
-                        <div class="text-purple-400 mb-0.5"><i class="fa-solid fa-building-columns text-base"></i></div>
-                        Sinqee
-                    </button>
-                    <button onclick="selectWithdrawMethod('coop')" id="withTabCoop" class="with-method-btn border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold">
-                        <div class="text-blue-400 mb-0.5"><i class="fa-solid fa-landmark text-base"></i></div>
-                        Coop Bank
-                    </button>
-                </div>
-            </div>
-
-            <!-- Account Details Input -->
             <div id="withdrawFieldsBox" class="space-y-3">
                 <div class="space-y-1">
-                    <label class="text-xs font-semibold text-slate-400 block">Account Phone Number / Number</label>
+                    <label class="text-xs font-semibold text-slate-400 block">Telebirr Phone Number</label>
                     <input type="text" id="withdrawAccountInput" placeholder="+2519..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500">
                 </div>
             </div>
@@ -522,9 +467,136 @@
         </div>
     </div>
 
+    <!-- PREVIEW PRODUCT MODAL (MOTIVATES DOWNLOAD & PURCHASE) -->
+    <div id="previewProductModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-5 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                <h3 class="font-extrabold text-base text-white flex items-center gap-2">
+                    <i class="fa-solid fa-eye text-amber-400"></i> Product Sample Preview
+                </h3>
+                <button onclick="closeModal('previewProductModal')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <!-- Preview Card Banner -->
+            <div class="bg-gradient-to-br from-slate-950 to-slate-900 p-4 rounded-2xl border border-slate-800 space-y-3">
+                <div class="flex items-center gap-2">
+                    <span id="previewBadge" class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-sky-500/20 text-sky-300 border border-sky-500/30">BOOK SAMPLE</span>
+                    <span id="previewPrice" class="text-amber-400 font-extrabold text-sm ml-auto">150.00 ETB</span>
+                </div>
+                <h4 id="previewTitle" class="font-black text-white text-base">Product Title</h4>
+                
+                <!-- Sample Content Display Box -->
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 font-mono text-[11px] text-slate-300 space-y-2 max-h-36 overflow-y-auto" id="previewSampleText">
+                    <!-- Dynamic Sample Text -->
+                </div>
+            </div>
+
+            <!-- Features / Benefits List -->
+            <div class="space-y-1.5 text-xs text-slate-300">
+                <div class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> Instant Google Drive Download Link</div>
+                <div class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> Lifetime Access & Free Future Updates</div>
+                <div class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> Secure Telebirr & Balance Checkout</div>
+            </div>
+
+            <input type="hidden" id="previewModalProductId" value="">
+
+            <button onclick="proceedToBuyFromPreview()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-extrabold text-sm shadow-neon-gold active:scale-98 transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-bag-shopping"></i> Proceed to Checkout
+            </button>
+        </div>
+    </div>
+
+    <!-- UPLOAD PRODUCT MODAL (ADMIN ONLY) -->
+    <div id="uploadProductModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-5 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                <h3 class="font-extrabold text-base text-white flex items-center gap-2">
+                    <i class="fa-solid fa-cloud-arrow-up text-purple-400"></i> Add Book or Design Product
+                </h3>
+                <button onclick="closeModal('uploadProductModal')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-xs font-semibold text-slate-400 block">Category</label>
+                <select id="prodCategory" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none">
+                    <option value="Book">📚 Book / E-Book</option>
+                    <option value="Design">🎨 Graphic / UI Design</option>
+                </select>
+            </div>
+
+            <div class="space-y-1">
+                <label class="text-xs font-semibold text-slate-400 block">Product Title</label>
+                <input type="text" id="prodTitle" placeholder="e.g. Python Engineering Guide 2026" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none">
+            </div>
+
+            <div class="space-y-1">
+                <label class="text-xs font-semibold text-slate-400 block">Price (ETB)</label>
+                <input type="number" id="prodPrice" placeholder="150" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-amber-400 font-bold focus:outline-none">
+            </div>
+
+            <div class="space-y-1">
+                <label class="text-xs font-semibold text-purple-400 block">
+                    <i class="fa-brands fa-google-drive mr-1"></i> Google Drive Download Link
+                </label>
+                <input type="text" id="prodDriveLink" placeholder="https://drive.google.com/file/d/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-sky-400 font-mono focus:outline-none">
+            </div>
+
+            <div class="space-y-1">
+                <label class="text-xs font-semibold text-slate-400 block">Sample Preview Description / Excerpt</label>
+                <textarea id="prodSampleText" rows="3" placeholder="Write a short sample preview text to motivate buyers..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none resize-none"></textarea>
+            </div>
+
+            <button onclick="addNewProduct()" class="w-full py-3 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-sm active:scale-98 transition shadow-neon-purple">
+                Publish Product to Store
+            </button>
+        </div>
+    </div>
+
+    <!-- BUY PRODUCT MODAL (CHECKOUT & TELEBIRR PAYMENT) -->
+    <div id="buyProductModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-5 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                <h3 class="font-extrabold text-base text-white flex items-center gap-2">
+                    <i class="fa-solid fa-bag-shopping text-amber-400"></i> Checkout Product
+                </h3>
+                <button onclick="closeModal('buyProductModal')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1 text-xs">
+                <span id="buyModalTitle" class="font-bold text-white text-sm block">Product Title</span>
+                <span id="buyModalPrice" class="text-amber-400 font-extrabold text-base block">0.00 ETB</span>
+            </div>
+
+            <!-- Payment Method Selection -->
+            <div class="space-y-2">
+                <label class="text-xs font-semibold text-slate-400 block">Select Payment Mode</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="selectBuyMode('balance')" id="buyModeBalanceBtn" class="border-2 border-amber-500 bg-amber-500/10 text-white p-2 rounded-xl text-center text-xs font-bold">
+                        Use Balance (<span id="buyModalUserBal">100</span> ETB)
+                    </button>
+                    <button onclick="selectBuyMode('telebirr')" id="buyModeTelebirrBtn" class="border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold">
+                        Telebirr Direct SMS
+                    </button>
+                </div>
+            </div>
+
+            <div id="buyTelebirrBox" class="hidden space-y-2">
+                <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-[11px] text-slate-300">
+                    Send exact amount to Wondu: <strong class="text-amber-400 font-mono">+251917393624</strong>, then paste SMS receipt below:
+                </div>
+                <textarea id="buyTelebirrReceipt" rows="3" placeholder="Dear Adam You have transferred ETB ... to Wondu..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 font-mono resize-none focus:outline-none"></textarea>
+            </div>
+
+            <input type="hidden" id="buyModalProductId" value="">
+
+            <button onclick="confirmPurchase()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-extrabold text-sm shadow-neon-gold active:scale-98 transition">
+                Confirm Purchase & Get Download Link
+            </button>
+        </div>
+    </div>
+
     <!-- JAVASCRIPT APP LOGIC -->
     <script>
-        // --- SOUND FX (Tone.js) ---
         let soundEnabled = true;
         let synth = null;
         try {
@@ -544,8 +616,6 @@
                     setTimeout(() => synth.triggerAttackRelease("C5", "4n"), 100);
                 } else if (type === 'click') {
                     synth.triggerAttackRelease("E5", "32n");
-                } else if (type === 'drop') {
-                    synth.triggerAttackRelease("A3", "16n");
                 }
             } catch(e) {}
         }
@@ -556,9 +626,6 @@
             btn.innerHTML = soundEnabled ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark text-rose-400"></i>';
         }
 
-        // --- GLOBAL APP STATE & USER STORAGE ---
-        const SYMBOLS = ['🍎', '🥭', '🥑', '💎', '🍋', '🍊', '🍇', '🍉', '🍓'];
-        
         let currentUser = {
             id: '12345678',
             username: 'TgUser',
@@ -570,18 +637,37 @@
         };
 
         let currentBet = 10.00;
-        let activeDepositMethod = 'telebirr';
-        let activeWithdrawMethod = 'telebirr';
-        let dropCanvasCtx = null;
-        let dropInterval = null;
-        let currentDropX = 150;
-        let fallingFruitY = 0;
-        let fallingFruitSymbol = '🥭';
-        let isDropping = false;
+        let activeBuyMode = 'balance';
 
-        // Central LocalStorage DB
-        let usersDB = JSON.parse(localStorage.getItem('tg_fruit_users_db')) || {};
-        let pendingQueue = JSON.parse(localStorage.getItem('tg_fruit_pending_queue')) || [];
+        let usersDB = JSON.parse(localStorage.getItem('tg_store_users_db')) || {};
+        let pendingQueue = JSON.parse(localStorage.getItem('tg_store_pending_queue')) || [];
+        
+        let productsDB = JSON.parse(localStorage.getItem('tg_store_products_db')) || [
+            { 
+                id: 'p1', 
+                title: 'Python Telegram Bot Architecture & Mini Apps', 
+                category: 'Book', 
+                price: 150.00, 
+                driveLink: 'https://drive.google.com/file/d/sample-python-book',
+                sampleText: 'Chapter 1 Excerpt:\nBuilding robust single-file HTML & JS architectures for Telegram Mini Apps. Learn state synchronization, Telegram WebApp SDK bindings, and secure backend routing without complex build steps.'
+            },
+            { 
+                id: 'p2', 
+                title: 'Modern Dark UI Kit for Mobile Mini Apps', 
+                category: 'Design', 
+                price: 200.00, 
+                driveLink: 'https://drive.google.com/file/d/sample-ui-kit',
+                sampleText: 'Design Showcase Preview:\nIncludes 25+ fully responsive Tailwind CSS components, neon glow buttons, glassmorphic panels, and optimized mobile touch layouts tailored for high conversion.'
+            },
+            { 
+                id: 'p3', 
+                title: 'Ethiopian Payment Gateway Integration Guide', 
+                category: 'Book', 
+                price: 120.00, 
+                driveLink: 'https://drive.google.com/file/d/sample-payment-guide',
+                sampleText: 'Guide Overview:\nMaster automated regex parsing for Telebirr SMS receipts, reference number cross-verification, handling service fees and VAT calculations seamlessly.'
+            }
+        ];
 
         function initTelegramUser() {
             if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
@@ -590,10 +676,9 @@
                 currentUser.username = tg.username ? tg.username : (tg.first_name || 'User');
             } else {
                 currentUser.id = '98765432';
-                currentUser.username = 'WDemeke1'; // Default or test handle
+                currentUser.username = 'WDemeke1';
             }
 
-            // Load from DB if exists
             if (usersDB[currentUser.id]) {
                 currentUser = usersDB[currentUser.id];
             } else {
@@ -602,32 +687,35 @@
             }
 
             updateUI();
+            renderProductCatalog();
         }
 
         function saveDB() {
             usersDB[currentUser.id] = currentUser;
-            localStorage.setItem('tg_fruit_users_db', JSON.stringify(usersDB));
-            localStorage.setItem('tg_fruit_pending_queue', JSON.stringify(pendingQueue));
+            localStorage.setItem('tg_store_users_db', JSON.stringify(usersDB));
+            localStorage.setItem('tg_store_pending_queue', JSON.stringify(pendingQueue));
+            localStorage.setItem('tg_store_products_db', JSON.stringify(productsDB));
         }
 
-        // --- ADMIN RESTRICTION LOGIC (@WDemeke1) ---
         function checkAdminAccess() {
             const isAdmin = currentUser.username.toLowerCase() === 'wdemeke1';
             const adminTabBtn = document.getElementById('navAdmin');
             const adminBadge = document.getElementById('adminBadge');
+            const uploadNavBtn = document.getElementById('uploadProductNavBtn');
 
             if (isAdmin) {
                 adminTabBtn.classList.remove('hidden');
                 adminBadge.classList.remove('hidden');
+                uploadNavBtn.classList.remove('hidden');
             } else {
                 adminTabBtn.classList.add('hidden');
                 adminBadge.classList.add('hidden');
+                uploadNavBtn.classList.add('hidden');
             }
         }
 
-        // --- NAVIGATION TABS ---
         function switchTab(tabId) {
-            const tabs = ['spin', 'drop', 'dashboard', 'history', 'admin'];
+            const tabs = ['spin', 'shop', 'dashboard', 'history', 'admin'];
             tabs.forEach(t => {
                 const sec = document.getElementById(t + 'Tab');
                 const btn = document.getElementById('nav' + t.charAt(0).toUpperCase() + t.slice(1));
@@ -651,16 +739,11 @@
                 }
             }
 
-            if (tabId === 'drop') {
-                initDropCanvas();
-            }
-            if (tabId === 'admin') {
-                renderAdminDashboard();
-            }
+            if (tabId === 'shop') renderProductCatalog();
+            if (tabId === 'admin') renderAdminDashboard();
             playSound('click');
         }
 
-        // --- UPDATE UI ELEMENTS ---
         function updateUI() {
             document.getElementById('userBalance').textContent = currentUser.balance.toFixed(2);
             document.getElementById('dashBalance').textContent = currentUser.balance.toFixed(2) + ' ETB';
@@ -670,19 +753,184 @@
             document.getElementById('dashRefCount').textContent = currentUser.refCount;
             document.getElementById('dashRefEarnings').textContent = currentUser.refEarnings.toFixed(2);
             document.getElementById('dashPhoneInput').value = currentUser.phone || '';
-            document.getElementById('referralLinkInput').value = `https://t.me/FruitDropSpinETBBot?start=ref_${currentUser.id}`;
+            document.getElementById('referralLinkInput').value = `https://t.me/SpinDigitalShopETBBot?start=ref_${currentUser.id}`;
 
             renderHistoryList();
             checkAdminAccess();
             saveDB();
         }
 
-        // --- 3x3 MATRIX SLOT MACHINE LOGIC ---
+        // --- SHOP & PRODUCTS RENDERING WITH PREVIEW BUTTON ---
+        function renderProductCatalog() {
+            const listEl = document.getElementById('productCatalogList');
+            if (!listEl) return;
+
+            if (productsDB.length === 0) {
+                listEl.innerHTML = `<div class="text-center text-xs text-slate-500 py-6">No books or designs available in store yet.</div>`;
+                return;
+            }
+
+            listEl.innerHTML = productsDB.map(prod => `
+                <div class="bg-slate-900/90 p-3.5 rounded-2xl border border-slate-800 space-y-2.5">
+                    <div class="flex justify-between items-start">
+                        <div class="space-y-1 pr-2">
+                            <span class="px-2 py-0.5 rounded-full text-[9px] font-bold ${prod.category === 'Book' ? 'bg-sky-500/20 text-sky-300 border border-sky-500/30' : 'bg-purple-500/20 text-purple-300 border border-purple-500/30'}">
+                                ${prod.category === 'Book' ? '📚 Book' : '🎨 Design'}
+                            </span>
+                            <h4 class="font-bold text-white text-sm">${prod.title}</h4>
+                        </div>
+                        <span class="text-amber-400 font-extrabold text-sm shrink-0">${prod.price.toFixed(2)} ETB</span>
+                    </div>
+
+                    <div class="flex items-center gap-2 pt-1">
+                        <button onclick="openPreviewModal('${prod.id}')" class="w-1/2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition active:scale-95">
+                            <i class="fa-solid fa-eye text-amber-400"></i> Preview Sample
+                        </button>
+                        <button onclick="openBuyModal('${prod.id}')" class="w-1/2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-extrabold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-neon-gold transition active:scale-95">
+                            <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- PREVIEW SAMPLE MODAL ---
+        let previewProductId = null;
+
+        function openPreviewModal(productId) {
+            const prod = productsDB.find(p => p.id === productId);
+            if (!prod) return;
+
+            previewProductId = productId;
+            document.getElementById('previewTitle').textContent = prod.title;
+            document.getElementById('previewPrice').textContent = prod.price.toFixed(2) + ' ETB';
+            document.getElementById('previewBadge').textContent = prod.category === 'Book' ? 'BOOK SAMPLE EXCERPT' : 'DESIGN SHOWCASE PREVIEW';
+            document.getElementById('previewSampleText').textContent = prod.sampleText || 'No sample excerpt provided. High quality verified asset ready for download!';
+            document.getElementById('previewModalProductId').value = productId;
+
+            openModal('previewProductModal');
+        }
+
+        function proceedToBuyFromPreview() {
+            closeModal('previewProductModal');
+            openBuyModal(previewProductId);
+        }
+
+        function addNewProduct() {
+            const category = document.getElementById('prodCategory').value;
+            const title = document.getElementById('prodTitle').value.trim();
+            const price = parseFloat(document.getElementById('prodPrice').value);
+            const driveLink = document.getElementById('prodDriveLink').value.trim();
+            const sampleText = document.getElementById('prodSampleText').value.trim();
+
+            if (!title || !price || !driveLink) {
+                alert("Please fill in all product details and Google Drive link.");
+                return;
+            }
+
+            const newProd = {
+                id: 'prod-' + Math.floor(Math.random() * 90000 + 10000),
+                title: title,
+                category: category,
+                price: price,
+                driveLink: driveLink,
+                sampleText: sampleText
+            };
+
+            productsDB.push(newProd);
+            saveDB();
+            closeModal('uploadProductModal');
+            renderProductCatalog();
+            alert("Product published successfully to store!");
+        }
+
+        let selectedProductForBuy = null;
+
+        function openBuyModal(productId) {
+            selectedProductForBuy = productsDB.find(p => p.id === productId);
+            if (!selectedProductForBuy) return;
+
+            document.getElementById('buyModalTitle').textContent = selectedProductForBuy.title;
+            document.getElementById('buyModalPrice').textContent = selectedProductForBuy.price.toFixed(2) + ' ETB';
+            document.getElementById('buyModalUserBal').textContent = currentUser.balance.toFixed(2);
+            document.getElementById('buyModalProductId').value = productId;
+            
+            selectBuyMode('balance');
+            openModal('buyProductModal');
+        }
+
+        function selectBuyMode(mode) {
+            activeBuyMode = mode;
+            const balBtn = document.getElementById('buyModeBalanceBtn');
+            const teleBtn = document.getElementById('buyModeTelebirrBtn');
+            const teleBox = document.getElementById('buyTelebirrBox');
+
+            if (mode === 'balance') {
+                balBtn.className = "border-2 border-amber-500 bg-amber-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
+                teleBtn.className = "border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold";
+                teleBox.classList.add('hidden');
+            } else {
+                teleBtn.className = "border-2 border-sky-500 bg-sky-500/10 text-white p-2 rounded-xl text-center text-xs font-bold";
+                balBtn.className = "border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold";
+                teleBox.classList.remove('hidden');
+            }
+        }
+
+        function confirmPurchase() {
+            if (!selectedProductForBuy) return;
+
+            if (activeBuyMode === 'balance') {
+                if (currentUser.balance < selectedProductForBuy.price) {
+                    alert("Insufficient balance! Please deposit ETB or use Telebirr payment.");
+                    selectBuyMode('telebirr');
+                    return;
+                }
+
+                currentUser.balance -= selectedProductForBuy.price;
+                updateUI();
+                closeModal('buyProductModal');
+                
+                logActivity('Product Purchase', `Bought "${selectedProductForBuy.title}" for ${selectedProductForBuy.price.toFixed(2)} ETB`, -selectedProductForBuy.price);
+                alert(`Purchase successful!\n\nHere is your Google Drive download link:\n${selectedProductForBuy.driveLink}`);
+            } else {
+                const receiptText = document.getElementById('buyTelebirrReceipt').value.trim();
+                if (!receiptText) {
+                    alert("Please paste your Telebirr transfer SMS receipt.");
+                    return;
+                }
+
+                const txMatch = receiptText.match(/transaction number is\s+([A-Z0-9]+)/);
+                const transactionId = txMatch ? txMatch[1] : ('PUR-' + Math.floor(Math.random() * 900000 + 100000));
+
+                const orderObj = {
+                    id: transactionId,
+                    userId: currentUser.id,
+                    username: currentUser.username,
+                    type: 'Store Order',
+                    productId: selectedProductForBuy.id,
+                    productTitle: selectedProductForBuy.title,
+                    amount: selectedProductForBuy.price,
+                    driveLink: selectedProductForBuy.driveLink,
+                    receipt: receiptText,
+                    status: 'Pending',
+                    time: new Date().toLocaleTimeString()
+                };
+
+                pendingQueue.push(orderObj);
+                saveDB();
+                closeModal('buyProductModal');
+                alert(`Order submitted! Ref: ${transactionId}.\nOnce admin approves your payment, the Google Drive link will be sent to your activity history.`);
+                logActivity('Order Pending', `Ordered "${selectedProductForBuy.title}" via Telebirr [Ref: ${transactionId}]`, 0);
+            }
+        }
+
+        // --- 3x3 MATRIX SLOT MACHINE ---
         let matrixState = [
             ['🍎', '🥭', '🥑'],
             ['💎', '🍋', '🍊'],
             ['🍇', '🍉', '🍓']
         ];
+        const SYMBOLS = ['🍎', '🥭', '🥑', '💎', '🍋', '🍊', '🍇', '🍉', '🍓'];
 
         function adjustBet(amount) {
             currentBet += amount;
@@ -716,7 +964,6 @@
             document.getElementById('spinResultBox').innerHTML = `<span class="text-amber-400 animate-pulse font-bold">Spinning 3x3 Matrix...</span>`;
             clearPaylines();
 
-            // Shuffle animation effect
             let shuffleCount = 0;
             const shuffleInterval = setInterval(() => {
                 for (let r = 0; r < 3; r++) {
@@ -735,12 +982,10 @@
         }
 
         function finalizeSpinOutcome() {
-            // Rigged Odds: If balance > 3000 Birr, lower win chance significantly
             let winProbability = currentUser.balance > 3000 ? 0.03 : 0.28;
             let isWin = Math.random() < winProbability;
 
             if (isWin) {
-                // Force a winning line (e.g. Row 1 all matching)
                 const winSym = Math.random() < 0.3 ? '💎' : (Math.random() < 0.6 ? '🥭' : SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)]);
                 const winRow = Math.floor(Math.random() * 3);
                 for (let c = 0; c < 3; c++) {
@@ -748,7 +993,6 @@
                     document.getElementById(`cell-${winRow}-${c}`).textContent = winSym;
                 }
             } else {
-                // Random final state ensuring no easy 3-in-a-row unless lucky
                 for (let r = 0; r < 3; r++) {
                     for (let c = 0; c < 3; c++) {
                         const randSym = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
@@ -758,11 +1002,9 @@
                 }
             }
 
-            // Evaluate Matrix Wins (Rows and Diagonals)
             let totalWinAmount = 0;
             let winningLines = [];
 
-            // Check Rows
             for (let r = 0; r < 3; r++) {
                 if (matrixState[r][0] === matrixState[r][1] && matrixState[r][1] === matrixState[r][2]) {
                     let sym = matrixState[r][0];
@@ -772,7 +1014,6 @@
                 }
             }
 
-            // Check Diagonals
             if (matrixState[0][0] === matrixState[1][1] && matrixState[1][1] === matrixState[2][2]) {
                 let sym = matrixState[1][1];
                 let mult = (sym === '💎') ? 5 : (sym === '🥭' ? 3 : 2);
@@ -835,135 +1076,15 @@
             document.getElementById('paylineSvg').innerHTML = '';
         }
 
-        // --- FRUIT DROP MINIGAME LOGIC ---
-        function initDropCanvas() {
-            const canvas = document.getElementById('dropCanvas');
-            if (!canvas) return;
-            dropCanvasCtx = canvas.getContext('2d');
-            canvas.width = canvas.parentElement.clientWidth;
-            canvas.height = canvas.parentElement.clientHeight;
-            drawDropScene();
-        }
-
-        function drawDropScene() {
-            if (!dropCanvasCtx) return;
-            const canvas = dropCanvasCtx.canvas;
-            dropCanvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw catcher basket at bottom
-            dropCanvasCtx.fillStyle = '#f59e0b';
-            dropCanvasCtx.fillRect(currentDropX - 35, canvas.height - 30, 70, 16);
-
-            // Draw falling fruit if active
-            if (isDropping) {
-                dropCanvasCtx.font = '32px sans-serif';
-                dropCanvasCtx.fillText(fallingFruitSymbol, currentDropX - 16, fallingFruitY);
-            }
-        }
-
-        function dropFruitFromTop(event) {
-            if (isDropping) return;
-            if (currentUser.balance < 5.00) {
-                alert("Insufficient balance for Fruit Drop! Minimum 5 ETB required.");
-                openModal('depositModal');
-                return;
-            }
-
-            currentUser.balance -= 5.00;
-            updateUI();
-            playSound('drop');
-
-            const canvas = dropCanvasCtx.canvas;
-            const rect = canvas.getBoundingClientRect();
-            currentDropX = event.clientX - rect.left;
-            if (currentDropX < 40) currentDropX = 40;
-            if (currentDropX > canvas.width - 40) currentDropX = canvas.width - 40;
-
-            fallingFruitY = 40;
-            fallingFruitSymbol = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
-            isDropping = true;
-
-            // Speed multiplier higher if balance > 3000 (harder)
-            let speedMultiplier = currentUser.balance > 3000 ? 12 : 8;
-
-            clearInterval(dropInterval);
-            dropInterval = setInterval(() => {
-                fallingFruitY += speedMultiplier;
-                drawDropScene();
-
-                if (fallingFruitY >= canvas.height - 35) {
-                    clearInterval(dropInterval);
-                    isDropping = false;
-
-                    // Calculate drop win
-                    let winChance = currentUser.balance > 3000 ? 0.05 : 0.35;
-                    let dropWin = Math.random() < winChance ? (Math.random() < 0.2 ? 25.00 : 10.00) : 0;
-
-                    if (dropWin > 0) {
-                        currentUser.balance += dropWin;
-                        document.getElementById('dropScore').textContent = dropWin.toFixed(2) + ' ETB';
-                        playSound('win');
-                        logActivity('Fruit Drop Win', `Caught ${fallingFruitSymbol}, won ${dropWin.toFixed(2)} ETB`, dropWin);
-                    } else {
-                        document.getElementById('dropScore').textContent = '0.00 ETB';
-                        logActivity('Fruit Drop', `Dropped ${fallingFruitSymbol} (Missed)`, -5.00);
-                    }
-                    updateUI();
-                }
-            }, 30);
-        }
-
         // --- DEPOSIT & WITHDRAW MODAL FUNCTIONS ---
         function openModal(modalId) {
             document.getElementById(modalId).classList.remove('hidden');
-            if (modalId === 'depositModal') selectDepositMethod('telebirr');
-            if (modalId === 'withdrawModal') selectWithdrawMethod('telebirr');
             playSound('click');
         }
 
         function closeModal(modalId) {
             document.getElementById(modalId).classList.add('hidden');
             playSound('click');
-        }
-
-        function selectDepositMethod(method) {
-            activeDepositMethod = method;
-            ['telebirr', 'sinqee', 'coop'].forEach(m => {
-                const btn = document.getElementById('depTab' + m.charAt(0).toUpperCase() + m.slice(1));
-                if (btn) {
-                    btn.className = (m === method) ? 
-                        "dep-method-btn border-2 border-sky-500 bg-sky-500/10 text-white p-2 rounded-xl text-center text-xs font-bold" :
-                        "dep-method-btn border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold";
-                }
-            });
-
-            const box = document.getElementById('depositDetailsBox');
-            if (method === 'telebirr') {
-                box.innerHTML = `<span class="text-sky-400 font-bold block mb-1"><i class="fa-solid fa-mobile-screen-button mr-1"></i> Telebirr Deposit Account</span>
-                <p class="text-slate-300">Transfer to Wondu: <strong class="text-amber-400 font-mono text-sm">+251917393624</strong></p>
-                <p class="text-slate-300 mt-1">Payment Support / Admin: <a href="https://t.me/Kale177" target="_blank" class="text-sky-400 font-bold underline">@Kale177</a></p>
-                <p class="text-[10px] text-slate-400 mt-1">Includes instant +20% bonus upon admin verification.</p>`;
-            } else if (method === 'sinqee') {
-                box.innerHTML = `<span class="text-purple-400 font-bold block mb-1"><i class="fa-solid fa-building-columns mr-1"></i> Sinqee Bank Account</span>
-                <p class="text-slate-300">Account: <strong class="text-amber-400 font-mono">1002938485901</strong></p>
-                <p class="text-slate-300 mt-1">Payment Support / Admin: <a href="https://t.me/Kale177" target="_blank" class="text-sky-400 font-bold underline">@Kale177</a></p>`;
-            } else {
-                box.innerHTML = `<span class="text-blue-400 font-bold block mb-1"><i class="fa-solid fa-landmark mr-1"></i> Cooperative Bank of Oromia</span>
-                <p class="text-slate-300">Account: <strong class="text-amber-400 font-mono">1000495837261</strong></p>
-                <p class="text-slate-300 mt-1">Payment Support / Admin: <a href="https://t.me/Kale177" target="_blank" class="text-sky-400 font-bold underline">@Kale177</a></p>`;
-            }
-        }
-
-        function selectWithdrawMethod(method) {
-            activeWithdrawMethod = method;
-            ['telebirr', 'sinqee', 'coop'].forEach(m => {
-                const btn = document.getElementById('withTab' + m.charAt(0).toUpperCase() + m.slice(1));
-                if (btn) {
-                    btn.className = (m === method) ? 
-                        "with-method-btn border-2 border-sky-500 bg-sky-500/10 text-white p-2 rounded-xl text-center text-xs font-bold" :
-                        "with-method-btn border border-slate-800 bg-slate-950 text-slate-400 p-2 rounded-xl text-center text-xs font-bold";
-                }
-            });
         }
 
         function submitDepositRequest() {
@@ -975,7 +1096,6 @@
                 return;
             }
 
-            // Auto-parse Telebirr SMS receipt (Amount and Transaction Reference Number)
             const amountMatch = receiptText.match(/transferred\s+ETB\s+([\d,]+\.\d{2})/);
             const parsedAmount = amountMatch ? parseFloat(amountMatch[1]) : inputAmount;
 
@@ -992,8 +1112,7 @@
                 return;
             }
 
-            // Check duplicate submission
-            let isDuplicate = pendingQueue.some(item => item.receiptId === transactionId) || 
+            let isDuplicate = pendingQueue.some(item => item.id === transactionId) || 
                               Object.values(usersDB).some(u => u.history.some(h => h.desc && h.desc.includes(transactionId)));
             
             if (isDuplicate) {
@@ -1001,14 +1120,12 @@
                 return;
             }
 
-            let bonusAmount = parsedAmount * 1.20; // 20% bonus calculation
+            let bonusAmount = parsedAmount * 1.20;
             const txObj = {
                 id: transactionId,
-                receiptId: transactionId,
                 userId: currentUser.id,
                 username: currentUser.username,
                 type: 'Deposit',
-                method: activeDepositMethod,
                 amount: parsedAmount,
                 credited: bonusAmount,
                 receipt: receiptText,
@@ -1036,7 +1153,7 @@
                 return;
             }
             if (!account) {
-                alert("Please provide your destination phone or account number.");
+                alert("Please provide your Telebirr phone number.");
                 return;
             }
 
@@ -1048,7 +1165,6 @@
                 userId: currentUser.id,
                 username: currentUser.username,
                 type: 'Cashout',
-                method: activeWithdrawMethod,
                 amount: amount,
                 account: account,
                 status: 'Pending',
@@ -1072,7 +1188,7 @@
         }
 
         function shareReferralTelegram() {
-            const text = encodeURIComponent("Play Fruit Drop & Spin ETB on Telegram and win Ethiopian Birr! Use my link:");
+            const text = encodeURIComponent("Explore Books and Designs on Telegram Store! Use my link:");
             const url = encodeURIComponent(document.getElementById('referralLinkInput').value);
             window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
         }
@@ -1116,7 +1232,7 @@
         }
 
         function clearUserStorage() {
-            if (confirm("Reset all game history and progress?")) {
+            if (confirm("Reset all activity history?")) {
                 currentUser.balance = 100.00;
                 currentUser.history = [];
                 currentUser.refCount = 0;
@@ -1125,7 +1241,7 @@
             }
         }
 
-        // --- SUPER ADMIN DASHBOARD LOGIC (@WDemeke1) ---
+        // --- SUPER ADMIN DASHBOARD ---
         function renderAdminDashboard() {
             if (currentUser.username.toLowerCase() !== 'wdemeke1') return;
 
@@ -1145,25 +1261,24 @@
             document.getElementById('admTotalCashouts').textContent = totalCashouts.toFixed(2) + ' ETB';
             document.getElementById('admPendingCount').textContent = pendingQueue.length;
 
-            // Render Pending Queue
             const queueEl = document.getElementById('adminPendingQueue');
             if (pendingQueue.length === 0) {
-                queueEl.innerHTML = `<div class="text-center text-xs text-slate-500 py-3 bg-slate-950 rounded-xl">No pending deposits or withdrawals.</div>`;
+                queueEl.innerHTML = `<div class="text-center text-xs text-slate-500 py-3 bg-slate-950 rounded-xl">No pending deposits or store orders.</div>`;
             } else {
                 queueEl.innerHTML = pendingQueue.map((item, idx) => `
                     <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs space-y-2">
                         <div class="flex justify-between items-center">
-                            <span class="font-bold text-amber-400">${item.type} (${item.method})</span>
+                            <span class="font-bold text-amber-400">${item.type} (${item.productTitle || 'Telebirr'})</span>
                             <span class="text-slate-400">${item.time}</span>
                         </div>
                         <div class="text-slate-300">
                             User: <strong class="text-white">@${item.username}</strong> (${item.userId})<br>
-                            Amount: <strong class="text-emerald-400">${item.amount} ETB</strong> ${item.credited ? `(Credited: ${item.credited.toFixed(2)} w/ 20% bonus)` : ''}
+                            Amount: <strong class="text-emerald-400">${item.amount} ETB</strong>
+                            ${item.type === 'Deposit' ? `(Bonus Credited: ${(item.amount * 1.20).toFixed(2)})` : ''}
                             ${item.receipt ? `<br><span class="text-[10px] text-slate-400 font-mono bg-slate-900 p-1 block mt-1">Receipt: ${item.receipt}</span>` : ''}
-                            ${item.account ? `<br>Destination: <span class="text-sky-400">${item.account}</span>` : ''}
                         </div>
                         <div class="flex gap-2 pt-1">
-                            <button onclick="approveTransaction(${idx})" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg text-xs">Approve & Credit</button>
+                            <button onclick="approveTransaction(${idx})" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg text-xs">Approve & Deliver Link</button>
                             <button onclick="rejectTransaction(${idx})" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-1.5 rounded-lg text-xs">Reject</button>
                         </div>
                     </div>
@@ -1182,15 +1297,15 @@
                 usersDB[tx.userId].balance += credit;
                 usersDB[tx.userId].history.unshift({
                     title: 'Deposit Approved',
-                    desc: `Approved ${tx.amount} ETB deposit [Ref: ${tx.receiptId || tx.id}] + 20% bonus`,
+                    desc: `Approved ${tx.amount} ETB deposit [Ref: ${tx.id}] + 20% bonus`,
                     amount: credit,
                     time: new Date().toLocaleTimeString()
                 });
-            } else if (tx.type === 'Cashout') {
+            } else if (tx.type === 'Store Order') {
                 usersDB[tx.userId].history.unshift({
-                    title: 'Cashout Approved',
-                    desc: `Payout of ${tx.amount} ETB processed successfully`,
-                    amount: 0,
+                    title: 'Order Approved & Delivered',
+                    desc: `Bought "${tx.productTitle}". Download Link: ${tx.driveLink}`,
+                    amount: -tx.amount,
                     time: new Date().toLocaleTimeString()
                 });
             }
@@ -1200,13 +1315,13 @@
             renderAdminDashboard();
             if (currentUser.id === tx.userId) currentUser = usersDB[currentUser.id];
             updateUI();
-            alert("Transaction approved successfully!");
+            alert("Transaction approved and delivered successfully!");
         }
 
         function rejectTransaction(idx) {
             const tx = pendingQueue[idx];
             if (tx.type === 'Cashout' && usersDB[tx.userId]) {
-                usersDB[tx.userId].balance += tx.amount; // Refund
+                usersDB[tx.userId].balance += tx.amount;
             }
             pendingQueue.splice(idx, 1);
             saveDB();
@@ -1261,7 +1376,6 @@
             }
         }
 
-        // Initialize on load
         window.addEventListener('DOMContentLoaded', () => {
             initTelegramUser();
         });
