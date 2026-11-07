@@ -291,13 +291,10 @@
                     </div>
                 </div>
 
-                <!-- Share Buttons -->
-                <div class="grid grid-cols-2 gap-2">
+                <!-- Share Button -->
+                <div>
                     <button onclick="shareReferralTelegram()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-telebirr text-white font-bold text-xs shadow-md flex items-center justify-center gap-1.5 active:scale-98 transition">
-                        <i class="fa-paper-plane fa-solid"></i> Share Telegram
-                    </button>
-                    <button onclick="simulateMockReferral()" class="w-full py-2.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold text-xs flex items-center justify-center gap-1.5 active:scale-98 transition">
-                        <i class="fa-solid fa-user-plus"></i> Test Signup (+10)
+                        <i class="fa-paper-plane fa-solid"></i> Share Telegram Link
                     </button>
                 </div>
             </div>
@@ -942,8 +939,9 @@
 
             const box = document.getElementById('depositDetailsBox');
             if (method === 'telebirr') {
-                box.innerHTML = `<span class="text-sky-400 font-bold block mb-1"><i class="fa-solid fa-mobile-screen-button mr-1"></i> Telebirr Deposit Account</span>
-                <p class="text-slate-300">Send deposit funds to Telebirr: <strong class="text-amber-400 font-mono text-sm">+251917393624</strong></p>
+                box.innerHTML = `<span class="text-sky-400 font-bold block mb-1"><i class="fa-solid fa-mobile-screen-button mr-1"></i> Telebirr Deposit Accounts</span>
+                <p class="text-slate-300">Account 1 (Wondu): <strong class="text-amber-400 font-mono text-sm">+251917393624</strong></p>
+                <p class="text-slate-300 mt-1">Account 2 (Tahir): <strong class="text-amber-400 font-mono text-sm">+251919461150</strong></p>
                 <p class="text-slate-300 mt-1">Payment Support / Admin: <a href="https://t.me/Kale177" target="_blank" class="text-sky-400 font-bold underline">@Kale177</a></p>
                 <p class="text-[10px] text-slate-400 mt-1">Includes instant +20% bonus upon admin verification.</p>`;
             } else if (method === 'sinqee') {
@@ -978,7 +976,7 @@
                 return;
             }
 
-            // Auto-parse Telebirr SMS receipt (e.g. amount and transaction ID)
+            // Auto-parse Telebirr SMS receipt (amount and transaction ID)
             const amountMatch = receiptText.match(/transferred\s+ETB\s+([\d,]+\.\d{2})/);
             const parsedAmount = amountMatch ? parseFloat(amountMatch[1]) : inputAmount;
 
@@ -990,7 +988,7 @@
                 return;
             }
 
-            // Check if transaction ID was already submitted (Duplicate Protection)
+            // Check duplicate submission
             let isDuplicate = pendingQueue.some(item => item.receiptId === transactionId) || 
                               Object.values(usersDB).some(u => u.history.some(h => h.desc && h.desc.includes(transactionId)));
             
@@ -1073,15 +1071,6 @@
             const text = encodeURIComponent("Play Fruit Drop & Spin ETB on Telegram and win Ethiopian Birr! Use my link:");
             const url = encodeURIComponent(document.getElementById('referralLinkInput').value);
             window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
-        }
-
-        function simulateMockReferral() {
-            currentUser.refCount += 1;
-            currentUser.refEarnings += 10.00;
-            currentUser.balance += 10.00;
-            updateUI();
-            alert("Test referral simulated! +10.00 ETB added to your balance.");
-            logActivity('Referral Bonus', `Friend signup reward (+10.00 ETB)`, 10.00);
         }
 
         function updateUserPhone() {
