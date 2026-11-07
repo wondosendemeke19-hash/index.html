@@ -458,9 +458,9 @@
             <!-- Transaction Reference Text Box -->
             <div class="space-y-1">
                 <label class="text-xs font-semibold text-amber-400 block">
-                    <i class="fa-solid fa-paste mr-1"></i> Paste Telebirr / Bank SMS Receipt Text
+                    <i class="fa-solid fa-paste mr-1"></i> Paste Telebirr SMS Receipt (e.g. "Dear Adam You have transferred...")
                 </label>
-                <textarea id="depositRefInput" rows="3" placeholder="Paste full transaction SMS receipt text here..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500 font-mono resize-none"></textarea>
+                <textarea id="depositRefInput" rows="4" placeholder="Dear Adam You have transferred ETB 100.00 to Wondu (2519****3624) on..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500 font-mono resize-none"></textarea>
             </div>
 
             <button onclick="submitDepositRequest()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-extrabold text-sm shadow-neon-green active:scale-98 transition">
@@ -939,9 +939,8 @@
 
             const box = document.getElementById('depositDetailsBox');
             if (method === 'telebirr') {
-                box.innerHTML = `<span class="text-sky-400 font-bold block mb-1"><i class="fa-solid fa-mobile-screen-button mr-1"></i> Telebirr Deposit Accounts</span>
-                <p class="text-slate-300">Account 1 (Wondu): <strong class="text-amber-400 font-mono text-sm">+251917393624</strong></p>
-                <p class="text-slate-300 mt-1">Account 2 (Tahir): <strong class="text-amber-400 font-mono text-sm">+251919461150</strong></p>
+                box.innerHTML = `<span class="text-sky-400 font-bold block mb-1"><i class="fa-solid fa-mobile-screen-button mr-1"></i> Telebirr Deposit Account</span>
+                <p class="text-slate-300">Transfer to Wondu: <strong class="text-amber-400 font-mono text-sm">+251917393624</strong></p>
                 <p class="text-slate-300 mt-1">Payment Support / Admin: <a href="https://t.me/Kale177" target="_blank" class="text-sky-400 font-bold underline">@Kale177</a></p>
                 <p class="text-[10px] text-slate-400 mt-1">Includes instant +20% bonus upon admin verification.</p>`;
             } else if (method === 'sinqee') {
@@ -972,19 +971,24 @@
             const receiptText = document.getElementById('depositRefInput').value.trim();
 
             if (!receiptText) {
-                alert("Please paste your transaction SMS receipt text for verification.");
+                alert("Please paste your Telebirr transfer SMS receipt text for verification.");
                 return;
             }
 
-            // Auto-parse Telebirr SMS receipt (amount and transaction ID)
+            // Auto-parse Telebirr SMS receipt (Amount and Transaction Reference Number)
             const amountMatch = receiptText.match(/transferred\s+ETB\s+([\d,]+\.\d{2})/);
             const parsedAmount = amountMatch ? parseFloat(amountMatch[1]) : inputAmount;
 
             const txMatch = receiptText.match(/transaction number is\s+([A-Z0-9]+)/);
-            const transactionId = txMatch ? txMatch[1] : ('DEP-' + Math.floor(Math.random() * 900000 + 100000));
+            const transactionId = txMatch ? txMatch[1] : null;
 
             if (!parsedAmount || parsedAmount < 50) {
-                alert("Please enter or paste a valid deposit amount (Minimum 50 ETB).");
+                alert("Please enter or ensure a valid deposit amount (Minimum 50 ETB).");
+                return;
+            }
+
+            if (!transactionId) {
+                alert("Invalid receipt format! Could not find transaction number (e.g. DJL856XCCK).");
                 return;
             }
 
@@ -993,7 +997,7 @@
                               Object.values(usersDB).some(u => u.history.some(h => h.desc && h.desc.includes(transactionId)));
             
             if (isDuplicate) {
-                alert(`Error: Transaction ID (${transactionId}) has already been submitted or processed!`);
+                alert(`Error: Transaction number (${transactionId}) has already been submitted or processed!`);
                 return;
             }
 
@@ -1015,8 +1019,8 @@
             pendingQueue.push(txObj);
             saveDB();
             closeModal('depositModal');
-            alert(`Deposit receipt (${transactionId}) verified & submitted! Your +20% bonus (${bonusAmount.toFixed(2)} ETB) will be credited after admin review.`);
-            logActivity('Deposit Request', `Requested ${parsedAmount} ETB via ${activeDepositMethod} [Ref: ${transactionId}] (+20% bonus pending)`, 0);
+            alert(`Telebirr receipt (${transactionId}) verified & submitted! Your +20% bonus (${bonusAmount.toFixed(2)} ETB) will be credited after admin review.`);
+            logActivity('Deposit Request', `Requested ${parsedAmount} ETB via Telebirr [Ref: ${transactionId}] (+20% bonus pending)`, 0);
         }
 
         function submitWithdrawRequest() {
