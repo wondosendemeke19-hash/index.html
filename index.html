@@ -90,7 +90,6 @@
     <!-- HEADER / USER PROFILE / BALANCE BAR -->
     <header class="sticky top-0 z-30 glass-panel border-b border-slate-800 px-4 py-3">
         <div class="max-w-md mx-auto flex items-center justify-between">
-            <!-- User Info -->
             <div class="flex items-center space-x-2">
                 <div id="userPhotoContainer" class="w-9 h-9 rounded-full bg-gradient-to-tr from-emerald-500 via-amber-500 to-rose-500 p-0.5 shadow-neon-gold">
                     <div class="w-full h-full bg-slate-900 rounded-full flex items-center justify-center font-bold text-white text-xs">
@@ -109,7 +108,6 @@
                 </div>
             </div>
 
-            <!-- Header Action Controls -->
             <div class="flex items-center gap-2">
                 <button onclick="toggleSound()" id="soundBtn" class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs text-slate-300">
                     <i class="fa-solid fa-volume-high"></i>
@@ -117,7 +115,6 @@
             </div>
         </div>
 
-        <!-- BALANCE & QUICK CASH ACTION BANNER -->
         <div class="max-w-md mx-auto mt-3 bg-slate-900/90 rounded-2xl p-3 border border-slate-800 flex items-center justify-between shadow-inner">
             <div class="pl-2">
                 <span class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider block">Total Balance</span>
@@ -127,7 +124,6 @@
                 </div>
             </div>
 
-            <!-- Deposit / Withdraw Buttons -->
             <div class="flex items-center gap-2">
                 <button onclick="openModal('depositModal')" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold px-3 py-2 rounded-xl text-xs shadow-neon-green flex items-center gap-1 transition active:scale-95">
                     <i class="fa-solid fa-circle-plus"></i> Deposit
@@ -142,7 +138,7 @@
     <!-- MAIN APP WRAPPER -->
     <main class="max-w-md mx-auto w-full px-4 pt-3 pb-6 flex-grow flex flex-col justify-center">
 
-        <!-- TAB 1: 3x3 MATRIX FRUIT SLOT MACHINE -->
+        <!-- TAB 1: 3x3 MATRIX SLOT MACHINE -->
         <section id="spinTab" class="space-y-4">
             <div class="relative bg-gradient-to-b from-slate-800 via-slate-900 to-slate-950 p-4 rounded-3xl border-2 border-amber-500/40 shadow-neon-gold">
                 
@@ -220,12 +216,12 @@
                 </div>
                 <div class="grid grid-cols-2 gap-2 text-xs">
                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                        <span class="text-slate-500 block text-[10px]">Telegram Handle</span>
-                        <span id="dashUsername" class="font-bold text-white">@TgUser</span>
+                        <span class="text-slate-500 block text-[10px]">Telegram Name</span>
+                        <input type="text" id="dashFullNameInput" onchange="updateUserFullName()" placeholder="Your Full Name" class="w-full bg-transparent font-bold text-white focus:outline-none">
                     </div>
                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                        <span class="text-slate-500 block text-[10px]">Telegram ID</span>
-                        <span id="dashTgId" class="font-bold text-white">123456789</span>
+                        <span class="text-slate-500 block text-[10px]">Telegram Handle</span>
+                        <span id="dashUsername" class="font-bold text-sky-400">@TgUser</span>
                     </div>
                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
                         <span class="text-slate-500 block text-[10px]">Account Balance</span>
@@ -293,16 +289,21 @@
             </div>
         </section>
 
-        <!-- TAB 5: ADMIN DASHBOARD (RESTRICTED TO @WDemeke1 with CSV Export & Pagination) -->
+        <!-- TAB 5: ADMIN DASHBOARD (RESTRICTED TO @WDemeke1 with Quick-Reply Templates) -->
         <section id="adminTab" class="hidden space-y-4">
             <div class="bg-purple-950/40 p-4 rounded-2xl border border-purple-500/40 space-y-4 shadow-neon-purple">
                 <div class="flex justify-between items-center border-b border-purple-500/30 pb-2">
                     <h3 class="font-black text-sm text-purple-300 flex items-center gap-2">
                         <i class="fa-solid fa-user-shield text-purple-400"></i> Admin Panel (@WDemeke1)
                     </h3>
-                    <button onclick="exportCustomersCSV()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2.5 py-1.5 rounded-xl text-[10px] flex items-center gap-1 shadow-md transition">
-                        <i class="fa-solid fa-file-csv text-sm"></i> Export CSV
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <button onclick="openModal('quickReplyModal')" class="bg-sky-600 hover:bg-sky-500 text-white font-bold px-2 py-1.5 rounded-xl text-[10px] flex items-center gap-1 shadow-md transition">
+                            <i class="fa-solid fa-comments"></i> Templates
+                        </button>
+                        <button onclick="exportCustomersCSV()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2 py-1.5 rounded-xl text-[10px] flex items-center gap-1 shadow-md transition">
+                            <i class="fa-solid fa-file-csv"></i> CSV
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Admin Stats Overview -->
@@ -329,16 +330,14 @@
                 <div class="space-y-2">
                     <div class="flex justify-between items-center">
                         <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1">
-                            <i class="fa-solid fa-clock-rotate-left text-amber-400"></i> Pending Approvals (Deposits & Orders)
+                            <i class="fa-solid fa-clock-rotate-left text-amber-400"></i> Pending Approvals
                         </h4>
                         <span id="pendingPageIndicator" class="text-[10px] text-purple-300 font-mono">Page 1/1</span>
                     </div>
                     
                     <div id="adminPendingQueue" class="space-y-2 min-h-[140px]">
-                        <!-- Dynamic Queue Content -->
                     </div>
 
-                    <!-- Pending Pagination Controls -->
                     <div class="flex justify-between items-center pt-1">
                         <button onclick="changePendingPage(-1)" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-bold"><i class="fa-solid fa-chevron-left mr-1"></i> Prev</button>
                         <span id="pendingPageNumText" class="text-xs text-slate-400">Page 1</span>
@@ -346,19 +345,17 @@
                     </div>
                 </div>
 
-                <!-- Customer Management (Up to 10 per page & Search) -->
+                <!-- Customer Management (Up to 10 per page) -->
                 <div class="space-y-2 pt-2 border-t border-purple-500/30">
                     <div class="flex justify-between items-center">
                         <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Customer Directory (Max 10/page)</h4>
                         <span id="customerPageIndicator" class="text-[10px] text-purple-300 font-mono">Page 1/1</span>
                     </div>
-                    <input type="text" id="adminSearchInput" onkeyup="filterAdminUsers()" placeholder="Search customer by username or ID..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-purple-500">
+                    <input type="text" id="adminSearchInput" onkeyup="filterAdminUsers()" placeholder="Search by name, username or ID..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-purple-500">
                     
                     <div id="adminUserList" class="space-y-2 min-h-[180px]">
-                        <!-- Dynamic Customer Entries -->
                     </div>
 
-                    <!-- Customer Pagination Controls -->
                     <div class="flex justify-between items-center pt-1">
                         <button onclick="changeCustomerPage(-1)" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-bold"><i class="fa-solid fa-chevron-left mr-1"></i> Prev</button>
                         <span id="customerPageNumText" class="text-xs text-slate-400">Page 1</span>
@@ -395,6 +392,59 @@
             </button>
         </div>
     </nav>
+
+    <!-- QUICK-REPLY TEMPLATES MODAL -->
+    <div id="quickReplyModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-5 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                <h3 class="font-extrabold text-base text-white flex items-center gap-2">
+                    <i class="fa-solid fa-comments text-sky-400"></i> Admin Quick-Reply Templates
+                </h3>
+                <button onclick="closeModal('quickReplyModal')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <p class="text-[11px] text-slate-300">Click any template to instantly copy it to your clipboard for messaging customers on Telegram:</p>
+
+            <div class="space-y-3 text-xs">
+                <!-- Template 1: Deposit Approval -->
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1.5">
+                    <div class="flex justify-between items-center font-bold text-emerald-400">
+                        <span><i class="fa-solid fa-circle-check mr-1"></i> Deposit Approved (+20% Bonus)</span>
+                        <button onclick="copyTemplate('deposit')" class="bg-slate-800 hover:bg-slate-700 text-white px-2 py-1 rounded text-[10px]">Copy</button>
+                    </div>
+                    <p id="tplDeposit" class="text-[11px] text-slate-300 font-mono bg-slate-900 p-2 rounded">
+                        Hello! Your Telebirr deposit has been verified & approved. We have credited your Qarshi Store account with your requested amount plus your 20% bonus! Happy gaming & shopping! 🇪🇹
+                    </p>
+                </div>
+
+                <!-- Template 2: Order Delivery -->
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1.5">
+                    <div class="flex justify-between items-center font-bold text-sky-400">
+                        <span><i class="fa-solid fa-box-archive mr-1"></i> Store Order & Download Link</span>
+                        <button onclick="copyTemplate('order')" class="bg-slate-800 hover:bg-slate-700 text-white px-2 py-1 rounded text-[10px]">Copy</button>
+                    </div>
+                    <p id="tplOrder" class="text-[11px] text-slate-300 font-mono bg-slate-900 p-2 rounded">
+                        Hello! Thank you for purchasing from Qarshi Store. Your payment has been confirmed. Here is your secure Google Drive download link: [INSERT_DRIVE_LINK]. Enjoy your asset!
+                    </p>
+                </div>
+
+                <!-- Template 3: Support / General Assistance -->
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1.5">
+                    <div class="flex justify-between items-center font-bold text-amber-400">
+                        <span><i class="fa-solid fa-headset mr-1"></i> Support Assistance</span>
+                        <button onclick="copyTemplate('support')" class="bg-slate-800 hover:bg-slate-700 text-white px-2 py-1 rounded text-[10px]">Copy</button>
+                    </div>
+                    <p id="tplSupport" class="text-[11px] text-slate-300 font-mono bg-slate-900 p-2 rounded">
+                        Hello! This is Wondu from Qarshi Store support (@WDemeke1 / @Kale177). How can we assist you with your deposit, withdrawal, or digital asset today?
+                    </p>
+                </div>
+            </div>
+
+            <button onclick="closeModal('quickReplyModal')" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs">
+                Close Templates
+            </button>
+        </div>
+    </div>
 
     <!-- DEPOSIT MODAL -->
     <div id="depositModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-4">
@@ -635,6 +685,7 @@
 
         let currentUser = {
             id: '12345678',
+            fullName: 'Wondossen Demeke',
             username: 'TgUser',
             balance: 100.00,
             phone: '',
@@ -681,9 +732,12 @@
                 const tg = window.Telegram.WebApp.initDataUnsafe.user;
                 currentUser.id = tg.id.toString();
                 currentUser.username = tg.username ? tg.username : (tg.first_name || 'User');
+                currentUser.fullName = (tg.first_name || '') + (tg.last_name ? ' ' + tg.last_name : '');
+                if (!currentUser.fullName.trim()) currentUser.fullName = currentUser.username;
             } else {
                 currentUser.id = '98765432';
                 currentUser.username = 'WDemeke1'; // Super admin handle
+                currentUser.fullName = 'Wondu Admin';
             }
 
             if (usersDB[currentUser.id]) {
@@ -698,6 +752,7 @@
                     let mockId = '900' + i;
                     usersDB[mockId] = {
                         id: mockId,
+                        fullName: `Customer Name ${i}`,
                         username: `customer_${i}`,
                         balance: 100.00 + (i * 25),
                         phone: `+25191${i}3624`,
@@ -773,6 +828,7 @@
             document.getElementById('dashBalance').textContent = currentUser.balance.toFixed(2) + ' ETB';
             document.getElementById('userName').textContent = '@' + currentUser.username;
             document.getElementById('dashUsername').textContent = '@' + currentUser.username;
+            document.getElementById('dashFullNameInput').value = currentUser.fullName || currentUser.username;
             document.getElementById('dashTgId').textContent = currentUser.id;
             document.getElementById('dashRefCount').textContent = currentUser.refCount;
             document.getElementById('dashRefEarnings').textContent = currentUser.refEarnings.toFixed(2);
@@ -927,6 +983,7 @@
                 const orderObj = {
                     id: transactionId,
                     userId: currentUser.id,
+                    fullName: currentUser.fullName,
                     username: currentUser.username,
                     type: 'Store Order',
                     productId: selectedProductForBuy.id,
@@ -944,6 +1001,15 @@
                 alert(`Order submitted! Ref: ${transactionId}.\nOnce admin approves your payment, the Google Drive link will be sent to your activity history.`);
                 logActivity('Order Pending', `Ordered "${selectedProductForBuy.title}" via Telebirr [Ref: ${transactionId}]`, 0);
             }
+        }
+
+        // --- QUICK-REPLY TEMPLATE CLIPBOARD HELPER ---
+        function copyTemplate(type) {
+            let elId = type === 'deposit' ? 'tplDeposit' : (type === 'order' ? 'tplOrder' : 'tplSupport');
+            let text = document.getElementById(elId).textContent.trim();
+            navigator.clipboard.writeText(text);
+            alert("Quick-reply template copied to clipboard!");
+            playSound('click');
         }
 
         // --- 3x3 MATRIX SLOT MACHINE ---
@@ -1158,6 +1224,7 @@
             const txObj = {
                 id: transactionId,
                 userId: currentUser.id,
+                fullName: currentUser.fullName,
                 username: currentUser.username,
                 type: 'Deposit',
                 amount: parsedAmount,
@@ -1198,6 +1265,7 @@
             const txObj = {
                 id: 'WTH-' + Math.floor(Math.random() * 900000 + 100000),
                 userId: currentUser.id,
+                fullName: currentUser.fullName,
                 username: currentUser.username,
                 type: 'Cashout',
                 bank: bankName,
@@ -1227,6 +1295,11 @@
             const text = encodeURIComponent("Explore Books and Designs on Qarshi Store! Use my link:");
             const url = encodeURIComponent(document.getElementById('referralLinkInput').value);
             window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
+        }
+
+        function updateUserFullName() {
+            currentUser.fullName = document.getElementById('dashFullNameInput').value.trim();
+            saveDB();
         }
 
         function updateUserPhone() {
@@ -1286,12 +1359,13 @@
             }
 
             let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "Telegram ID,Username,Balance (ETB),Phone Number,Referral Count,Referral Earnings (ETB)\r\n";
+            csvContent += "Telegram ID,Full Name,Username,Balance (ETB),Phone Number,Referral Count,Referral Earnings (ETB)\r\n";
 
             users.forEach(u => {
                 let row = [
                     u.id,
-                    `"${u.username}"`,
+                    `"${u.fullName || u.username}"`,
+                    `"@${u.username}"`,
                     u.balance.toFixed(2),
                     `"${u.phone || 'N/A'}"`,
                     u.refCount || 0,
@@ -1310,7 +1384,7 @@
             alert("Customer data CSV downloaded successfully!");
         }
 
-        // --- SUPER ADMIN DASHBOARD WITH PAGINATION (MAX 10 PER PAGE) ---
+        // --- SUPER ADMIN DASHBOARD WITH PAGINATION & TELEGRAM CHAT DIRECT LINKS ---
         let customerCurrentPage = 1;
         let pendingCurrentPage = 1;
         const ITEMS_PER_PAGE = 10;
@@ -1346,7 +1420,7 @@
             if (pendingCurrentPage < 1) pendingCurrentPage = 1;
 
             document.getElementById('pendingPageIndicator').textContent = `Page ${pendingCurrentPage}/${totalPages}`;
-            document.getElementById('pendingPageNumText').textContent = `Page ${pendingCurrentPage} of ${totalPages} (${pendingQueue.length} total pending)`;
+            document.getElementById('pendingPageNumText').textContent = `Page ${pendingCurrentPage} of ${totalPages} (${pendingQueue.length} pending)`;
 
             if (pendingQueue.length === 0) {
                 queueEl.innerHTML = `<div class="text-center text-xs text-slate-500 py-4 bg-slate-950 rounded-xl">No pending deposits or store orders.</div>`;
@@ -1358,14 +1432,20 @@
 
             queueEl.innerHTML = sliceItems.map((item, localIdx) => {
                 const actualIdx = startIdx + localIdx;
+                const tgContactUrl = item.username && !item.username.startsWith('customer_') 
+                    ? `https://t.me/${item.username}` 
+                    : `tg://user?id=${item.userId}`;
+
                 return `
                     <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs space-y-2">
                         <div class="flex justify-between items-center">
                             <span class="font-bold text-amber-400">${item.type} ${item.productTitle ? '('+item.productTitle+')' : ''}</span>
-                            <span class="text-slate-400">${item.time}</span>
+                            <a href="${tgContactUrl}" target="_blank" class="bg-sky-500/20 text-sky-300 border border-sky-500/40 px-2 py-1 rounded-lg font-bold hover:bg-sky-500/30 transition flex items-center gap-1">
+                                <i class="fa-brands fa-telegram text-sm"></i> Chat @${item.username}
+                            </a>
                         </div>
                         <div class="text-slate-300">
-                            User: <strong class="text-white">@${item.username}</strong> (${item.userId})<br>
+                            Name: <strong class="text-white">${item.fullName || 'N/A'}</strong><br>
                             Amount: <strong class="text-emerald-400">${item.amount} ETB</strong>
                             ${item.type === 'Deposit' ? `(Bonus Credited: ${(item.amount * 1.20).toFixed(2)})` : ''}
                             ${item.bank ? `<br>Payout Method: <span class="text-sky-400 font-bold">${item.bank}</span> (Acct: ${item.account})` : ''}
@@ -1393,7 +1473,9 @@
             const users = Object.entries(usersDB);
             
             const filtered = users.filter(([id, u]) => 
-                u.username.toLowerCase().includes(filterQuery.toLowerCase()) || id.includes(filterQuery)
+                (u.fullName && u.fullName.toLowerCase().includes(filterQuery.toLowerCase())) ||
+                u.username.toLowerCase().includes(filterQuery.toLowerCase()) || 
+                id.includes(filterQuery)
             );
 
             const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1;
@@ -1411,25 +1493,44 @@
             const startIdx = (customerCurrentPage - 1) * ITEMS_PER_PAGE;
             const sliceUsers = filtered.slice(startIdx, startIdx + ITEMS_PER_PAGE);
 
-            listEl.innerHTML = sliceUsers.map(([id, u]) => `
-                <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
-                    <div>
-                        <span class="font-bold text-white">@${u.username}</span> <span class="text-[10px] text-slate-500">(${id})</span>
-                        <div class="text-[10px] text-amber-400 font-bold">Balance: ${u.balance.toFixed(2)} ETB | Phone: ${u.phone || 'N/A'}</div>
+            listEl.innerHTML = sliceUsers.map(([id, u]) => {
+                const tgContactUrl = u.username && !u.username.startsWith('customer_') 
+                    ? `https://t.me/${u.username}` 
+                    : `tg://user?id=${id}`;
+
+                return `
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
+                        <div class="space-y-0.5">
+                            <span class="font-bold text-white text-sm block">${u.fullName || 'Telegram User'}</span>
+                            <div class="flex items-center gap-2">
+                                <a href="${tgContactUrl}" target="_blank" class="text-sky-400 font-bold hover:underline flex items-center gap-1">
+                                    <i class="fa-brands fa-telegram"></i> @${u.username}
+                                </a>
+                                <span class="text-[10px] text-slate-500">(ID: ${id})</span>
+                            </div>
+                            <div class="text-[10px] text-amber-400 font-bold">Balance: ${u.balance.toFixed(2)} ETB | Phone: ${u.phone || 'N/A'}</div>
+                        </div>
+                        <div class="flex flex-col items-end gap-1.5">
+                            <a href="${tgContactUrl}" target="_blank" class="bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 px-2 py-1 rounded-lg font-bold text-[10px] flex items-center gap-1">
+                                <i class="fa-solid fa-paper-plane"></i> Message
+                            </a>
+                            <div class="flex items-center gap-1">
+                                <button onclick="adminAdjustBalance('${id}', 50)" class="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 rounded font-bold text-[10px]">+50</button>
+                                <button onclick="adminAdjustBalance('${id}', -50)" class="px-1.5 py-0.5 bg-rose-500/20 text-rose-300 rounded font-bold text-[10px]">-50</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="adminAdjustBalance('${id}', 50)" class="px-2 py-1 bg-emerald-500/20 text-emerald-300 rounded font-bold text-[10px]">+50</button>
-                        <button onclick="adminAdjustBalance('${id}', -50)" class="px-2 py-1 bg-rose-500/20 text-rose-300 rounded font-bold text-[10px]">-50</button>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function changeCustomerPage(direction) {
             const query = document.getElementById('adminSearchInput').value;
             const users = Object.entries(usersDB);
             const filtered = users.filter(([id, u]) => 
-                u.username.toLowerCase().includes(query.toLowerCase()) || id.includes(query)
+                (u.fullName && u.fullName.toLowerCase().includes(query.toLowerCase())) ||
+                u.username.toLowerCase().includes(query.toLowerCase()) || 
+                id.includes(query)
             );
             const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1;
 
