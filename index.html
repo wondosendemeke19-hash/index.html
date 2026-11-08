@@ -301,7 +301,7 @@
             </div>
         </section>
 
-        <!-- TAB 5: SUPER ADMIN DASHBOARD (@WDemeke1) -->
+        <!-- TAB 5: SUPER ADMIN DASHBOARD (@WDemeke1 ONLY) -->
         <section id="adminTab" class="hidden space-y-4">
             <div class="bg-purple-950/40 p-4 rounded-2xl border border-purple-500/40 space-y-4 shadow-neon-purple">
                 <div class="flex justify-between items-center border-b border-purple-500/30 pb-2">
@@ -379,9 +379,9 @@
 
     </main>
 
-    <!-- FOOTER NAV BAR -->
+    <!-- FOOTER NAV BAR (Admin Tab Hidden for Customers, Visible for @WDemeke1) -->
     <nav class="fixed bottom-0 left-0 right-0 z-30 glass-panel border-t border-slate-800 px-3 py-2">
-        <div class="max-w-md mx-auto grid grid-cols-5 gap-1 text-center" id="footerNavGrid">
+        <div class="max-w-md mx-auto grid grid-cols-4 gap-1 text-center" id="footerNavGrid">
             <button onclick="switchTab('spin')" id="navSpin" class="flex flex-col items-center justify-center py-1 text-amber-400 font-bold text-xs">
                 <i class="fa-solid fa-gamepad text-base mb-0.5"></i>
                 Spin
@@ -398,7 +398,7 @@
                 <i class="fa-solid fa-list-check text-base mb-0.5"></i>
                 History
             </button>
-            <button onclick="switchTab('admin')" id="navAdmin" class="flex flex-col items-center justify-center py-1 text-purple-400 font-semibold text-xs hover:text-purple-300">
+            <button onclick="switchTab('admin')" id="navAdmin" class="hidden flex-col items-center justify-center py-1 text-purple-400 font-semibold text-xs hover:text-purple-300">
                 <i class="fa-solid fa-shield-halved text-base mb-0.5"></i>
                 Admin
             </button>
@@ -754,17 +754,27 @@
             const isAdmin = currentUser.username.toLowerCase() === 'wdemeke1';
             const adminTabBtn = document.getElementById('navAdmin');
             const adminBadge = document.getElementById('adminBadge');
+            const footerNavGrid = document.getElementById('footerNavGrid');
 
             if (isAdmin) {
                 adminTabBtn.classList.remove('hidden');
+                adminTabBtn.classList.add('flex');
                 adminBadge.classList.remove('hidden');
+                footerNavGrid.className = "max-w-md mx-auto grid grid-cols-5 gap-1 text-center";
             } else {
                 adminTabBtn.classList.add('hidden');
+                adminTabBtn.classList.remove('flex');
                 adminBadge.classList.add('hidden');
+                footerNavGrid.className = "max-w-md mx-auto grid grid-cols-4 gap-1 text-center";
             }
         }
 
         function switchTab(tabId) {
+            const isAdmin = currentUser.username.toLowerCase() === 'wdemeke1';
+            if (tabId === 'admin' && !isAdmin) {
+                return; // Block customers from accessing admin tab
+            }
+
             const tabs = ['spin', 'shop', 'dashboard', 'history', 'admin'];
             tabs.forEach(t => {
                 const sec = document.getElementById(t + 'Tab');
@@ -790,7 +800,7 @@
             }
 
             if (tabId === 'shop') renderProductCatalog();
-            if (tabId === 'admin') renderAdminDashboard();
+            if (tabId === 'admin' && isAdmin) renderAdminDashboard();
             playSound('click');
         }
 
