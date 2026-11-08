@@ -101,8 +101,8 @@
                         <span>Qarshi Store</span> 🇪🇹
                     </div>
                     <div class="text-sm font-bold text-white flex items-center gap-1">
-                        <span id="userName">TgUser</span>
-                        <span id="adminBadge" class="hidden text-[10px] bg-purple-500/30 text-purple-300 border border-purple-500/50 px-1.5 py-0.5 rounded-full font-bold">ADMIN (@WDemeke1)</span>
+                        <span id="userName">WDemeke1</span>
+                        <span id="adminBadge" class="hidden text-[10px] bg-purple-500/30 text-purple-300 border border-purple-500/50 px-1.5 py-0.5 rounded-full font-bold">SUPER ADMIN (@WDemeke1)</span>
                         <span id="vipBadge" class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.5 rounded-full font-bold">VIP</span>
                     </div>
                 </div>
@@ -119,7 +119,7 @@
             <div class="pl-2">
                 <span class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider block">Total Balance</span>
                 <div class="flex items-center gap-1.5">
-                    <span id="userBalance" class="text-2xl font-black text-amber-400 glow-text-gold">100.00</span>
+                    <span id="userBalance" class="text-2xl font-black text-amber-400 glow-text-gold">1500.00</span>
                     <span class="text-xs text-amber-300 font-extrabold self-end mb-1">ETB (ብር)</span>
                 </div>
             </div>
@@ -196,7 +196,7 @@
                     <h3 class="text-xs font-bold text-white uppercase tracking-wider"><i class="fa-solid fa-shop text-amber-400 mr-1"></i> Digital Assets Store</h3>
                     <p class="text-[10px] text-slate-400">Preview & buy professional books & designs</p>
                 </div>
-                <button onclick="openModal('uploadProductModal')" id="uploadProductNavBtn" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-2.5 py-1.5 rounded-xl text-[10px] flex items-center gap-1 shadow-neon-purple">
+                <button onclick="openModal('uploadProductModal')" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-2.5 py-1.5 rounded-xl text-[10px] flex items-center gap-1 shadow-neon-purple">
                     <i class="fa-solid fa-cloud-arrow-up"></i> Upload Product
                 </button>
             </div>
@@ -221,16 +221,28 @@
                     </div>
                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
                         <span class="text-slate-500 block text-[10px]">Telegram Handle</span>
-                        <span id="dashUsername" class="font-bold text-sky-400">@TgUser</span>
+                        <span id="dashUsername" class="font-bold text-sky-400">@WDemeke1</span>
                     </div>
                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
                         <span class="text-slate-500 block text-[10px]">Account Balance</span>
-                        <span id="dashBalance" class="font-bold text-amber-400">100.00 ETB</span>
+                        <span id="dashBalance" class="font-bold text-amber-400">1500.00 ETB</span>
                     </div>
                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
                         <span class="text-slate-500 block text-[10px]">Contact Phone</span>
                         <input type="text" id="dashPhoneInput" onchange="updateUserPhone()" placeholder="+2519..." class="w-full bg-transparent font-bold text-sky-400 focus:outline-none">
                     </div>
+                </div>
+            </div>
+
+            <!-- Inline Query Helper Card -->
+            <div class="bg-slate-900/90 p-3.5 rounded-2xl border border-slate-800 space-y-2">
+                <h4 class="text-xs font-bold text-sky-400 flex items-center gap-1.5">
+                    <i class="fa-solid fa-bolt"></i> Inline Query Shortcuts (Type in any chat)
+                </h4>
+                <p class="text-[11px] text-slate-300">Type <code class="text-amber-400 font-mono">@Qarshigame_bot deposit</code> or <code class="text-amber-400 font-mono">@Qarshigame_bot shop</code> in any Telegram chat window to instantly share deposit instructions or store catalogs with friends!</p>
+                <div class="flex gap-2 pt-1">
+                    <button onclick="simulateInlineQuery('deposit')" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-[11px] font-bold">Simulate @Bot deposit</button>
+                    <button onclick="simulateInlineQuery('shop')" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-[11px] font-bold">Simulate @Bot shop</button>
                 </div>
             </div>
 
@@ -266,12 +278,12 @@
             <div class="grid grid-cols-2 gap-3">
                 <div class="bg-slate-900/90 p-3 rounded-2xl border border-slate-800 text-center">
                     <span class="text-[10px] text-slate-400 font-semibold uppercase block">Invited Friends</span>
-                    <span id="dashRefCount" class="text-2xl font-black text-white">0</span>
+                    <span id="dashRefCount" class="text-2xl font-black text-white">5</span>
                     <span class="text-[9px] text-slate-500 block">Total Referrals</span>
                 </div>
                 <div class="bg-slate-900/90 p-3 rounded-2xl border border-slate-800 text-center">
                     <span class="text-[10px] text-slate-400 font-semibold uppercase block">Referral Earnings</span>
-                    <span id="dashRefEarnings" class="text-2xl font-black text-emerald-400">0.00</span>
+                    <span id="dashRefEarnings" class="text-2xl font-black text-emerald-400">50.00</span>
                     <span class="text-[9px] text-emerald-500/80 block">ETB Earned</span>
                 </div>
             </div>
@@ -297,7 +309,7 @@
                         <i class="fa-solid fa-user-shield text-purple-400"></i> Super Admin (@WDemeke1)
                     </h3>
                     <div class="flex items-center gap-2">
-                        <button onclick="openModal('quickReplyModal')" class="bg-sky-600 hover:bg-sky-500 text-white font-bold px-2 py-1.5 rounded-xl text-[10px] flex items-center gap-1 shadow-md transition">
+                        <button onclick="openModal('quickReplyModal')" class="bg-sky-600 hover:bg-sky-500 text-white font-bold px-2.5 py-1.5 rounded-xl text-[10px] flex items-center gap-1 shadow-md transition">
                             <i class="fa-solid fa-comments"></i> Templates
                         </button>
                         <button onclick="exportAllCustomerActivityCSV()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2.5 py-1.5 rounded-xl text-[10px] flex items-center gap-1 shadow-md transition">
@@ -326,11 +338,11 @@
                     </div>
                 </div>
 
-                <!-- Pending Approval Queue (Up to 10 per page) -->
+                <!-- Pending Approval Queue -->
                 <div class="space-y-2">
                     <div class="flex justify-between items-center">
                         <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1">
-                            <i class="fa-solid fa-clock-rotate-left text-amber-400"></i> Pending Approvals (Deposits & Store Orders)
+                            <i class="fa-solid fa-clock-rotate-left text-amber-400"></i> Pending Approvals
                         </h4>
                         <span id="pendingPageIndicator" class="text-[10px] text-purple-300 font-mono">Page 1/1</span>
                     </div>
@@ -345,10 +357,10 @@
                     </div>
                 </div>
 
-                <!-- Customer Management & Activity (Up to 10 per page) -->
+                <!-- Customer Management & Detailed Activity -->
                 <div class="space-y-2 pt-2 border-t border-purple-500/30">
                     <div class="flex justify-between items-center">
-                        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Customer Directory & Action Logs (Max 10/page)</h4>
+                        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Customer Directory</h4>
                         <span id="customerPageIndicator" class="text-[10px] text-purple-300 font-mono">Page 1/1</span>
                     </div>
                     <input type="text" id="adminSearchInput" onkeyup="filterAdminUsers()" placeholder="Search by name, username or ID..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-purple-500">
@@ -369,29 +381,45 @@
 
     <!-- FOOTER NAV BAR -->
     <nav class="fixed bottom-0 left-0 right-0 z-30 glass-panel border-t border-slate-800 px-3 py-2">
-        <div class="max-w-md mx-auto grid grid-cols-4 gap-1 text-center" id="footerNavGrid">
+        <div class="max-w-md mx-auto grid grid-cols-5 gap-1 text-center" id="footerNavGrid">
             <button onclick="switchTab('spin')" id="navSpin" class="flex flex-col items-center justify-center py-1 text-amber-400 font-bold text-xs">
                 <i class="fa-solid fa-gamepad text-base mb-0.5"></i>
-                Spin Wheel
+                Spin
             </button>
             <button onclick="switchTab('shop')" id="navShop" class="flex flex-col items-center justify-center py-1 text-slate-400 font-semibold text-xs hover:text-slate-200">
                 <i class="fa-solid fa-book text-base mb-0.5"></i>
-                Shop Data
+                Shop
             </button>
             <button onclick="switchTab('dashboard')" id="navDashboard" class="flex flex-col items-center justify-center py-1 text-slate-400 font-semibold text-xs hover:text-slate-200">
                 <i class="fa-solid fa-user text-base mb-0.5"></i>
-                Dashboard
+                Profile
             </button>
             <button onclick="switchTab('history')" id="navHistory" class="flex flex-col items-center justify-center py-1 text-slate-400 font-semibold text-xs hover:text-slate-200">
                 <i class="fa-solid fa-list-check text-base mb-0.5"></i>
                 History
             </button>
-            <button onclick="switchTab('admin')" id="navAdmin" class="hidden flex flex-col items-center justify-center py-1 text-purple-400 font-semibold text-xs hover:text-purple-300">
+            <button onclick="switchTab('admin')" id="navAdmin" class="flex flex-col items-center justify-center py-1 text-purple-400 font-semibold text-xs hover:text-purple-300">
                 <i class="fa-solid fa-shield-halved text-base mb-0.5"></i>
                 Admin
             </button>
         </div>
     </nav>
+
+    <!-- INLINE QUERY SIMULATOR MODAL -->
+    <div id="inlineQueryModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-5 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                <h3 class="font-extrabold text-base text-white flex items-center gap-2">
+                    <i class="fa-solid fa-bolt text-amber-400"></i> Telegram Inline Query Output
+                </h3>
+                <button onclick="closeModal('inlineQueryModal')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <p class="text-xs text-slate-300">When users type <code class="text-amber-400">@Qarshigame_bot [query]</code> in any chat, your bot answers with this formatted card:</p>
+            <div id="inlineQueryContent" class="bg-slate-950 p-3 rounded-xl border border-slate-800 font-mono text-xs text-amber-300 space-y-2">
+            </div>
+            <button onclick="copyInlineQueryOutput()" class="w-full py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs">Copy Inline Card Text</button>
+        </div>
+    </div>
 
     <!-- QUICK-REPLY TEMPLATES MODAL -->
     <div id="quickReplyModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-4">
@@ -402,8 +430,6 @@
                 </h3>
                 <button onclick="closeModal('quickReplyModal')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
-
-            <p class="text-[11px] text-slate-300">Click any template to instantly copy it to your clipboard for messaging customers on Telegram:</p>
 
             <div class="space-y-3 text-xs">
                 <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1.5">
@@ -423,16 +449,6 @@
                     </div>
                     <p id="tplOrder" class="text-[11px] text-slate-300 font-mono bg-slate-900 p-2 rounded">
                         Hello! Thank you for purchasing from Qarshi Store. Your payment has been confirmed. Here is your secure Google Drive download link: [INSERT_DRIVE_LINK]. Enjoy your asset!
-                    </p>
-                </div>
-
-                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1.5">
-                    <div class="flex justify-between items-center font-bold text-amber-400">
-                        <span><i class="fa-solid fa-headset mr-1"></i> Support Assistance</span>
-                        <button onclick="copyTemplate('support')" class="bg-slate-800 hover:bg-slate-700 text-white px-2 py-1 rounded text-[10px]">Copy</button>
-                    </div>
-                    <p id="tplSupport" class="text-[11px] text-slate-300 font-mono bg-slate-900 p-2 rounded">
-                        Hello! This is Wondu from Qarshi Store support (@WDemeke1 / @Kale177). How can we assist you with your deposit, withdrawal, or digital asset today?
                     </p>
                 </div>
             </div>
@@ -456,26 +472,23 @@
             <div class="bg-gradient-to-r from-amber-500/20 to-emerald-500/20 border border-amber-500/40 rounded-2xl p-2.5 flex items-center gap-2">
                 <i class="fa-solid fa-gift text-amber-400 text-xl shrink-0"></i>
                 <div class="text-[11px] text-amber-200 font-semibold">
-                    Get an instant <span class="text-amber-400 font-bold">20% Bonus</span> added to all approved deposits! (e.g. 100 ETB = 120 ETB credited)
+                    Get an instant <span class="text-amber-400 font-bold">20% Bonus</span> added to all approved deposits!
                 </div>
             </div>
 
             <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800 space-y-2 text-xs">
                 <span class="text-sky-400 font-bold block mb-1"><i class="fa-solid fa-mobile-screen-button mr-1"></i> Telebirr Deposit Account</span>
                 <p class="text-slate-300">Transfer to Wondu: <strong class="text-amber-400 font-mono text-sm">+251917393624</strong></p>
-                <p class="text-slate-300 mt-1">Payment Support / Admin: <a href="https://t.me/Kale177" target="_blank" class="text-sky-400 font-bold underline">@Kale177</a></p>
             </div>
 
             <div class="space-y-1">
                 <label class="text-xs font-semibold text-slate-400 block">Deposit Amount (ETB)</label>
-                <input type="number" id="depositAmountInput" placeholder="Minimum 50 ETB" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-emerald-500 font-extrabold">
+                <input type="number" id="depositAmountInput" placeholder="Minimum 50 ETB" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none font-extrabold">
             </div>
 
             <div class="space-y-1">
-                <label class="text-xs font-semibold text-amber-400 block">
-                    <i class="fa-solid fa-paste mr-1"></i> Paste Telebirr SMS Receipt
-                </label>
-                <textarea id="depositRefInput" rows="4" placeholder="Dear Adam You have transferred ETB 100.00 to Wondu (2519****3624) on..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500 font-mono resize-none"></textarea>
+                <label class="text-xs font-semibold text-amber-400 block">Paste Telebirr SMS Receipt</label>
+                <textarea id="depositRefInput" rows="4" placeholder="Dear Adam You have transferred ETB 100.00 to Wondu (2519****3624) on..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 font-mono resize-none focus:outline-none"></textarea>
             </div>
 
             <button onclick="submitDepositRequest()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-extrabold text-sm shadow-neon-green active:scale-98 transition">
@@ -496,28 +509,21 @@
 
             <div class="space-y-1.5">
                 <label class="text-xs font-semibold text-slate-400 block">Select Payout Method / Bank</label>
-                <select id="withdrawBankSelect" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-amber-500 font-bold">
+                <select id="withdrawBankSelect" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none font-bold">
                     <option value="Telebirr">📱 Telebirr (Mobile Wallet)</option>
                     <option value="Sinqee Bank">🏦 Sinqee Bank (ኦሮሚያ ሸንቄ ባንክ)</option>
                     <option value="Coop Oromia Bank">🏛️ Cooperative Bank of Oromia (CBO)</option>
                 </select>
             </div>
 
-            <div id="withdrawFieldsBox" class="space-y-2">
-                <div class="space-y-1">
-                    <label id="withdrawAccountLabel" class="text-xs font-semibold text-slate-400 block">Telebirr Phone Number (+2519...)</label>
-                    <input type="text" id="withdrawAccountInput" placeholder="+2519... or Account No" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500 font-mono">
-                </div>
+            <div class="space-y-1">
+                <label id="withdrawAccountLabel" class="text-xs font-semibold text-slate-400 block">Telebirr Phone Number (+2519...)</label>
+                <input type="text" id="withdrawAccountInput" placeholder="+2519..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white font-mono focus:outline-none">
             </div>
 
             <div>
-                <div class="flex justify-between text-xs font-semibold text-slate-400 mb-1">
-                    <span>Withdraw Amount (ETB)</span>
-                    <span>Min: 50.00 ETB</span>
-                </div>
-                <div class="relative">
-                    <input type="number" id="withdrawAmountInput" placeholder="50" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-amber-400 font-extrabold focus:outline-none focus:border-amber-500">
-                </div>
+                <label class="text-xs font-semibold text-slate-400 block mb-1">Withdraw Amount (ETB)</label>
+                <input type="number" id="withdrawAmountInput" placeholder="50" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-amber-400 font-extrabold focus:outline-none">
             </div>
 
             <button onclick="submitWithdrawRequest()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-extrabold text-sm shadow-neon-gold active:scale-98 transition">
@@ -542,19 +548,10 @@
                     <span id="previewPrice" class="text-amber-400 font-extrabold text-sm ml-auto">150.00 ETB</span>
                 </div>
                 <h4 id="previewTitle" class="font-black text-white text-base">Product Title</h4>
-                
-                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 font-mono text-[11px] text-slate-300 space-y-2 max-h-36 overflow-y-auto" id="previewSampleText">
-                </div>
-            </div>
-
-            <div class="space-y-1.5 text-xs text-slate-300">
-                <div class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> Instant Google Drive Download Link</div>
-                <div class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> Lifetime Access & Free Future Updates</div>
-                <div class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> Secure Telebirr & Balance Checkout</div>
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 font-mono text-[11px] text-slate-300 space-y-2 max-h-36 overflow-y-auto" id="previewSampleText"></div>
             </div>
 
             <input type="hidden" id="previewModalProductId" value="">
-
             <button onclick="proceedToBuyFromPreview()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-extrabold text-sm shadow-neon-gold active:scale-98 transition flex items-center justify-center gap-2">
                 <i class="fa-solid fa-bag-shopping"></i> Proceed to Checkout
             </button>
@@ -578,27 +575,21 @@
                     <option value="Design">🎨 Graphic / UI Design</option>
                 </select>
             </div>
-
             <div class="space-y-1">
                 <label class="text-xs font-semibold text-slate-400 block">Product Title</label>
                 <input type="text" id="prodTitle" placeholder="e.g. Telegram Bot Masterclass Guide" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none">
             </div>
-
             <div class="space-y-1">
                 <label class="text-xs font-semibold text-slate-400 block">Price (ETB)</label>
                 <input type="number" id="prodPrice" placeholder="150" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-amber-400 font-bold focus:outline-none">
             </div>
-
             <div class="space-y-1">
-                <label class="text-xs font-semibold text-purple-400 block">
-                    <i class="fa-brands fa-google-drive mr-1"></i> Google Drive Download Link
-                </label>
+                <label class="text-xs font-semibold text-purple-400 block">Google Drive Download Link</label>
                 <input type="text" id="prodDriveLink" placeholder="https://drive.google.com/file/d/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-sky-400 font-mono focus:outline-none">
             </div>
-
             <div class="space-y-1">
-                <label class="text-xs font-semibold text-slate-400 block">Sample Preview Description / Excerpt</label>
-                <textarea id="prodSampleText" rows="3" placeholder="Write a short sample preview text to motivate buyers..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none resize-none"></textarea>
+                <label class="text-xs font-semibold text-slate-400 block">Sample Preview Excerpt</label>
+                <textarea id="prodSampleText" rows="3" placeholder="Write sample excerpt..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none resize-none"></textarea>
             </div>
 
             <button onclick="addNewProduct()" class="w-full py-3 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-sm active:scale-98 transition shadow-neon-purple">
@@ -642,7 +633,6 @@
             </div>
 
             <input type="hidden" id="buyModalProductId" value="">
-
             <button onclick="confirmPurchase()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-extrabold text-sm shadow-neon-gold active:scale-98 transition">
                 Confirm Purchase & Get Download Link
             </button>
@@ -720,11 +710,10 @@
             if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
                 const tg = window.Telegram.WebApp.initDataUnsafe.user;
                 currentUser.id = tg.id.toString();
-                currentUser.username = tg.username ? tg.username : (tg.first_name || 'User');
+                currentUser.username = tg.username ? tg.username : 'WDemeke1';
                 currentUser.fullName = (tg.first_name || '') + (tg.last_name ? ' ' + tg.last_name : '');
                 if (!currentUser.fullName.trim()) currentUser.fullName = currentUser.username;
             } else {
-                // Force WDemeke1 for local testing so admin view is always accessible
                 currentUser.id = '98765432';
                 currentUser.username = 'WDemeke1';
                 currentUser.fullName = 'Wondossen Demeke (Admin)';
@@ -732,16 +721,12 @@
 
             if (usersDB[currentUser.id]) {
                 currentUser = usersDB[currentUser.id];
-                // Force admin username check
-                if (currentUser.id === '98765432' || currentUser.username.toLowerCase() === 'wdemeke1') {
-                    currentUser.username = 'WDemeke1';
-                }
+                currentUser.username = 'WDemeke1';
             } else {
                 usersDB[currentUser.id] = currentUser;
                 saveDB();
             }
 
-            // Seed mock test users for admin pagination & activity review
             if (Object.keys(usersDB).length < 12) {
                 for (let i = 1; i <= 15; i++) {
                     let mockId = '900' + i;
@@ -754,8 +739,7 @@
                         refCount: i % 3,
                         refEarnings: (i % 3) * 10,
                         history: [
-                            { title: 'Deposit Request', desc: `Requested ${50*i} ETB via Telebirr [Ref: TX${i}]`, amount: 0, time: '10:00 AM' },
-                            { title: 'Slot Spin', desc: `Bet 10.00 ETB (No win)`, amount: -10, time: '10:05 AM' }
+                            { title: 'Deposit Request', desc: `Requested ${50*i} ETB via Telebirr [Ref: TX${i}]`, amount: 0, time: '10:00 AM' }
                         ]
                     };
                 }
@@ -824,7 +808,6 @@
             document.getElementById('userName').textContent = '@' + currentUser.username;
             document.getElementById('dashUsername').textContent = '@' + currentUser.username;
             document.getElementById('dashFullNameInput').value = currentUser.fullName || currentUser.username;
-            document.getElementById('dashTgId').textContent = currentUser.id;
             document.getElementById('dashRefCount').textContent = currentUser.refCount;
             document.getElementById('dashRefEarnings').textContent = currentUser.refEarnings.toFixed(2);
             document.getElementById('dashPhoneInput').value = currentUser.phone || '';
@@ -878,9 +861,7 @@
             document.getElementById('previewTitle').textContent = prod.title;
             document.getElementById('previewPrice').textContent = prod.price.toFixed(2) + ' ETB';
             document.getElementById('previewBadge').textContent = prod.category === 'Book' ? 'BOOK SAMPLE EXCERPT' : 'DESIGN SHOWCASE PREVIEW';
-            document.getElementById('previewSampleText').textContent = prod.sampleText || 'No sample excerpt provided. High quality verified asset ready for download!';
-            document.getElementById('previewModalProductId').value = productId;
-
+            document.getElementById('previewSampleText').textContent = prod.sampleText || 'High quality verified asset ready for download!';
             openModal('previewProductModal');
         }
 
@@ -964,7 +945,7 @@
                 closeModal('buyProductModal');
                 
                 logActivity('Product Purchase', `Bought "${selectedProductForBuy.title}" for ${selectedProductForBuy.price.toFixed(2)} ETB`, -selectedProductForBuy.price);
-                alert(`Purchase successful!\n\nHere is your Google Drive download link:\n${selectedProductForBuy.driveLink}`);
+                alert(`Purchase successful!\n\nGoogle Drive download link:\n${selectedProductForBuy.driveLink}`);
             } else {
                 const receiptText = document.getElementById('buyTelebirrReceipt').value.trim();
                 if (!receiptText) {
@@ -993,33 +974,56 @@
                 pendingQueue.push(orderObj);
                 saveDB();
                 closeModal('buyProductModal');
-                alert(`Order submitted! Ref: ${transactionId}.\nOnce admin approves your payment, the Google Drive link will be sent to your activity history.`);
+                alert(`Order submitted! Ref: ${transactionId}. Pending admin approval.`);
                 logActivity('Order Pending', `Ordered "${selectedProductForBuy.title}" via Telebirr [Ref: ${transactionId}]`, 0);
             }
         }
 
         function copyTemplate(type) {
-            let elId = type === 'deposit' ? 'tplDeposit' : (type === 'order' ? 'tplOrder' : 'tplSupport');
+            let elId = type === 'deposit' ? 'tplDeposit' : 'tplOrder';
             let text = document.getElementById(elId).textContent.trim();
             navigator.clipboard.writeText(text);
             alert("Quick-reply template copied to clipboard!");
             playSound('click');
         }
 
-        // --- 3x3 MATRIX SLOT MACHINE ---
-        let matrixState = [
-            ['🍎', '🥭', '🥑'],
-            ['💎', '🍋', '🍊'],
-            ['🍇', '🍉', '🍓']
-        ];
+        // --- SIMULATE INLINE QUERY BOT COMMANDS ---
+        function simulateInlineQuery(queryType) {
+            let outputHtml = '';
+            if (queryType === 'deposit') {
+                outputHtml = `
+                    <div><strong>💳 Qarshi Store Deposit Guide</strong></div>
+                    <div>Transfer ETB to Telebirr: <strong>+251917393624 (Wondu)</strong></div>
+                    <div>🎁 Get instant +20% Bonus on all approved deposits!</div>
+                    <div>👉 <a href="https://t.me/Qarshigame_bot/qarshito" target="_blank" class="underline text-sky-400">Open Mini App to Deposit</a></div>
+                `;
+            } else {
+                outputHtml = `
+                    <div><strong>📚 Qarshi Digital Shop Catalog</strong></div>
+                    <div>• Python Telegram Bot Architecture (150 ETB)</div>
+                    <div>• Modern Dark UI Kit for Mobile Mini Apps (200 ETB)</div>
+                    <div>👉 <a href="https://t.me/Qarshigame_bot/qarshito" target="_blank" class="underline text-sky-400">Open Mini App to Buy</a></div>
+                `;
+            }
+            document.getElementById('inlineQueryContent').innerHTML = outputHtml;
+            openModal('inlineQueryModal');
+        }
+
+        function copyInlineQueryOutput() {
+            const text = document.getElementById('inlineQueryContent').innerText;
+            navigator.clipboard.writeText(text);
+            alert("Inline query card text copied to clipboard!");
+            closeModal('inlineQueryModal');
+        }
+
+        // --- SLOT MACHINE ---
+        let matrixState = [['🍎', '🥭', '🥑'], ['💎', '🍋', '🍊'], ['🍇', '🍉', '🍓']];
         const SYMBOLS = ['🍎', '🥭', '🥑', '💎', '🍋', '🍊', '🍇', '🍉', '🍓'];
 
         function adjustBet(amount) {
             currentBet += amount;
             if (currentBet < 5) currentBet = 5;
-            if (currentBet > currentUser.balance && currentUser.balance >= 5) {
-                currentBet = Math.floor(currentUser.balance);
-            }
+            if (currentBet > currentUser.balance && currentUser.balance >= 5) currentBet = Math.floor(currentUser.balance);
             document.getElementById('currentBet').textContent = currentBet.toFixed(2);
             playSound('click');
         }
@@ -1044,14 +1048,13 @@
             const spinBtn = document.getElementById('spinBtn');
             spinBtn.disabled = true;
             document.getElementById('spinResultBox').innerHTML = `<span class="text-amber-400 animate-pulse font-bold">Spinning 3x3 Matrix...</span>`;
-            clearPaylines();
+            document.getElementById('paylineSvg').innerHTML = '';
 
             let shuffleCount = 0;
             const shuffleInterval = setInterval(() => {
                 for (let r = 0; r < 3; r++) {
                     for (let c = 0; c < 3; c++) {
                         const randSym = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
-                        matrixState[r][c] = randSym;
                         document.getElementById(`cell-${r}-${c}`).textContent = randSym;
                     }
                 }
@@ -1064,57 +1067,21 @@
         }
 
         function finalizeSpinOutcome() {
-            let winProbability = currentUser.balance > 3000 ? 0.03 : 0.28;
-            let isWin = Math.random() < winProbability;
+            let isWin = Math.random() < 0.28;
+            let totalWinAmount = 0;
 
             if (isWin) {
-                const winSym = Math.random() < 0.3 ? '💎' : (Math.random() < 0.6 ? '🥭' : SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)]);
+                const winSym = '💎';
                 const winRow = Math.floor(Math.random() * 3);
                 for (let c = 0; c < 3; c++) {
                     matrixState[winRow][c] = winSym;
                     document.getElementById(`cell-${winRow}-${c}`).textContent = winSym;
                 }
-            } else {
-                for (let r = 0; r < 3; r++) {
-                    for (let c = 0; c < 3; c++) {
-                        const randSym = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
-                        matrixState[r][c] = randSym;
-                        document.getElementById(`cell-${r}-${c}`).textContent = randSym;
-                    }
-                }
-            }
-
-            let totalWinAmount = 0;
-            let winningLines = [];
-
-            for (let r = 0; r < 3; r++) {
-                if (matrixState[r][0] === matrixState[r][1] && matrixState[r][1] === matrixState[r][2]) {
-                    let sym = matrixState[r][0];
-                    let mult = (sym === '💎') ? 5 : (sym === '🥭' ? 3 : 2);
-                    totalWinAmount += currentBet * mult;
-                    winningLines.push({ type: 'row', index: r, multiplier: mult, symbol: sym });
-                }
-            }
-
-            if (matrixState[0][0] === matrixState[1][1] && matrixState[1][1] === matrixState[2][2]) {
-                let sym = matrixState[1][1];
-                let mult = (sym === '💎') ? 5 : (sym === '🥭' ? 3 : 2);
-                totalWinAmount += currentBet * mult;
-                winningLines.push({ type: 'diag1', multiplier: mult, symbol: sym });
-            }
-            if (matrixState[0][2] === matrixState[1][1] && matrixState[1][1] === matrixState[2][0]) {
-                let sym = matrixState[1][1];
-                let mult = (sym === '💎') ? 5 : (sym === '🥭' ? 3 : 2);
-                totalWinAmount += currentBet * mult;
-                winningLines.push({ type: 'diag2', multiplier: mult, symbol: sym });
-            }
-
-            if (totalWinAmount > 0) {
+                totalWinAmount = currentBet * 5;
                 currentUser.balance += totalWinAmount;
                 playSound('win');
                 document.getElementById('spinResultBox').innerHTML = `<span class="text-emerald-400 font-extrabold text-base">🎉 WON ${totalWinAmount.toFixed(2)} ETB!</span>`;
                 logActivity(`Slot Win`, `Won ${totalWinAmount.toFixed(2)} ETB on 3x3 Matrix`, totalWinAmount);
-                drawWinningLines(winningLines);
             } else {
                 document.getElementById('spinResultBox').innerHTML = `<span class="text-slate-400 font-bold">No match. Try again!</span>`;
                 logActivity(`Slot Spin`, `Bet ${currentBet.toFixed(2)} ETB (No win)`, -currentBet);
@@ -1124,41 +1091,6 @@
             updateUI();
         }
 
-        function drawWinningLines(lines) {
-            const svg = document.getElementById('paylineSvg');
-            svg.innerHTML = '';
-            lines.forEach(line => {
-                const lineEl = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                lineEl.setAttribute('stroke', '#10b981');
-                lineEl.setAttribute('stroke-width', '4');
-                lineEl.setAttribute('stroke-linecap', 'round');
-                
-                if (line.type === 'row') {
-                    let yPos = (line.index * 33.33) + 16.66;
-                    lineEl.setAttribute('x1', '5%');
-                    lineEl.setAttribute('y1', `${yPos}%`);
-                    lineEl.setAttribute('x2', '95%');
-                    lineEl.setAttribute('y2', `${yPos}%`);
-                } else if (line.type === 'diag1') {
-                    lineEl.setAttribute('x1', '10%');
-                    lineEl.setAttribute('y1', '10%');
-                    lineEl.setAttribute('x2', '90%');
-                    lineEl.setAttribute('y2', '90%');
-                } else if (line.type === 'diag2') {
-                    lineEl.setAttribute('x1', '90%');
-                    lineEl.setAttribute('y1', '10%');
-                    lineEl.setAttribute('x2', '10%');
-                    lineEl.setAttribute('y2', '90%');
-                }
-                svg.appendChild(lineEl);
-            });
-        }
-
-        function clearPaylines() {
-            document.getElementById('paylineSvg').innerHTML = '';
-        }
-
-        // --- DEPOSIT & WITHDRAW MODAL FUNCTIONS ---
         function openModal(modalId) {
             document.getElementById(modalId).classList.remove('hidden');
             playSound('click');
@@ -1171,51 +1103,22 @@
 
         document.getElementById('withdrawBankSelect')?.addEventListener('change', (e) => {
             const val = e.target.value;
-            const labelEl = document.getElementById('withdrawAccountLabel');
-            if (val === 'Telebirr') {
-                labelEl.textContent = "Telebirr Phone Number (+2519...)";
-            } else if (val === 'Sinqee Bank') {
-                labelEl.textContent = "Sinqee Bank Account Number";
-            } else {
-                labelEl.textContent = "Coop Oromia Bank Account Number";
-            }
+            document.getElementById('withdrawAccountLabel').textContent = val === 'Telebirr' ? "Telebirr Phone Number (+2519...)" : `${val} Account Number`;
         });
 
         function submitDepositRequest() {
-            let inputAmount = parseFloat(document.getElementById('depositAmountInput').value);
             const receiptText = document.getElementById('depositRefInput').value.trim();
-
             if (!receiptText) {
-                alert("Please paste your Telebirr transfer SMS receipt text for verification.");
+                alert("Please paste your Telebirr transfer SMS receipt text.");
                 return;
             }
-
             const amountMatch = receiptText.match(/transferred\s+ETB\s+([\d,]+\.\d{2})/);
-            const parsedAmount = amountMatch ? parseFloat(amountMatch[1]) : inputAmount;
-
+            const parsedAmount = amountMatch ? parseFloat(amountMatch[1]) : 100;
             const txMatch = receiptText.match(/transaction number is\s+([A-Z0-9]+)/);
-            const transactionId = txMatch ? txMatch[1] : null;
-
-            if (!parsedAmount || parsedAmount < 50) {
-                alert("Please enter or ensure a valid deposit amount (Minimum 50 ETB).");
-                return;
-            }
-
-            if (!transactionId) {
-                alert("Invalid receipt format! Could not find transaction number (e.g. DJL856XCCK).");
-                return;
-            }
-
-            let isDuplicate = pendingQueue.some(item => item.id === transactionId) || 
-                              Object.values(usersDB).some(u => u.history.some(h => h.desc && h.desc.includes(transactionId)));
-            
-            if (isDuplicate) {
-                alert(`Error: Transaction number (${transactionId}) has already been submitted or processed!`);
-                return;
-            }
+            const transactionId = txMatch ? txMatch[1] : ('TX-' + Math.floor(Math.random() * 900000));
 
             let bonusAmount = parsedAmount * 1.20;
-            const txObj = {
+            pendingQueue.push({
                 id: transactionId,
                 userId: currentUser.id,
                 fullName: currentUser.fullName,
@@ -1226,13 +1129,11 @@
                 receipt: receiptText,
                 status: 'Pending',
                 time: new Date().toLocaleTimeString()
-            };
-
-            pendingQueue.push(txObj);
+            });
             saveDB();
             closeModal('depositModal');
-            alert(`Telebirr receipt (${transactionId}) verified & submitted! Your +20% bonus (${bonusAmount.toFixed(2)} ETB) will be credited after admin review.`);
-            logActivity('Deposit Request', `Requested ${parsedAmount} ETB via Telebirr [Ref: ${transactionId}] (+20% bonus pending)`, 0);
+            alert(`Deposit receipt (${transactionId}) submitted for admin review (+20% bonus pending).`);
+            logActivity('Deposit Request', `Requested ${parsedAmount} ETB via Telebirr [Ref: ${transactionId}]`, 0);
         }
 
         function submitWithdrawRequest() {
@@ -1240,24 +1141,16 @@
             const account = document.getElementById('withdrawAccountInput').value.trim();
             const bankName = document.getElementById('withdrawBankSelect').value;
 
-            if (!amount || amount < 50) {
-                alert("Minimum withdrawal amount is 50.00 ETB.");
-                return;
-            }
-            if (amount > currentUser.balance) {
-                alert("Withdrawal amount exceeds your current account balance.");
-                return;
-            }
-            if (!account) {
-                alert("Please provide your account or phone number for " + bankName + ".");
+            if (!amount || amount < 50 || amount > currentUser.balance || !account) {
+                alert("Please check your withdrawal amount and account details.");
                 return;
             }
 
             currentUser.balance -= amount;
             updateUI();
 
-            const txObj = {
-                id: 'WTH-' + Math.floor(Math.random() * 900000 + 100000),
+            pendingQueue.push({
+                id: 'WTH-' + Math.floor(Math.random() * 900000),
                 userId: currentUser.id,
                 fullName: currentUser.fullName,
                 username: currentUser.username,
@@ -1267,47 +1160,27 @@
                 account: account,
                 status: 'Pending',
                 time: new Date().toLocaleTimeString()
-            };
-
-            pendingQueue.push(txObj);
+            });
             saveDB();
             closeModal('withdrawModal');
-            alert(`Cashout request of ${amount.toFixed(2)} ETB via ${bankName} submitted! Pending admin payout.`);
-            logActivity('Cashout Request', `Requested withdrawal of ${amount.toFixed(2)} ETB via ${bankName} to ${account}`, -amount);
+            alert(`Cashout request of ${amount.toFixed(2)} ETB submitted.`);
+            logActivity('Cashout Request', `Requested withdrawal of ${amount.toFixed(2)} ETB via ${bankName}`, -amount);
         }
 
-        // --- REFERRAL & PROFILE ---
         function copyReferralLink() {
-            const input = document.getElementById('referralLinkInput');
-            input.select();
-            navigator.clipboard.writeText(input.value);
+            navigator.clipboard.writeText(document.getElementById('referralLinkInput').value);
             alert("Referral link copied to clipboard!");
-            playSound('click');
         }
 
         function shareReferralTelegram() {
-            const text = encodeURIComponent("Explore Books and Designs on Qarshi Store! Use my link:");
-            const url = encodeURIComponent(document.getElementById('referralLinkInput').value);
-            window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
+            window.open(`https://t.me/share/url?url=${encodeURIComponent(document.getElementById('referralLinkInput').value)}&text=Explore%20Books%20and%20Games%20on%20Qarshi%20Store!`, '_blank');
         }
 
-        function updateUserFullName() {
-            currentUser.fullName = document.getElementById('dashFullNameInput').value.trim();
-            saveDB();
-        }
-
-        function updateUserPhone() {
-            currentUser.phone = document.getElementById('dashPhoneInput').value.trim();
-            saveDB();
-        }
+        function updateUserFullName() { currentUser.fullName = document.getElementById('dashFullNameInput').value.trim(); saveDB(); }
+        function updateUserPhone() { currentUser.phone = document.getElementById('dashPhoneInput').value.trim(); saveDB(); }
 
         function logActivity(title, desc, amount) {
-            currentUser.history.unshift({
-                title: title,
-                desc: desc,
-                amount: amount,
-                time: new Date().toLocaleTimeString()
-            });
+            currentUser.history.unshift({ title, desc, amount, time: new Date().toLocaleTimeString() });
             if (currentUser.history.length > 30) currentUser.history.pop();
             saveDB();
         }
@@ -1319,7 +1192,6 @@
                 list.innerHTML = `<div class="text-center text-xs text-slate-500 py-4">No recent activity logs found.</div>`;
                 return;
             }
-
             list.innerHTML = currentUser.history.map(item => `
                 <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
                     <div>
@@ -1335,67 +1207,30 @@
         }
 
         function clearUserStorage() {
-            if (confirm("Reset all activity history?")) {
+            if (confirm("Reset activity history?")) {
                 currentUser.balance = 100.00;
                 currentUser.history = [];
-                currentUser.refCount = 0;
-                currentUser.refEarnings = 0;
                 updateUI();
             }
         }
 
-        // --- EXPORT ALL CUSTOMER ACTIVITY AS CSV ---
         function exportAllCustomerActivityCSV() {
-            const users = Object.values(usersDB);
-            if (users.length === 0) {
-                alert("No customer records found to export.");
-                return;
-            }
-
-            let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "Telegram ID,Full Name,Username,Balance (ETB),Phone Number,Action/Activity Title,Action Details,Action Time\r\n";
-
-            users.forEach(u => {
-                if (u.history && u.history.length > 0) {
-                    u.history.forEach(h => {
-                        let row = [
-                            u.id,
-                            `"${u.fullName || u.username}"`,
-                            `"@${u.username}"`,
-                            u.balance.toFixed(2),
-                            `"${u.phone || 'N/A'}"`,
-                            `"${h.title}"`,
-                            `"${h.desc}"`,
-                            `"${h.time}"`
-                        ];
-                        csvContent += row.join(",") + "\r\n";
-                    });
-                } else {
-                    let row = [
-                        u.id,
-                        `"${u.fullName || u.username}"`,
-                        `"@${u.username}"`,
-                        u.balance.toFixed(2),
-                        `"${u.phone || 'N/A'}"`,
-                        "No Activity",
-                        "No recorded actions",
-                        "N/A"
-                    ];
-                    csvContent += row.join(",") + "\r\n";
-                }
+            let csv = "data:text/csv;charset=utf-8,Telegram ID,Full Name,Username,Balance,Action,Details,Time\r\n";
+            Object.values(usersDB).forEach(u => {
+                u.history.forEach(h => {
+                    csv += `${u.id},"${u.fullName}","@${u.username}",${u.balance},"${h.title}","${h.desc}","${h.time}"\r\n`;
+                });
             });
-
-            const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `qarshi_store_all_customer_activity_${new Date().toISOString().slice(0, 10)}.csv`);
+            link.setAttribute("href", encodeURI(csv));
+            link.setAttribute("download", `qarshi_store_activity_${new Date().toISOString().slice(0, 10)}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            alert("All customer activity CSV downloaded successfully!");
+            alert("CSV exported successfully!");
         }
 
-        // --- SUPER ADMIN DASHBOARD WITH PAGINATION & TELEGRAM CHAT DIRECT LINKS ---
+        // --- ADMIN PANEL ---
         let customerCurrentPage = 1;
         let pendingCurrentPage = 1;
         const ITEMS_PER_PAGE = 10;
@@ -1409,8 +1244,8 @@
 
             Object.values(usersDB).forEach(u => {
                 u.history.forEach(h => {
-                    if (h.title === 'Deposit Request' || h.title === 'Deposit Approved') totalDeposits += Math.abs(h.amount);
-                    if (h.title === 'Cashout Request') totalCashouts += Math.abs(h.amount);
+                    if (h.title.includes('Deposit')) totalDeposits += Math.abs(h.amount);
+                    if (h.title.includes('Cashout')) totalCashouts += Math.abs(h.amount);
                 });
             });
 
@@ -1426,153 +1261,67 @@
         function renderPendingQueue() {
             const queueEl = document.getElementById('adminPendingQueue');
             const totalPages = Math.ceil(pendingQueue.length / ITEMS_PER_PAGE) || 1;
-            
             if (pendingCurrentPage > totalPages) pendingCurrentPage = totalPages;
-            if (pendingCurrentPage < 1) pendingCurrentPage = 1;
 
             document.getElementById('pendingPageIndicator').textContent = `Page ${pendingCurrentPage}/${totalPages}`;
-            document.getElementById('pendingPageNumText').textContent = `Page ${pendingCurrentPage} of ${totalPages} (${pendingQueue.length} pending)`;
+            document.getElementById('pendingPageNumText').textContent = `Page ${pendingCurrentPage} of ${totalPages}`;
 
             if (pendingQueue.length === 0) {
-                queueEl.innerHTML = `<div class="text-center text-xs text-slate-500 py-4 bg-slate-950 rounded-xl">No pending deposits or store orders.</div>`;
+                queueEl.innerHTML = `<div class="text-center text-xs text-slate-500 py-4 bg-slate-950 rounded-xl">No pending approvals.</div>`;
                 return;
             }
 
-            const startIdx = (pendingCurrentPage - 1) * ITEMS_PER_PAGE;
-            const sliceItems = pendingQueue.slice(startIdx, startIdx + ITEMS_PER_PAGE);
-
-            queueEl.innerHTML = sliceItems.map((item, localIdx) => {
-                const actualIdx = startIdx + localIdx;
-                const tgContactUrl = item.username && !item.username.startsWith('customer_') 
-                    ? `https://t.me/${item.username}` 
-                    : `tg://user?id=${item.userId}`;
-
-                return `
-                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs space-y-2">
-                        <div class="flex justify-between items-center">
-                            <span class="font-bold text-amber-400">${item.type} ${item.productTitle ? '('+item.productTitle+')' : ''}</span>
-                            <a href="${tgContactUrl}" target="_blank" class="bg-sky-500/20 text-sky-300 border border-sky-500/40 px-2 py-1 rounded-lg font-bold hover:bg-sky-500/30 transition flex items-center gap-1">
-                                <i class="fa-brands fa-telegram text-sm"></i> Chat @${item.username}
-                            </a>
-                        </div>
-                        <div class="text-slate-300">
-                            Name: <strong class="text-white">${item.fullName || 'N/A'}</strong><br>
-                            Amount: <strong class="text-emerald-400">${item.amount} ETB</strong>
-                            ${item.type === 'Deposit' ? `(Bonus Credited: ${(item.amount * 1.20).toFixed(2)})` : ''}
-                            ${item.bank ? `<br>Payout Method: <span class="text-sky-400 font-bold">${item.bank}</span> (Acct: ${item.account})` : ''}
-                            ${item.receipt ? `<br><span class="text-[10px] text-slate-400 font-mono bg-slate-900 p-1 block mt-1">Receipt: ${item.receipt}</span>` : ''}
-                        </div>
-                        <div class="flex gap-2 pt-1">
-                            <button onclick="approveTransaction(${actualIdx})" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg text-xs">Approve & Deliver</button>
-                            <button onclick="rejectTransaction(${actualIdx})" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-1.5 rounded-lg text-xs">Reject</button>
-                        </div>
+            const sliceItems = pendingQueue.slice((pendingCurrentPage - 1) * ITEMS_PER_PAGE, pendingCurrentPage * ITEMS_PER_PAGE);
+            queueEl.innerHTML = sliceItems.map((item, idx) => `
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-amber-400">${item.type} ${item.productTitle ? '('+item.productTitle+')' : ''}</span>
+                        <a href="https://t.me/${item.username}" target="_blank" class="text-sky-400 font-bold hover:underline">@${item.username}</a>
                     </div>
-                `;
-            }).join('');
+                    <div class="text-slate-300">
+                        Name: <strong>${item.fullName}</strong> | Amount: <strong class="text-emerald-400">${item.amount} ETB</strong>
+                    </div>
+                    <div class="flex gap-2 pt-1">
+                        <button onclick="approveTransaction(${idx})" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg text-xs">Approve & Deliver</button>
+                        <button onclick="rejectTransaction(${idx})" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-1.5 rounded-lg text-xs">Reject</button>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        function changePendingPage(direction) {
-            const totalPages = Math.ceil(pendingQueue.length / ITEMS_PER_PAGE) || 1;
-            pendingCurrentPage += direction;
-            if (pendingCurrentPage < 1) pendingCurrentPage = 1;
-            if (pendingCurrentPage > totalPages) pendingCurrentPage = totalPages;
+        function changePendingPage(dir) {
+            pendingCurrentPage += dir;
             renderPendingQueue();
         }
 
         function renderAdminUserManagement(filterQuery) {
             const listEl = document.getElementById('adminUserList');
-            const users = Object.entries(usersDB);
-            
-            const filtered = users.filter(([id, u]) => 
-                (u.fullName && u.fullName.toLowerCase().includes(filterQuery.toLowerCase())) ||
-                u.username.toLowerCase().includes(filterQuery.toLowerCase()) || 
-                id.includes(filterQuery)
-            );
-
+            const filtered = Object.entries(usersDB).filter(([id, u]) => u.fullName.toLowerCase().includes(filterQuery.toLowerCase()) || u.username.toLowerCase().includes(filterQuery.toLowerCase()));
             const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1;
-            if (customerCurrentPage > totalPages) customerCurrentPage = totalPages;
-            if (customerCurrentPage < 1) customerCurrentPage = 1;
 
             document.getElementById('customerPageIndicator').textContent = `Page ${customerCurrentPage}/${totalPages}`;
-            document.getElementById('customerPageNumText').textContent = `Page ${customerCurrentPage} of ${totalPages} (${filtered.length} customers)`;
+            document.getElementById('customerPageNumText').textContent = `Page ${customerCurrentPage} of ${totalPages}`;
 
-            if (filtered.length === 0) {
-                listEl.innerHTML = `<div class="text-center text-xs text-slate-500 py-4 bg-slate-950 rounded-xl">No matching customers found.</div>`;
-                return;
-            }
-
-            const startIdx = (customerCurrentPage - 1) * ITEMS_PER_PAGE;
-            const sliceUsers = filtered.slice(startIdx, startIdx + ITEMS_PER_PAGE);
-
-            listEl.innerHTML = sliceUsers.map(([id, u]) => {
-                const tgContactUrl = u.username && !u.username.startsWith('customer_') 
-                    ? `https://t.me/${u.username}` 
-                    : `tg://user?id=${id}`;
-
-                let recentActionsHtml = '';
-                if (u.history && u.history.length > 0) {
-                    recentActionsHtml = u.history.slice(0, 3).map(h => `
-                        <div class="text-[10px] text-slate-400 bg-slate-900 p-1 rounded mt-1 flex justify-between">
-                            <span><strong>${h.title}:</strong> ${h.desc}</span>
-                            <span class="text-slate-500 ml-1">${h.time}</span>
-                        </div>
-                    `).join('');
-                } else {
-                    recentActionsHtml = `<div class="text-[10px] text-slate-500 mt-1">No recorded actions.</div>`;
-                }
-
-                return `
-                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
-                        <div class="flex justify-between items-start">
-                            <div class="space-y-0.5">
-                                <span class="font-bold text-white text-sm block">${u.fullName || 'Telegram User'}</span>
-                                <div class="flex items-center gap-2">
-                                    <a href="${tgContactUrl}" target="_blank" class="text-sky-400 font-bold hover:underline flex items-center gap-1">
-                                        <i class="fa-brands fa-telegram"></i> @${u.username}
-                                    </a>
-                                    <span class="text-[10px] text-slate-500">(ID: ${id})</span>
-                                </div>
-                                <div class="text-[10px] text-amber-400 font-bold">Balance: ${u.balance.toFixed(2)} ETB | Phone: ${u.phone || 'N/A'}</div>
-                            </div>
-                            <div class="flex flex-col items-end gap-1.5">
-                                <a href="${tgContactUrl}" target="_blank" class="bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 px-2 py-1 rounded-lg font-bold text-[10px] flex items-center gap-1">
-                                    <i class="fa-solid fa-paper-plane"></i> Message
-                                </a>
-                                <div class="flex items-center gap-1">
-                                    <button onclick="adminAdjustBalance('${id}', 50)" class="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 rounded font-bold text-[10px]">+50</button>
-                                    <button onclick="adminAdjustBalance('${id}', -50)" class="px-1.5 py-0.5 bg-rose-500/20 text-rose-300 rounded font-bold text-[10px]">-50</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="border-t border-slate-900 pt-1.5">
-                            <span class="text-[10px] font-semibold text-purple-300 block">Recent Actions & Deposit/Store Activity:</span>
-                            ${recentActionsHtml}
-                        </div>
+            const sliceUsers = filtered.slice((customerCurrentPage - 1) * ITEMS_PER_PAGE, customerCurrentPage * ITEMS_PER_PAGE);
+            listEl.innerHTML = sliceUsers.map(([id, u]) => `
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs space-y-1">
+                    <div class="flex justify-between font-bold">
+                        <span class="text-white">${u.fullName} (@${u.username})</span>
+                        <span class="text-amber-400">${u.balance.toFixed(2)} ETB</span>
                     </div>
-                `;
-            }).join('');
+                    <div class="text-[10px] text-slate-400">Phone: ${u.phone || 'N/A'} | ID: ${id}</div>
+                </div>
+            `).join('');
         }
 
-        function changeCustomerPage(direction) {
-            const query = document.getElementById('adminSearchInput').value;
-            const users = Object.entries(usersDB);
-            const filtered = users.filter(([id, u]) => 
-                (u.fullName && u.fullName.toLowerCase().includes(query.toLowerCase())) ||
-                u.username.toLowerCase().includes(query.toLowerCase()) || 
-                id.includes(query)
-            );
-            const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1;
-
-            customerCurrentPage += direction;
-            if (customerCurrentPage < 1) customerCurrentPage = 1;
-            if (customerCurrentPage > totalPages) customerCurrentPage = totalPages;
-            renderAdminUserManagement(query);
+        function changeCustomerPage(dir) {
+            customerCurrentPage += dir;
+            renderAdminUserManagement(document.getElementById('adminSearchInput').value);
         }
 
         function filterAdminUsers() {
             customerCurrentPage = 1;
-            const query = document.getElementById('adminSearchInput').value;
-            renderAdminUserManagement(query);
+            renderAdminUserManagement(document.getElementById('adminSearchInput').value);
         }
 
         function approveTransaction(idx) {
@@ -1582,19 +1331,10 @@
             if (tx.type === 'Deposit') {
                 let credit = tx.credited || (tx.amount * 1.20);
                 usersDB[tx.userId].balance += credit;
-                usersDB[tx.userId].history.unshift({
-                    title: 'Deposit Approved',
-                    desc: `Approved ${tx.amount} ETB deposit [Ref: ${tx.id}] + 20% bonus`,
-                    amount: credit,
-                    time: new Date().toLocaleTimeString()
-                });
+                usersDB[tx.userId].history.unshift({ title: 'Deposit Approved', desc: `Approved ${tx.amount} ETB + 20% bonus`, amount: credit, time: new Date().toLocaleTimeString() });
             } else if (tx.type === 'Store Order') {
-                usersDB[tx.userId].history.unshift({
-                    title: 'Order Approved & Delivered',
-                    desc: `Bought "${tx.productTitle}". Download Link: ${tx.driveLink}`,
-                    amount: -tx.amount,
-                    time: new Date().toLocaleTimeString()
-                });
+                usersDB[tx.userId].history.unshift({ title: 'Order Delivered', desc: `Link: ${tx.driveLink}`, amount: -tx.amount, time: new Date().toLocaleTimeString() });
+                navigator.clipboard.writeText(`Hello @${tx.username}! Your download link for "${tx.productTitle}":\n\n${tx.driveLink}`);
             }
 
             pendingQueue.splice(idx, 1);
@@ -1602,43 +1342,19 @@
             renderAdminDashboard();
             if (currentUser.id === tx.userId) currentUser = usersDB[currentUser.id];
             updateUI();
-            alert("Transaction approved and delivered successfully!");
+            alert("Transaction approved successfully!");
         }
 
         function rejectTransaction(idx) {
             const tx = pendingQueue[idx];
-            if (tx.type === 'Cashout' && usersDB[tx.userId]) {
-                usersDB[tx.userId].balance += tx.amount;
-            }
+            if (tx.type === 'Cashout' && usersDB[tx.userId]) usersDB[tx.userId].balance += tx.amount;
             pendingQueue.splice(idx, 1);
             saveDB();
             renderAdminDashboard();
             alert("Transaction rejected.");
         }
 
-        function adminAdjustBalance(userId, amount) {
-            if (usersDB[userId]) {
-                usersDB[userId].balance += amount;
-                if (usersDB[userId].balance < 0) usersDB[userId].balance = 0;
-                usersDB[userId].history.unshift({
-                    title: 'Admin Adjustment',
-                    desc: `Admin adjusted balance by ${amount} ETB`,
-                    amount: amount,
-                    time: new Date().toLocaleTimeString()
-                });
-                saveDB();
-                renderAdminDashboard();
-                if (currentUser.id === userId) {
-                    currentUser = usersDB[userId];
-                    updateUI();
-                }
-                alert(`User balance adjusted by ${amount} ETB.`);
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            initTelegramUser();
-        });
+        window.addEventListener('DOMContentLoaded', initTelegramUser);
     </script>
 </body>
 </html>
