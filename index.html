@@ -101,7 +101,7 @@
                         <span>Qarshi Store</span> 🇪🇹
                     </div>
                     <div class="text-sm font-bold text-white flex items-center gap-1">
-                        <span id="userName">WDemeke1</span>
+                        <span id="userName">Wondossen Demeke</span>
                         <span id="adminBadge" class="hidden text-[10px] bg-purple-500/30 text-purple-300 border border-purple-500/50 px-1.5 py-0.5 rounded-full font-bold">SUPER ADMIN (@WDemeke1)</span>
                         <span id="vipBadge" class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.5 rounded-full font-bold">VIP</span>
                     </div>
@@ -210,13 +210,13 @@
             <div class="bg-slate-900/90 rounded-2xl p-4 border border-slate-800 space-y-3">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-2">
                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                        <i class="fa-solid fa-id-card text-emerald-400"></i> Customer Profile
+                        <i class="fa-solid fa-id-card text-emerald-400"></i> Customer Profile (Remembered by Name)
                     </h3>
                     <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">VERIFIED USER</span>
                 </div>
                 <div class="grid grid-cols-2 gap-2 text-xs">
                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                        <span class="text-slate-500 block text-[10px]">Telegram Name</span>
+                        <span class="text-slate-500 block text-[10px]">Customer Full Name</span>
                         <input type="text" id="dashFullNameInput" onchange="updateUserFullName()" placeholder="Your Full Name" class="w-full bg-transparent font-bold text-white focus:outline-none">
                     </div>
                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
@@ -321,7 +321,7 @@
                 <!-- Admin Stats Overview -->
                 <div class="grid grid-cols-2 gap-2 text-xs">
                     <div class="bg-slate-950/90 p-3 rounded-xl border border-slate-800">
-                        <span class="text-slate-400 text-[10px] block font-semibold">Total System Users</span>
+                        <span class="text-slate-400 text-[10px] block font-semibold">Total Customers & Users</span>
                         <span id="admTotalUsers" class="text-xl font-black text-white">1</span>
                     </div>
                     <div class="bg-slate-950/90 p-3 rounded-xl border border-slate-800">
@@ -357,13 +357,13 @@
                     </div>
                 </div>
 
-                <!-- Customer Directory & Detailed Activity (10 per page) -->
+                <!-- Customer Directory by Name & Activity (10 per page) -->
                 <div class="space-y-2 pt-2 border-t border-purple-500/30">
                     <div class="flex justify-between items-center">
-                        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Customer Directory (10 per page)</h4>
+                        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Customer Directory by Name (10/page)</h4>
                         <span id="customerPageIndicator" class="text-[10px] text-purple-300 font-mono">Page 1/1</span>
                     </div>
-                    <input type="text" id="adminSearchInput" onkeyup="filterAdminUsers()" placeholder="Search by name, username or ID..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-purple-500">
+                    <input type="text" id="adminSearchInput" onkeyup="filterAdminUsers()" placeholder="Search by customer name, username..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-purple-500">
                     
                     <div id="adminUserList" class="space-y-2.5 min-h-[220px]">
                     </div>
@@ -702,39 +702,48 @@
                 currentUser.id = tg.id.toString();
                 currentUser.username = tg.username ? tg.username : 'WDemeke1';
                 currentUser.fullName = (tg.first_name || '') + (tg.last_name ? ' ' + tg.last_name : '');
-                if (!currentUser.fullName.trim()) currentUser.fullName = currentUser.username;
+                if (!currentUser.fullName.trim()) currentUser.fullName = 'Wondossen Demeke';
             } else {
-                currentUser.id = '98765432';
+                currentUser.id = '12345678';
                 currentUser.username = 'WDemeke1';
-                currentUser.fullName = 'Wondossen Demeke (Admin)';
+                currentUser.fullName = 'Wondossen Demeke';
             }
 
             if (usersDB[currentUser.id]) {
                 currentUser = usersDB[currentUser.id];
+                if (!currentUser.fullName) currentUser.fullName = 'Wondossen Demeke';
                 currentUser.username = 'WDemeke1';
             } else {
                 usersDB[currentUser.id] = currentUser;
                 saveDB();
             }
 
-            // Seed mock test users for pagination & directory demonstration
+            // Seed mock test customers with realistic names for name-based memory & directory demonstration
             if (Object.keys(usersDB).length < 15) {
-                for (let i = 1; i <= 18; i++) {
-                    let mockId = '900' + i;
+                const sampleNames = [
+                    "Abebe Kebede", "Tigist Bekele", "Dawit Meles", "Mekdes Tadesse",
+                    "Yohannes Haile", "Hana Alemu", "Edom Kassahun", "Samuel Berhane",
+                    "Bethelhem Assefa", "Natnael Gizaw", "Meron Tesfaye", "Kidus Girma",
+                    "Rahel Desta", "Solomon Abebe", "Meseret Worku", "Henok Getachew",
+                    "Blen Mulat", "Daniel Tefera"
+                ];
+
+                sampleNames.forEach((name, idx) => {
+                    let mockId = '900' + (idx + 1);
                     usersDB[mockId] = {
                         id: mockId,
-                        fullName: `Customer User ${i}`,
-                        username: `customer_user_${i}`,
-                        balance: 100.00 + (i * 35),
-                        phone: `+25191${i}3624`,
-                        refCount: i % 3,
-                        refEarnings: (i % 3) * 10,
+                        fullName: name,
+                        username: `customer_${idx + 1}`,
+                        balance: 100.00 + ((idx + 1) * 35),
+                        phone: `+25191${idx + 1}3624`,
+                        refCount: (idx + 1) % 3,
+                        refEarnings: ((idx + 1) % 3) * 10,
                         history: [
-                            { title: 'Deposit Approved', desc: `Credited ${50*i} ETB via Telebirr`, amount: 50*i, time: '10:00 AM' },
-                            { title: 'Slot Win', desc: `Won ${25*i} ETB on 3x3 Matrix`, amount: 25*i, time: '10:15 AM' }
+                            { title: 'Deposit Approved', desc: `Credited ${(idx+1)*50} ETB via Telebirr`, amount: (idx+1)*50, time: '10:00 AM' },
+                            { title: 'Slot Win', desc: `Won ${(idx+1)*25} ETB on 3x3 Matrix`, amount: (idx+1)*25, time: '10:15 AM' }
                         ]
                     };
-                }
+                });
                 usersDB[currentUser.id] = currentUser;
                 saveDB();
             }
@@ -807,9 +816,9 @@
         function updateUI() {
             document.getElementById('userBalance').textContent = currentUser.balance.toFixed(2);
             document.getElementById('dashBalance').textContent = currentUser.balance.toFixed(2) + ' ETB';
-            document.getElementById('userName').textContent = '@' + currentUser.username;
+            document.getElementById('userName').textContent = currentUser.fullName;
             document.getElementById('dashUsername').textContent = '@' + currentUser.username;
-            document.getElementById('dashFullNameInput').value = currentUser.fullName || currentUser.username;
+            document.getElementById('dashFullNameInput').value = currentUser.fullName;
             document.getElementById('dashRefCount').textContent = currentUser.refCount;
             document.getElementById('dashRefEarnings').textContent = currentUser.refEarnings.toFixed(2);
             document.getElementById('dashPhoneInput').value = currentUser.phone || '';
@@ -976,7 +985,7 @@
                 pendingQueue.push(orderObj);
                 saveDB();
                 closeModal('buyProductModal');
-                alert(`Order submitted! Ref: ${transactionId}. Pending admin approval.`);
+                alert(`Order submitted for ${currentUser.fullName}! Ref: ${transactionId}. Pending admin approval.`);
                 logActivity('Order Pending', `Ordered "${selectedProductForBuy.title}" via Telebirr [Ref: ${transactionId}]`, 0);
             }
         }
@@ -1066,7 +1075,7 @@
                 totalWinAmount = currentBet * 5;
                 currentUser.balance += totalWinAmount;
                 playSound('win');
-                document.getElementById('spinResultBox').innerHTML = `<span class="text-emerald-400 font-extrabold text-base">🎉 WON ${totalWinAmount.toFixed(2)} ETB!</span>`;
+                document.getElementById('spinResultBox').innerHTML = `<span class="text-emerald-400 font-extrabold text-base">🎉 ${currentUser.fullName} WON ${totalWinAmount.toFixed(2)} ETB!</span>`;
                 logActivity(`Slot Win`, `Won ${totalWinAmount.toFixed(2)} ETB on 3x3 Matrix`, totalWinAmount);
             } else {
                 document.getElementById('spinResultBox').innerHTML = `<span class="text-slate-400 font-bold">No match. Try again!</span>`;
@@ -1118,7 +1127,7 @@
             });
             saveDB();
             closeModal('depositModal');
-            alert(`Deposit receipt (${transactionId}) submitted for admin review (+20% bonus pending).`);
+            alert(`Deposit receipt (${transactionId}) for ${currentUser.fullName} submitted for admin review (+20% bonus pending).`);
             logActivity('Deposit Request', `Requested ${parsedAmount} ETB via Telebirr [Ref: ${transactionId}]`, 0);
         }
 
@@ -1149,7 +1158,7 @@
             });
             saveDB();
             closeModal('withdrawModal');
-            alert(`Cashout request of ${amount.toFixed(2)} ETB submitted.`);
+            alert(`Cashout request of ${amount.toFixed(2)} ETB for ${currentUser.fullName} submitted.`);
             logActivity('Cashout Request', `Requested withdrawal of ${amount.toFixed(2)} ETB via ${bankName}`, -amount);
         }
 
@@ -1162,8 +1171,15 @@
             window.open(`https://t.me/share/url?url=${encodeURIComponent(document.getElementById('referralLinkInput').value)}&text=Explore%20Books%20and%20Games%20on%20Qarshi%20Store!`, '_blank');
         }
 
-        function updateUserFullName() { currentUser.fullName = document.getElementById('dashFullNameInput').value.trim(); saveDB(); }
-        function updateUserPhone() { currentUser.phone = document.getElementById('dashPhoneInput').value.trim(); saveDB(); }
+        function updateUserFullName() { 
+            currentUser.fullName = document.getElementById('dashFullNameInput').value.trim() || "Wondossen Demeke"; 
+            updateUI();
+        }
+
+        function updateUserPhone() { 
+            currentUser.phone = document.getElementById('dashPhoneInput').value.trim(); 
+            saveDB(); 
+        }
 
         function logActivity(title, desc, amount) {
             currentUser.history.unshift({ title, desc, amount, time: new Date().toLocaleTimeString() });
@@ -1201,22 +1217,22 @@
         }
 
         function exportAllCustomerActivityCSV() {
-            let csv = "data:text/csv;charset=utf-8,Telegram ID,Full Name,Username,Balance,Action,Details,Time\r\n";
+            let csv = "data:text/csv;charset=utf-8,Customer Full Name,Username,Telegram ID,Balance,Action,Details,Time\r\n";
             Object.values(usersDB).forEach(u => {
                 u.history.forEach(h => {
-                    csv += `${u.id},"${u.fullName}","@${u.username}",${u.balance},"${h.title}","${h.desc}","${h.time}"\r\n`;
+                    csv += `"${u.fullName}","@${u.username}",${u.id},${u.balance},"${h.title}","${h.desc}","${h.time}"\r\n`;
                 });
             });
             const link = document.createElement("a");
             link.setAttribute("href", encodeURI(csv));
-            link.setAttribute("download", `qarshi_store_activity_${new Date().toISOString().slice(0, 10)}.csv`);
+            link.setAttribute("download", `qarshi_store_customers_by_name_${new Date().toISOString().slice(0, 10)}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            alert("CSV exported successfully!");
+            alert("Customer activity CSV exported successfully!");
         }
 
-        // --- SUPER ADMIN PANEL WITH PAGINATED CUSTOMER DIRECTORY (10/page) ---
+        // --- SUPER ADMIN PANEL WITH PAGINATED CUSTOMER DIRECTORY BY NAME (10/page) ---
         let customerCurrentPage = 1;
         let pendingCurrentPage = 1;
         const ITEMS_PER_PAGE = 10;
@@ -1265,7 +1281,7 @@
                         <a href="https://t.me/${item.username}" target="_blank" class="text-sky-400 font-bold hover:underline">@${item.username}</a>
                     </div>
                     <div class="text-slate-300">
-                        Name: <strong>${item.fullName}</strong> | Amount: <strong class="text-emerald-400">${item.amount} ETB</strong>
+                        Customer Name: <strong>${item.fullName}</strong> | Amount: <strong class="text-emerald-400">${item.amount} ETB</strong>
                     </div>
                     <div class="flex gap-2 pt-1">
                         <button onclick="approveTransaction(${idx})" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg text-xs">Approve & Deliver</button>
@@ -1322,7 +1338,7 @@
                     <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
                         <div class="flex justify-between items-start">
                             <div>
-                                <strong class="text-white text-sm block">${u.fullName || 'User'}</strong>
+                                <strong class="text-white text-sm block"><i class="fa-solid fa-user text-amber-400 mr-1"></i> ${u.fullName || 'Valued Customer'}</strong>
                                 <a href="${tgLink}" target="_blank" class="text-sky-400 font-bold hover:underline flex items-center gap-1 mt-0.5">
                                     <i class="fa-brands fa-telegram"></i> @${u.username}
                                 </a>
@@ -1336,7 +1352,7 @@
                             </div>
                         </div>
                         <div class="border-t border-slate-900 pt-1.5">
-                            <span class="text-[10px] font-semibold text-purple-300 block mb-0.5">Recent Activity Logs:</span>
+                            <span class="text-[10px] font-semibold text-purple-300 block mb-0.5">${u.fullName}'s Recent Activity Logs:</span>
                             ${activityListHtml}
                         </div>
                     </div>
@@ -1364,7 +1380,7 @@
                 usersDB[tx.userId].history.unshift({ title: 'Deposit Approved', desc: `Approved ${tx.amount} ETB + 20% bonus`, amount: credit, time: new Date().toLocaleTimeString() });
             } else if (tx.type === 'Store Order') {
                 usersDB[tx.userId].history.unshift({ title: 'Order Delivered', desc: `Link: ${tx.driveLink}`, amount: -tx.amount, time: new Date().toLocaleTimeString() });
-                navigator.clipboard.writeText(`Hello @${tx.username}! Your download link for "${tx.productTitle}":\n\n${tx.driveLink}`);
+                navigator.clipboard.writeText(`Hello ${tx.fullName} (@${tx.username})! Your download link for "${tx.productTitle}":\n\n${tx.driveLink}`);
             }
 
             pendingQueue.splice(idx, 1);
@@ -1372,7 +1388,7 @@
             renderAdminDashboard();
             if (currentUser.id === tx.userId) currentUser = usersDB[currentUser.id];
             updateUI();
-            alert("Transaction approved successfully!");
+            alert(`Transaction for ${tx.fullName} approved successfully!`);
         }
 
         function rejectTransaction(idx) {
