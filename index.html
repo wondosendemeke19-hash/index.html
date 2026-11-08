@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Spin & Digital Shop ETB - Telegram Mini App</title>
+    <title>Qarshi Game & Digital Shop ETB - Telegram Mini App</title>
     
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -26,7 +26,9 @@
                         ethGreen: '#10b981',
                         ethYellow: '#f59e0b',
                         ethRed: '#ef4444',
-                        telebirr: '#0088cc'
+                        telebirr: '#0088cc',
+                        sinqee: '#059669',
+                        coop: '#d97706'
                     },
                     boxShadow: {
                         'neon-gold': '0 0 20px rgba(245, 158, 11, 0.4)',
@@ -97,7 +99,7 @@
                 </div>
                 <div>
                     <div class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider flex items-center gap-1">
-                        <span>Ethiopian Store</span> 🇪🇹
+                        <span>Qarshi Store</span> 🇪🇹
                     </div>
                     <div class="text-sm font-bold text-white flex items-center gap-1">
                         <span id="userName">TgUser</span>
@@ -144,50 +146,35 @@
         <section id="spinTab" class="space-y-4">
             <div class="relative bg-gradient-to-b from-slate-800 via-slate-900 to-slate-950 p-4 rounded-3xl border-2 border-amber-500/40 shadow-neon-gold">
                 
-                <!-- Payout Rates Header -->
                 <div class="flex justify-between items-center bg-slate-950/80 rounded-xl p-2 mb-3 border border-slate-800 text-[11px] text-slate-300 font-semibold">
                     <span class="text-amber-400"><i class="fa-solid fa-gem mr-1"></i>3x 💎 Opal = 5x</span>
                     <span class="text-rose-400">3x 🥭 Mango = 3x</span>
                     <span class="text-emerald-400">3x Any = 2x</span>
                 </div>
 
-                <!-- 3x3 MATRIX GRID -->
                 <div class="reel-box p-3 rounded-2xl border border-slate-700 relative">
-                    <!-- SVG Payline Overlay -->
                     <svg id="paylineSvg" class="absolute inset-0 w-full h-full pointer-events-none z-20 overflow-visible" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Dynamically drawn winning lines -->
                     </svg>
 
                     <div class="grid grid-cols-3 gap-2 relative z-10" id="matrixGrid">
-                        <!-- Cell 0,0 -->
                         <div id="cell-0-0" class="matrix-cell h-20 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-4xl">🍎</div>
-                        <!-- Cell 0,1 -->
                         <div id="cell-0-1" class="matrix-cell h-20 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-4xl">🥭</div>
-                        <!-- Cell 0,2 -->
                         <div id="cell-0-2" class="matrix-cell h-20 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-4xl">🥑</div>
                         
-                        <!-- Cell 1,0 -->
                         <div id="cell-1-0" class="matrix-cell h-20 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-4xl">💎</div>
-                        <!-- Cell 1,1 -->
                         <div id="cell-1-1" class="matrix-cell h-20 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-4xl">🍋</div>
-                        <!-- Cell 1,2 -->
                         <div id="cell-1-2" class="matrix-cell h-20 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-4xl">🍊</div>
                         
-                        <!-- Cell 2,0 -->
                         <div id="cell-2-0" class="matrix-cell h-20 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-4xl">🍇</div>
-                        <!-- Cell 2,1 -->
                         <div id="cell-2-1" class="matrix-cell h-20 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-4xl">🍉</div>
-                        <!-- Cell 2,2 -->
                         <div id="cell-2-2" class="matrix-cell h-20 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-4xl">🍓</div>
                     </div>
                 </div>
 
-                <!-- Result Message -->
                 <div id="spinResultBox" class="mt-3 text-center min-h-[32px] flex items-center justify-center">
                     <span class="text-sm font-bold text-slate-400">Match 3 in rows or diagonals to win!</span>
                 </div>
 
-                <!-- Bet Control & Action -->
                 <div class="mt-3 pt-3 border-t border-slate-800 space-y-3">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-bold text-slate-400 uppercase">Bet Amount (ETB)</span>
@@ -218,15 +205,12 @@
                 </button>
             </div>
 
-            <!-- Product Catalog Grid -->
             <div id="productCatalogList" class="space-y-3 max-h-[420px] overflow-y-auto pr-1">
-                <!-- Dynamically populated products -->
             </div>
         </section>
 
         <!-- TAB 3: USER DASHBOARD & REFERRAL TAB -->
         <section id="dashboardTab" class="hidden space-y-4">
-            <!-- Profile Box -->
             <div class="bg-slate-900/90 rounded-2xl p-4 border border-slate-800 space-y-3">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-2">
                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -262,22 +246,20 @@
                     </div>
                     <div>
                         <h3 class="text-sm font-extrabold text-white">Referral Program (10 ETB / Friend)</h3>
-                        <p class="text-[11px] text-slate-300">Share link & earn <span class="text-amber-400 font-bold">10.00 ETB</span> per signup plus <span class="text-emerald-400 font-bold">20% Deposit Bonus</span>!</p>
+                        <p class="text-[11px] text-slate-300">Share link & earn <span class="text-amber-400 font-bold">10.00 ETB</span> per referral signup!</p>
                     </div>
                 </div>
 
-                <!-- Referral Link Box -->
                 <div class="space-y-1 pt-1">
-                    <label class="text-[11px] font-semibold text-slate-400 block">Your Referral Link</label>
+                    <label class="text-[11px] font-semibold text-slate-400 block">Your Referral Link (Qarshi Bot)</label>
                     <div class="flex items-center gap-2">
-                        <input type="text" id="referralLinkInput" readonly value="https://t.me/SpinDigitalShopETBBot?start=ref_12345678" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-amber-300 font-mono focus:outline-none">
+                        <input type="text" id="referralLinkInput" readonly value="https://t.me/Qarshigame_bot/qarshito?start=ref_12345678" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-amber-300 font-mono focus:outline-none">
                         <button onclick="copyReferralLink()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3 py-2.5 rounded-xl text-xs flex items-center gap-1 shrink-0 transition active:scale-95">
                             <i class="fa-solid fa-copy"></i> Copy
                         </button>
                     </div>
                 </div>
 
-                <!-- Share Button -->
                 <div>
                     <button onclick="shareReferralTelegram()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-telebirr text-white font-bold text-xs shadow-md flex items-center justify-center gap-1.5 active:scale-98 transition">
                         <i class="fa-paper-plane fa-solid"></i> Share Telegram Link
@@ -285,7 +267,6 @@
                 </div>
             </div>
 
-            <!-- Referral Performance -->
             <div class="grid grid-cols-2 gap-3">
                 <div class="bg-slate-900/90 p-3 rounded-2xl border border-slate-800 text-center">
                     <span class="text-[10px] text-slate-400 font-semibold uppercase block">Invited Friends</span>
@@ -308,19 +289,20 @@
                     <button onclick="clearUserStorage()" class="text-[10px] text-rose-400 hover:underline">Reset Progress</button>
                 </div>
                 <div id="historyList" class="space-y-2 max-h-[360px] overflow-y-auto pr-1">
-                    <!-- Dynamic Log Entries -->
                 </div>
             </div>
         </section>
 
-        <!-- TAB 5: ADMIN DASHBOARD (RESTRICTED TO @WDemeke1) -->
+        <!-- TAB 5: ADMIN DASHBOARD (RESTRICTED TO @WDemeke1 with CSV Export & Pagination) -->
         <section id="adminTab" class="hidden space-y-4">
             <div class="bg-purple-950/40 p-4 rounded-2xl border border-purple-500/40 space-y-4 shadow-neon-purple">
                 <div class="flex justify-between items-center border-b border-purple-500/30 pb-2">
                     <h3 class="font-black text-sm text-purple-300 flex items-center gap-2">
                         <i class="fa-solid fa-user-shield text-purple-400"></i> Admin Panel (@WDemeke1)
                     </h3>
-                    <span class="text-[10px] bg-purple-500/30 text-purple-200 px-2.5 py-0.5 rounded-full font-extrabold">SUPER ADMIN</span>
+                    <button onclick="exportCustomersCSV()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2.5 py-1.5 rounded-xl text-[10px] flex items-center gap-1 shadow-md transition">
+                        <i class="fa-solid fa-file-csv text-sm"></i> Export CSV
+                    </button>
                 </div>
 
                 <!-- Admin Stats Overview -->
@@ -343,23 +325,44 @@
                     </div>
                 </div>
 
-                <!-- Pending Transaction & Purchase Queue -->
+                <!-- Pending Approval Queue (Up to 10 per page) -->
                 <div class="space-y-2">
-                    <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1">
-                        <i class="fa-solid fa-clock-rotate-left text-amber-400"></i> Pending Approval Queue (Deposits & Store Orders)
-                    </h4>
-                    <div id="adminPendingQueue" class="space-y-2 max-h-[220px] overflow-y-auto">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1">
+                            <i class="fa-solid fa-clock-rotate-left text-amber-400"></i> Pending Approvals (Deposits & Orders)
+                        </h4>
+                        <span id="pendingPageIndicator" class="text-[10px] text-purple-300 font-mono">Page 1/1</span>
+                    </div>
+                    
+                    <div id="adminPendingQueue" class="space-y-2 min-h-[140px]">
                         <!-- Dynamic Queue Content -->
+                    </div>
+
+                    <!-- Pending Pagination Controls -->
+                    <div class="flex justify-between items-center pt-1">
+                        <button onclick="changePendingPage(-1)" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-bold"><i class="fa-solid fa-chevron-left mr-1"></i> Prev</button>
+                        <span id="pendingPageNumText" class="text-xs text-slate-400">Page 1</span>
+                        <button onclick="changePendingPage(1)" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-bold">Next <i class="fa-solid fa-chevron-right ml-1"></i></button>
                     </div>
                 </div>
 
-                <!-- Customer Management & Search -->
+                <!-- Customer Management (Up to 10 per page & Search) -->
                 <div class="space-y-2 pt-2 border-t border-purple-500/30">
-                    <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Customer Management</h4>
-                    <input type="text" id="adminSearchInput" onkeyup="filterAdminUsers()" placeholder="Search user by username or ID..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-purple-500">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Customer Directory (Max 10/page)</h4>
+                        <span id="customerPageIndicator" class="text-[10px] text-purple-300 font-mono">Page 1/1</span>
+                    </div>
+                    <input type="text" id="adminSearchInput" onkeyup="filterAdminUsers()" placeholder="Search customer by username or ID..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-purple-500">
                     
-                    <div id="adminUserList" class="space-y-2 max-h-[240px] overflow-y-auto">
+                    <div id="adminUserList" class="space-y-2 min-h-[180px]">
                         <!-- Dynamic Customer Entries -->
+                    </div>
+
+                    <!-- Customer Pagination Controls -->
+                    <div class="flex justify-between items-center pt-1">
+                        <button onclick="changeCustomerPage(-1)" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-bold"><i class="fa-solid fa-chevron-left mr-1"></i> Prev</button>
+                        <span id="customerPageNumText" class="text-xs text-slate-400">Page 1</span>
+                        <button onclick="changeCustomerPage(1)" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-bold">Next <i class="fa-solid fa-chevron-right ml-1"></i></button>
                     </div>
                 </div>
             </div>
@@ -444,10 +447,19 @@
                 <button onclick="closeModal('withdrawModal')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <div id="withdrawFieldsBox" class="space-y-3">
+            <div class="space-y-1.5">
+                <label class="text-xs font-semibold text-slate-400 block">Select Payout Method / Bank</label>
+                <select id="withdrawBankSelect" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-amber-500 font-bold">
+                    <option value="Telebirr">📱 Telebirr (Mobile Wallet)</option>
+                    <option value="Sinqee Bank">🏦 Sinqee Bank (ኦሮሚያ ሸንቄ ባንክ)</option>
+                    <option value="Coop Oromia Bank">🏛️ Cooperative Bank of Oromia (CBO)</option>
+                </select>
+            </div>
+
+            <div id="withdrawFieldsBox" class="space-y-2">
                 <div class="space-y-1">
-                    <label class="text-xs font-semibold text-slate-400 block">Telebirr Phone Number</label>
-                    <input type="text" id="withdrawAccountInput" placeholder="+2519..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500">
+                    <label id="withdrawAccountLabel" class="text-xs font-semibold text-slate-400 block">Telebirr Phone Number (+2519...)</label>
+                    <input type="text" id="withdrawAccountInput" placeholder="+2519... or Account No" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500 font-mono">
                 </div>
             </div>
 
@@ -467,7 +479,7 @@
         </div>
     </div>
 
-    <!-- PREVIEW PRODUCT MODAL (MOTIVATES DOWNLOAD & PURCHASE) -->
+    <!-- PREVIEW PRODUCT MODAL -->
     <div id="previewProductModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-5 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-slate-800 pb-2">
@@ -477,7 +489,6 @@
                 <button onclick="closeModal('previewProductModal')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <!-- Preview Card Banner -->
             <div class="bg-gradient-to-br from-slate-950 to-slate-900 p-4 rounded-2xl border border-slate-800 space-y-3">
                 <div class="flex items-center gap-2">
                     <span id="previewBadge" class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-sky-500/20 text-sky-300 border border-sky-500/30">BOOK SAMPLE</span>
@@ -485,13 +496,10 @@
                 </div>
                 <h4 id="previewTitle" class="font-black text-white text-base">Product Title</h4>
                 
-                <!-- Sample Content Display Box -->
                 <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 font-mono text-[11px] text-slate-300 space-y-2 max-h-36 overflow-y-auto" id="previewSampleText">
-                    <!-- Dynamic Sample Text -->
                 </div>
             </div>
 
-            <!-- Features / Benefits List -->
             <div class="space-y-1.5 text-xs text-slate-300">
                 <div class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> Instant Google Drive Download Link</div>
                 <div class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> Lifetime Access & Free Future Updates</div>
@@ -506,7 +514,7 @@
         </div>
     </div>
 
-    <!-- UPLOAD PRODUCT MODAL (ADMIN ONLY) -->
+    <!-- UPLOAD PRODUCT MODAL -->
     <div id="uploadProductModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-5 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-slate-800 pb-2">
@@ -552,7 +560,7 @@
         </div>
     </div>
 
-    <!-- BUY PRODUCT MODAL (CHECKOUT & TELEBIRR PAYMENT) -->
+    <!-- BUY PRODUCT MODAL -->
     <div id="buyProductModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-5 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-slate-800 pb-2">
@@ -567,7 +575,6 @@
                 <span id="buyModalPrice" class="text-amber-400 font-extrabold text-base block">0.00 ETB</span>
             </div>
 
-            <!-- Payment Method Selection -->
             <div class="space-y-2">
                 <label class="text-xs font-semibold text-slate-400 block">Select Payment Mode</label>
                 <div class="grid grid-cols-2 gap-2">
@@ -639,10 +646,10 @@
         let currentBet = 10.00;
         let activeBuyMode = 'balance';
 
-        let usersDB = JSON.parse(localStorage.getItem('tg_store_users_db')) || {};
-        let pendingQueue = JSON.parse(localStorage.getItem('tg_store_pending_queue')) || [];
+        let usersDB = JSON.parse(localStorage.getItem('qarshi_store_users_db')) || {};
+        let pendingQueue = JSON.parse(localStorage.getItem('qarshi_store_pending_queue')) || [];
         
-        let productsDB = JSON.parse(localStorage.getItem('tg_store_products_db')) || [
+        let productsDB = JSON.parse(localStorage.getItem('qarshi_store_products_db')) || [
             { 
                 id: 'p1', 
                 title: 'Python Telegram Bot Architecture & Mini Apps', 
@@ -676,12 +683,29 @@
                 currentUser.username = tg.username ? tg.username : (tg.first_name || 'User');
             } else {
                 currentUser.id = '98765432';
-                currentUser.username = 'WDemeke1';
+                currentUser.username = 'WDemeke1'; // Super admin handle
             }
 
             if (usersDB[currentUser.id]) {
                 currentUser = usersDB[currentUser.id];
             } else {
+                usersDB[currentUser.id] = currentUser;
+                saveDB();
+            }
+
+            if (Object.keys(usersDB).length < 12) {
+                for (let i = 1; i <= 15; i++) {
+                    let mockId = '900' + i;
+                    usersDB[mockId] = {
+                        id: mockId,
+                        username: `customer_${i}`,
+                        balance: 100.00 + (i * 25),
+                        phone: `+25191${i}3624`,
+                        refCount: i % 3,
+                        refEarnings: (i % 3) * 10,
+                        history: []
+                    };
+                }
                 usersDB[currentUser.id] = currentUser;
                 saveDB();
             }
@@ -692,9 +716,9 @@
 
         function saveDB() {
             usersDB[currentUser.id] = currentUser;
-            localStorage.setItem('tg_store_users_db', JSON.stringify(usersDB));
-            localStorage.setItem('tg_store_pending_queue', JSON.stringify(pendingQueue));
-            localStorage.setItem('tg_store_products_db', JSON.stringify(productsDB));
+            localStorage.setItem('qarshi_store_users_db', JSON.stringify(usersDB));
+            localStorage.setItem('qarshi_store_pending_queue', JSON.stringify(pendingQueue));
+            localStorage.setItem('qarshi_store_products_db', JSON.stringify(productsDB));
         }
 
         function checkAdminAccess() {
@@ -753,14 +777,13 @@
             document.getElementById('dashRefCount').textContent = currentUser.refCount;
             document.getElementById('dashRefEarnings').textContent = currentUser.refEarnings.toFixed(2);
             document.getElementById('dashPhoneInput').value = currentUser.phone || '';
-            document.getElementById('referralLinkInput').value = `https://t.me/SpinDigitalShopETBBot?start=ref_${currentUser.id}`;
+            document.getElementById('referralLinkInput').value = `https://t.me/Qarshigame_bot/qarshito?start=ref_${currentUser.id}`;
 
             renderHistoryList();
             checkAdminAccess();
             saveDB();
         }
 
-        // --- SHOP & PRODUCTS RENDERING WITH PREVIEW BUTTON ---
         function renderProductCatalog() {
             const listEl = document.getElementById('productCatalogList');
             if (!listEl) return;
@@ -794,7 +817,6 @@
             `).join('');
         }
 
-        // --- PREVIEW SAMPLE MODAL ---
         let previewProductId = null;
 
         function openPreviewModal(productId) {
@@ -1087,6 +1109,18 @@
             playSound('click');
         }
 
+        document.getElementById('withdrawBankSelect')?.addEventListener('change', (e) => {
+            const val = e.target.value;
+            const labelEl = document.getElementById('withdrawAccountLabel');
+            if (val === 'Telebirr') {
+                labelEl.textContent = "Telebirr Phone Number (+2519...)";
+            } else if (val === 'Sinqee Bank') {
+                labelEl.textContent = "Sinqee Bank Account Number";
+            } else {
+                labelEl.textContent = "Coop Oromia Bank Account Number";
+            }
+        });
+
         function submitDepositRequest() {
             let inputAmount = parseFloat(document.getElementById('depositAmountInput').value);
             const receiptText = document.getElementById('depositRefInput').value.trim();
@@ -1143,6 +1177,7 @@
         function submitWithdrawRequest() {
             const amount = parseFloat(document.getElementById('withdrawAmountInput').value);
             const account = document.getElementById('withdrawAccountInput').value.trim();
+            const bankName = document.getElementById('withdrawBankSelect').value;
 
             if (!amount || amount < 50) {
                 alert("Minimum withdrawal amount is 50.00 ETB.");
@@ -1153,7 +1188,7 @@
                 return;
             }
             if (!account) {
-                alert("Please provide your Telebirr phone number.");
+                alert("Please provide your account or phone number for " + bankName + ".");
                 return;
             }
 
@@ -1165,6 +1200,7 @@
                 userId: currentUser.id,
                 username: currentUser.username,
                 type: 'Cashout',
+                bank: bankName,
                 amount: amount,
                 account: account,
                 status: 'Pending',
@@ -1174,8 +1210,8 @@
             pendingQueue.push(txObj);
             saveDB();
             closeModal('withdrawModal');
-            alert(`Cashout request of ${amount.toFixed(2)} ETB submitted! Pending admin payout.`);
-            logActivity('Cashout Request', `Requested withdrawal of ${amount.toFixed(2)} ETB to ${account}`, -amount);
+            alert(`Cashout request of ${amount.toFixed(2)} ETB via ${bankName} submitted! Pending admin payout.`);
+            logActivity('Cashout Request', `Requested withdrawal of ${amount.toFixed(2)} ETB via ${bankName} to ${account}`, -amount);
         }
 
         // --- REFERRAL & PROFILE ---
@@ -1188,7 +1224,7 @@
         }
 
         function shareReferralTelegram() {
-            const text = encodeURIComponent("Explore Books and Designs on Telegram Store! Use my link:");
+            const text = encodeURIComponent("Explore Books and Designs on Qarshi Store! Use my link:");
             const url = encodeURIComponent(document.getElementById('referralLinkInput').value);
             window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
         }
@@ -1241,7 +1277,44 @@
             }
         }
 
-        // --- SUPER ADMIN DASHBOARD ---
+        // --- EXPORT CUSTOMER DATA AS CSV ---
+        function exportCustomersCSV() {
+            const users = Object.values(usersDB);
+            if (users.length === 0) {
+                alert("No customer records found to export.");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Telegram ID,Username,Balance (ETB),Phone Number,Referral Count,Referral Earnings (ETB)\r\n";
+
+            users.forEach(u => {
+                let row = [
+                    u.id,
+                    `"${u.username}"`,
+                    u.balance.toFixed(2),
+                    `"${u.phone || 'N/A'}"`,
+                    u.refCount || 0,
+                    (u.refEarnings || 0).toFixed(2)
+                ];
+                csvContent += row.join(",") + "\r\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `qarshi_store_customers_${new Date().toISOString().slice(0, 10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            alert("Customer data CSV downloaded successfully!");
+        }
+
+        // --- SUPER ADMIN DASHBOARD WITH PAGINATION (MAX 10 PER PAGE) ---
+        let customerCurrentPage = 1;
+        let pendingCurrentPage = 1;
+        const ITEMS_PER_PAGE = 10;
+
         function renderAdminDashboard() {
             if (currentUser.username.toLowerCase() !== 'wdemeke1') return;
 
@@ -1261,31 +1334,115 @@
             document.getElementById('admTotalCashouts').textContent = totalCashouts.toFixed(2) + ' ETB';
             document.getElementById('admPendingCount').textContent = pendingQueue.length;
 
+            renderPendingQueue();
+            renderAdminUserManagement('');
+        }
+
+        function renderPendingQueue() {
             const queueEl = document.getElementById('adminPendingQueue');
+            const totalPages = Math.ceil(pendingQueue.length / ITEMS_PER_PAGE) || 1;
+            
+            if (pendingCurrentPage > totalPages) pendingCurrentPage = totalPages;
+            if (pendingCurrentPage < 1) pendingCurrentPage = 1;
+
+            document.getElementById('pendingPageIndicator').textContent = `Page ${pendingCurrentPage}/${totalPages}`;
+            document.getElementById('pendingPageNumText').textContent = `Page ${pendingCurrentPage} of ${totalPages} (${pendingQueue.length} total pending)`;
+
             if (pendingQueue.length === 0) {
-                queueEl.innerHTML = `<div class="text-center text-xs text-slate-500 py-3 bg-slate-950 rounded-xl">No pending deposits or store orders.</div>`;
-            } else {
-                queueEl.innerHTML = pendingQueue.map((item, idx) => `
+                queueEl.innerHTML = `<div class="text-center text-xs text-slate-500 py-4 bg-slate-950 rounded-xl">No pending deposits or store orders.</div>`;
+                return;
+            }
+
+            const startIdx = (pendingCurrentPage - 1) * ITEMS_PER_PAGE;
+            const sliceItems = pendingQueue.slice(startIdx, startIdx + ITEMS_PER_PAGE);
+
+            queueEl.innerHTML = sliceItems.map((item, localIdx) => {
+                const actualIdx = startIdx + localIdx;
+                return `
                     <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs space-y-2">
                         <div class="flex justify-between items-center">
-                            <span class="font-bold text-amber-400">${item.type} (${item.productTitle || 'Telebirr'})</span>
+                            <span class="font-bold text-amber-400">${item.type} ${item.productTitle ? '('+item.productTitle+')' : ''}</span>
                             <span class="text-slate-400">${item.time}</span>
                         </div>
                         <div class="text-slate-300">
                             User: <strong class="text-white">@${item.username}</strong> (${item.userId})<br>
                             Amount: <strong class="text-emerald-400">${item.amount} ETB</strong>
                             ${item.type === 'Deposit' ? `(Bonus Credited: ${(item.amount * 1.20).toFixed(2)})` : ''}
+                            ${item.bank ? `<br>Payout Method: <span class="text-sky-400 font-bold">${item.bank}</span> (Acct: ${item.account})` : ''}
                             ${item.receipt ? `<br><span class="text-[10px] text-slate-400 font-mono bg-slate-900 p-1 block mt-1">Receipt: ${item.receipt}</span>` : ''}
                         </div>
                         <div class="flex gap-2 pt-1">
-                            <button onclick="approveTransaction(${idx})" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg text-xs">Approve & Deliver Link</button>
-                            <button onclick="rejectTransaction(${idx})" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-1.5 rounded-lg text-xs">Reject</button>
+                            <button onclick="approveTransaction(${actualIdx})" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg text-xs">Approve & Deliver</button>
+                            <button onclick="rejectTransaction(${actualIdx})" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-1.5 rounded-lg text-xs">Reject</button>
                         </div>
                     </div>
-                `).join('');
+                `;
+            }).join('');
+        }
+
+        function changePendingPage(direction) {
+            const totalPages = Math.ceil(pendingQueue.length / ITEMS_PER_PAGE) || 1;
+            pendingCurrentPage += direction;
+            if (pendingCurrentPage < 1) pendingCurrentPage = 1;
+            if (pendingCurrentPage > totalPages) pendingCurrentPage = totalPages;
+            renderPendingQueue();
+        }
+
+        function renderAdminUserManagement(filterQuery) {
+            const listEl = document.getElementById('adminUserList');
+            const users = Object.entries(usersDB);
+            
+            const filtered = users.filter(([id, u]) => 
+                u.username.toLowerCase().includes(filterQuery.toLowerCase()) || id.includes(filterQuery)
+            );
+
+            const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1;
+            if (customerCurrentPage > totalPages) customerCurrentPage = totalPages;
+            if (customerCurrentPage < 1) customerCurrentPage = 1;
+
+            document.getElementById('customerPageIndicator').textContent = `Page ${customerCurrentPage}/${totalPages}`;
+            document.getElementById('customerPageNumText').textContent = `Page ${customerCurrentPage} of ${totalPages} (${filtered.length} customers)`;
+
+            if (filtered.length === 0) {
+                listEl.innerHTML = `<div class="text-center text-xs text-slate-500 py-4 bg-slate-950 rounded-xl">No matching customers found.</div>`;
+                return;
             }
 
-            renderAdminUserManagement('');
+            const startIdx = (customerCurrentPage - 1) * ITEMS_PER_PAGE;
+            const sliceUsers = filtered.slice(startIdx, startIdx + ITEMS_PER_PAGE);
+
+            listEl.innerHTML = sliceUsers.map(([id, u]) => `
+                <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
+                    <div>
+                        <span class="font-bold text-white">@${u.username}</span> <span class="text-[10px] text-slate-500">(${id})</span>
+                        <div class="text-[10px] text-amber-400 font-bold">Balance: ${u.balance.toFixed(2)} ETB | Phone: ${u.phone || 'N/A'}</div>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button onclick="adminAdjustBalance('${id}', 50)" class="px-2 py-1 bg-emerald-500/20 text-emerald-300 rounded font-bold text-[10px]">+50</button>
+                        <button onclick="adminAdjustBalance('${id}', -50)" class="px-2 py-1 bg-rose-500/20 text-rose-300 rounded font-bold text-[10px]">-50</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function changeCustomerPage(direction) {
+            const query = document.getElementById('adminSearchInput').value;
+            const users = Object.entries(usersDB);
+            const filtered = users.filter(([id, u]) => 
+                u.username.toLowerCase().includes(query.toLowerCase()) || id.includes(query)
+            );
+            const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1;
+
+            customerCurrentPage += direction;
+            if (customerCurrentPage < 1) customerCurrentPage = 1;
+            if (customerCurrentPage > totalPages) customerCurrentPage = totalPages;
+            renderAdminUserManagement(query);
+        }
+
+        function filterAdminUsers() {
+            customerCurrentPage = 1;
+            const query = document.getElementById('adminSearchInput').value;
+            renderAdminUserManagement(query);
         }
 
         function approveTransaction(idx) {
@@ -1327,33 +1484,6 @@
             saveDB();
             renderAdminDashboard();
             alert("Transaction rejected.");
-        }
-
-        function renderAdminUserManagement(filterQuery) {
-            const listEl = document.getElementById('adminUserList');
-            const users = Object.entries(usersDB);
-            
-            const filtered = users.filter(([id, u]) => 
-                u.username.toLowerCase().includes(filterQuery.toLowerCase()) || id.includes(filterQuery)
-            );
-
-            listEl.innerHTML = filtered.map(([id, u]) => `
-                <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
-                    <div>
-                        <span class="font-bold text-white">@${u.username}</span> <span class="text-[10px] text-slate-500">(${id})</span>
-                        <div class="text-[10px] text-amber-400 font-bold">Balance: ${u.balance.toFixed(2)} ETB</div>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="adminAdjustBalance('${id}', 50)" class="px-2 py-1 bg-emerald-500/20 text-emerald-300 rounded font-bold text-[10px]">+50</button>
-                        <button onclick="adminAdjustBalance('${id}', -50)" class="px-2 py-1 bg-rose-500/20 text-rose-300 rounded font-bold text-[10px]">-50</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function filterAdminUsers() {
-            const query = document.getElementById('adminSearchInput').value;
-            renderAdminUserManagement(query);
         }
 
         function adminAdjustBalance(userId, amount) {
