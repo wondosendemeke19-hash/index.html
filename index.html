@@ -1343,7 +1343,7 @@
             const listEl = document.getElementById('adminUserList');
             const filtered = Object.entries(usersDB).filter(([id, u]) => 
                 (u.fullName && u.fullName.toLowerCase().includes(filterQuery.toLowerCase())) ||
-                u.username.toLowerCase().includes(filterQuery.toLowerCase())) || 
+                u.username.toLowerCase().includes(filterQuery.toLowerCase()) || 
                 id.includes(filterQuery)
             );
 
