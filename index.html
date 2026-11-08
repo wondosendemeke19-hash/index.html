@@ -102,7 +102,7 @@
                     </div>
                     <div class="text-sm font-bold text-white flex items-center gap-1">
                         <span id="userName">TgUser</span>
-                        <span id="adminBadge" class="hidden text-[10px] bg-purple-500/30 text-purple-300 border border-purple-500/50 px-1.5 py-0.5 rounded-full font-bold">ADMIN</span>
+                        <span id="adminBadge" class="hidden text-[10px] bg-purple-500/30 text-purple-300 border border-purple-500/50 px-1.5 py-0.5 rounded-full font-bold">ADMIN (@WDemeke1)</span>
                         <span id="vipBadge" class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.5 rounded-full font-bold">VIP</span>
                     </div>
                 </div>
@@ -196,8 +196,8 @@
                     <h3 class="text-xs font-bold text-white uppercase tracking-wider"><i class="fa-solid fa-shop text-amber-400 mr-1"></i> Digital Assets Store</h3>
                     <p class="text-[10px] text-slate-400">Preview & buy professional books & designs</p>
                 </div>
-                <button onclick="openModal('uploadProductModal')" id="uploadProductNavBtn" class="hidden bg-purple-600 hover:bg-purple-500 text-white font-bold px-2.5 py-1.5 rounded-xl text-[10px] flex items-center gap-1">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> Add Product
+                <button onclick="openModal('uploadProductModal')" id="uploadProductNavBtn" class="bg-purple-600 hover:bg-purple-500 text-white font-bold px-2.5 py-1.5 rounded-xl text-[10px] flex items-center gap-1 shadow-neon-purple">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Upload Product
                 </button>
             </div>
 
@@ -289,19 +289,19 @@
             </div>
         </section>
 
-        <!-- TAB 5: ADMIN DASHBOARD (RESTRICTED TO @WDemeke1 with Quick-Reply Templates) -->
+        <!-- TAB 5: SUPER ADMIN DASHBOARD (@WDemeke1) -->
         <section id="adminTab" class="hidden space-y-4">
             <div class="bg-purple-950/40 p-4 rounded-2xl border border-purple-500/40 space-y-4 shadow-neon-purple">
                 <div class="flex justify-between items-center border-b border-purple-500/30 pb-2">
                     <h3 class="font-black text-sm text-purple-300 flex items-center gap-2">
-                        <i class="fa-solid fa-user-shield text-purple-400"></i> Admin Panel (@WDemeke1)
+                        <i class="fa-solid fa-user-shield text-purple-400"></i> Super Admin (@WDemeke1)
                     </h3>
                     <div class="flex items-center gap-2">
                         <button onclick="openModal('quickReplyModal')" class="bg-sky-600 hover:bg-sky-500 text-white font-bold px-2 py-1.5 rounded-xl text-[10px] flex items-center gap-1 shadow-md transition">
                             <i class="fa-solid fa-comments"></i> Templates
                         </button>
-                        <button onclick="exportCustomersCSV()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2 py-1.5 rounded-xl text-[10px] flex items-center gap-1 shadow-md transition">
-                            <i class="fa-solid fa-file-csv"></i> CSV
+                        <button onclick="exportAllCustomerActivityCSV()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2.5 py-1.5 rounded-xl text-[10px] flex items-center gap-1 shadow-md transition">
+                            <i class="fa-solid fa-file-csv text-sm"></i> Export CSV
                         </button>
                     </div>
                 </div>
@@ -330,7 +330,7 @@
                 <div class="space-y-2">
                     <div class="flex justify-between items-center">
                         <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1">
-                            <i class="fa-solid fa-clock-rotate-left text-amber-400"></i> Pending Approvals
+                            <i class="fa-solid fa-clock-rotate-left text-amber-400"></i> Pending Approvals (Deposits & Store Orders)
                         </h4>
                         <span id="pendingPageIndicator" class="text-[10px] text-purple-300 font-mono">Page 1/1</span>
                     </div>
@@ -345,10 +345,10 @@
                     </div>
                 </div>
 
-                <!-- Customer Management (Up to 10 per page) -->
+                <!-- Customer Management & Activity (Up to 10 per page) -->
                 <div class="space-y-2 pt-2 border-t border-purple-500/30">
                     <div class="flex justify-between items-center">
-                        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Customer Directory (Max 10/page)</h4>
+                        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Customer Directory & Action Logs (Max 10/page)</h4>
                         <span id="customerPageIndicator" class="text-[10px] text-purple-300 font-mono">Page 1/1</span>
                     </div>
                     <input type="text" id="adminSearchInput" onkeyup="filterAdminUsers()" placeholder="Search by name, username or ID..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-purple-500">
@@ -406,7 +406,6 @@
             <p class="text-[11px] text-slate-300">Click any template to instantly copy it to your clipboard for messaging customers on Telegram:</p>
 
             <div class="space-y-3 text-xs">
-                <!-- Template 1: Deposit Approval -->
                 <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1.5">
                     <div class="flex justify-between items-center font-bold text-emerald-400">
                         <span><i class="fa-solid fa-circle-check mr-1"></i> Deposit Approved (+20% Bonus)</span>
@@ -417,7 +416,6 @@
                     </p>
                 </div>
 
-                <!-- Template 2: Order Delivery -->
                 <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1.5">
                     <div class="flex justify-between items-center font-bold text-sky-400">
                         <span><i class="fa-solid fa-box-archive mr-1"></i> Store Order & Download Link</span>
@@ -428,7 +426,6 @@
                     </p>
                 </div>
 
-                <!-- Template 3: Support / General Assistance -->
                 <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1.5">
                     <div class="flex justify-between items-center font-bold text-amber-400">
                         <span><i class="fa-solid fa-headset mr-1"></i> Support Assistance</span>
@@ -569,7 +566,7 @@
         <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-5 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-slate-800 pb-2">
                 <h3 class="font-extrabold text-base text-white flex items-center gap-2">
-                    <i class="fa-solid fa-cloud-arrow-up text-purple-400"></i> Add Book or Design Product
+                    <i class="fa-solid fa-cloud-arrow-up text-purple-400"></i> Upload Product for Selling
                 </h3>
                 <button onclick="closeModal('uploadProductModal')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
@@ -584,7 +581,7 @@
 
             <div class="space-y-1">
                 <label class="text-xs font-semibold text-slate-400 block">Product Title</label>
-                <input type="text" id="prodTitle" placeholder="e.g. Python Engineering Guide 2026" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none">
+                <input type="text" id="prodTitle" placeholder="e.g. Telegram Bot Masterclass Guide" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none">
             </div>
 
             <div class="space-y-1">
@@ -686,11 +683,11 @@
         let currentUser = {
             id: '12345678',
             fullName: 'Wondossen Demeke',
-            username: 'TgUser',
-            balance: 100.00,
-            phone: '',
-            refCount: 0,
-            refEarnings: 0,
+            username: 'WDemeke1',
+            balance: 1500.00,
+            phone: '+251917393624',
+            refCount: 5,
+            refEarnings: 50.00,
             history: []
         };
 
@@ -716,14 +713,6 @@
                 price: 200.00, 
                 driveLink: 'https://drive.google.com/file/d/sample-ui-kit',
                 sampleText: 'Design Showcase Preview:\nIncludes 25+ fully responsive Tailwind CSS components, neon glow buttons, glassmorphic panels, and optimized mobile touch layouts tailored for high conversion.'
-            },
-            { 
-                id: 'p3', 
-                title: 'Ethiopian Payment Gateway Integration Guide', 
-                category: 'Book', 
-                price: 120.00, 
-                driveLink: 'https://drive.google.com/file/d/sample-payment-guide',
-                sampleText: 'Guide Overview:\nMaster automated regex parsing for Telebirr SMS receipts, reference number cross-verification, handling service fees and VAT calculations seamlessly.'
             }
         ];
 
@@ -735,18 +724,24 @@
                 currentUser.fullName = (tg.first_name || '') + (tg.last_name ? ' ' + tg.last_name : '');
                 if (!currentUser.fullName.trim()) currentUser.fullName = currentUser.username;
             } else {
+                // Force WDemeke1 for local testing so admin view is always accessible
                 currentUser.id = '98765432';
-                currentUser.username = 'WDemeke1'; // Super admin handle
-                currentUser.fullName = 'Wondu Admin';
+                currentUser.username = 'WDemeke1';
+                currentUser.fullName = 'Wondossen Demeke (Admin)';
             }
 
             if (usersDB[currentUser.id]) {
                 currentUser = usersDB[currentUser.id];
+                // Force admin username check
+                if (currentUser.id === '98765432' || currentUser.username.toLowerCase() === 'wdemeke1') {
+                    currentUser.username = 'WDemeke1';
+                }
             } else {
                 usersDB[currentUser.id] = currentUser;
                 saveDB();
             }
 
+            // Seed mock test users for admin pagination & activity review
             if (Object.keys(usersDB).length < 12) {
                 for (let i = 1; i <= 15; i++) {
                     let mockId = '900' + i;
@@ -758,7 +753,10 @@
                         phone: `+25191${i}3624`,
                         refCount: i % 3,
                         refEarnings: (i % 3) * 10,
-                        history: []
+                        history: [
+                            { title: 'Deposit Request', desc: `Requested ${50*i} ETB via Telebirr [Ref: TX${i}]`, amount: 0, time: '10:00 AM' },
+                            { title: 'Slot Spin', desc: `Bet 10.00 ETB (No win)`, amount: -10, time: '10:05 AM' }
+                        ]
                     };
                 }
                 usersDB[currentUser.id] = currentUser;
@@ -780,16 +778,13 @@
             const isAdmin = currentUser.username.toLowerCase() === 'wdemeke1';
             const adminTabBtn = document.getElementById('navAdmin');
             const adminBadge = document.getElementById('adminBadge');
-            const uploadNavBtn = document.getElementById('uploadProductNavBtn');
 
             if (isAdmin) {
                 adminTabBtn.classList.remove('hidden');
                 adminBadge.classList.remove('hidden');
-                uploadNavBtn.classList.remove('hidden');
             } else {
                 adminTabBtn.classList.add('hidden');
                 adminBadge.classList.add('hidden');
-                uploadNavBtn.classList.add('hidden');
             }
         }
 
@@ -1003,7 +998,6 @@
             }
         }
 
-        // --- QUICK-REPLY TEMPLATE CLIPBOARD HELPER ---
         function copyTemplate(type) {
             let elId = type === 'deposit' ? 'tplDeposit' : (type === 'order' ? 'tplOrder' : 'tplSupport');
             let text = document.getElementById(elId).textContent.trim();
@@ -1350,8 +1344,8 @@
             }
         }
 
-        // --- EXPORT CUSTOMER DATA AS CSV ---
-        function exportCustomersCSV() {
+        // --- EXPORT ALL CUSTOMER ACTIVITY AS CSV ---
+        function exportAllCustomerActivityCSV() {
             const users = Object.values(usersDB);
             if (users.length === 0) {
                 alert("No customer records found to export.");
@@ -1359,29 +1353,46 @@
             }
 
             let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "Telegram ID,Full Name,Username,Balance (ETB),Phone Number,Referral Count,Referral Earnings (ETB)\r\n";
+            csvContent += "Telegram ID,Full Name,Username,Balance (ETB),Phone Number,Action/Activity Title,Action Details,Action Time\r\n";
 
             users.forEach(u => {
-                let row = [
-                    u.id,
-                    `"${u.fullName || u.username}"`,
-                    `"@${u.username}"`,
-                    u.balance.toFixed(2),
-                    `"${u.phone || 'N/A'}"`,
-                    u.refCount || 0,
-                    (u.refEarnings || 0).toFixed(2)
-                ];
-                csvContent += row.join(",") + "\r\n";
+                if (u.history && u.history.length > 0) {
+                    u.history.forEach(h => {
+                        let row = [
+                            u.id,
+                            `"${u.fullName || u.username}"`,
+                            `"@${u.username}"`,
+                            u.balance.toFixed(2),
+                            `"${u.phone || 'N/A'}"`,
+                            `"${h.title}"`,
+                            `"${h.desc}"`,
+                            `"${h.time}"`
+                        ];
+                        csvContent += row.join(",") + "\r\n";
+                    });
+                } else {
+                    let row = [
+                        u.id,
+                        `"${u.fullName || u.username}"`,
+                        `"@${u.username}"`,
+                        u.balance.toFixed(2),
+                        `"${u.phone || 'N/A'}"`,
+                        "No Activity",
+                        "No recorded actions",
+                        "N/A"
+                    ];
+                    csvContent += row.join(",") + "\r\n";
+                }
             });
 
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `qarshi_store_customers_${new Date().toISOString().slice(0, 10)}.csv`);
+            link.setAttribute("download", `qarshi_store_all_customer_activity_${new Date().toISOString().slice(0, 10)}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            alert("Customer data CSV downloaded successfully!");
+            alert("All customer activity CSV downloaded successfully!");
         }
 
         // --- SUPER ADMIN DASHBOARD WITH PAGINATION & TELEGRAM CHAT DIRECT LINKS ---
@@ -1398,7 +1409,7 @@
 
             Object.values(usersDB).forEach(u => {
                 u.history.forEach(h => {
-                    if (h.title === 'Deposit Request') totalDeposits += Math.abs(h.amount);
+                    if (h.title === 'Deposit Request' || h.title === 'Deposit Approved') totalDeposits += Math.abs(h.amount);
                     if (h.title === 'Cashout Request') totalCashouts += Math.abs(h.amount);
                 });
             });
@@ -1498,26 +1509,44 @@
                     ? `https://t.me/${u.username}` 
                     : `tg://user?id=${id}`;
 
-                return `
-                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
-                        <div class="space-y-0.5">
-                            <span class="font-bold text-white text-sm block">${u.fullName || 'Telegram User'}</span>
-                            <div class="flex items-center gap-2">
-                                <a href="${tgContactUrl}" target="_blank" class="text-sky-400 font-bold hover:underline flex items-center gap-1">
-                                    <i class="fa-brands fa-telegram"></i> @${u.username}
-                                </a>
-                                <span class="text-[10px] text-slate-500">(ID: ${id})</span>
-                            </div>
-                            <div class="text-[10px] text-amber-400 font-bold">Balance: ${u.balance.toFixed(2)} ETB | Phone: ${u.phone || 'N/A'}</div>
+                let recentActionsHtml = '';
+                if (u.history && u.history.length > 0) {
+                    recentActionsHtml = u.history.slice(0, 3).map(h => `
+                        <div class="text-[10px] text-slate-400 bg-slate-900 p-1 rounded mt-1 flex justify-between">
+                            <span><strong>${h.title}:</strong> ${h.desc}</span>
+                            <span class="text-slate-500 ml-1">${h.time}</span>
                         </div>
-                        <div class="flex flex-col items-end gap-1.5">
-                            <a href="${tgContactUrl}" target="_blank" class="bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 px-2 py-1 rounded-lg font-bold text-[10px] flex items-center gap-1">
-                                <i class="fa-solid fa-paper-plane"></i> Message
-                            </a>
-                            <div class="flex items-center gap-1">
-                                <button onclick="adminAdjustBalance('${id}', 50)" class="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 rounded font-bold text-[10px]">+50</button>
-                                <button onclick="adminAdjustBalance('${id}', -50)" class="px-1.5 py-0.5 bg-rose-500/20 text-rose-300 rounded font-bold text-[10px]">-50</button>
+                    `).join('');
+                } else {
+                    recentActionsHtml = `<div class="text-[10px] text-slate-500 mt-1">No recorded actions.</div>`;
+                }
+
+                return `
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
+                        <div class="flex justify-between items-start">
+                            <div class="space-y-0.5">
+                                <span class="font-bold text-white text-sm block">${u.fullName || 'Telegram User'}</span>
+                                <div class="flex items-center gap-2">
+                                    <a href="${tgContactUrl}" target="_blank" class="text-sky-400 font-bold hover:underline flex items-center gap-1">
+                                        <i class="fa-brands fa-telegram"></i> @${u.username}
+                                    </a>
+                                    <span class="text-[10px] text-slate-500">(ID: ${id})</span>
+                                </div>
+                                <div class="text-[10px] text-amber-400 font-bold">Balance: ${u.balance.toFixed(2)} ETB | Phone: ${u.phone || 'N/A'}</div>
                             </div>
+                            <div class="flex flex-col items-end gap-1.5">
+                                <a href="${tgContactUrl}" target="_blank" class="bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 px-2 py-1 rounded-lg font-bold text-[10px] flex items-center gap-1">
+                                    <i class="fa-solid fa-paper-plane"></i> Message
+                                </a>
+                                <div class="flex items-center gap-1">
+                                    <button onclick="adminAdjustBalance('${id}', 50)" class="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 rounded font-bold text-[10px]">+50</button>
+                                    <button onclick="adminAdjustBalance('${id}', -50)" class="px-1.5 py-0.5 bg-rose-500/20 text-rose-300 rounded font-bold text-[10px]">-50</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border-t border-slate-900 pt-1.5">
+                            <span class="text-[10px] font-semibold text-purple-300 block">Recent Actions & Deposit/Store Activity:</span>
+                            ${recentActionsHtml}
                         </div>
                     </div>
                 `;
