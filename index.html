@@ -357,15 +357,15 @@
                     </div>
                 </div>
 
-                <!-- Customer Management & Detailed Activity -->
+                <!-- Customer Directory & Detailed Activity (10 per page) -->
                 <div class="space-y-2 pt-2 border-t border-purple-500/30">
                     <div class="flex justify-between items-center">
-                        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Customer Directory</h4>
+                        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Customer Directory (10 per page)</h4>
                         <span id="customerPageIndicator" class="text-[10px] text-purple-300 font-mono">Page 1/1</span>
                     </div>
                     <input type="text" id="adminSearchInput" onkeyup="filterAdminUsers()" placeholder="Search by name, username or ID..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-purple-500">
                     
-                    <div id="adminUserList" class="space-y-2 min-h-[180px]">
+                    <div id="adminUserList" class="space-y-2.5 min-h-[220px]">
                     </div>
 
                     <div class="flex justify-between items-center pt-1">
@@ -414,7 +414,7 @@
                 </h3>
                 <button onclick="closeModal('inlineQueryModal')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
-            <p class="text-xs text-slate-300">When users type <code class="text-amber-400">@Qarshigame_bot [query]</code> in any chat, your bot answers with this formatted card:</p>
+            <p class="text-xs text-slate-300">When users type <code class="text-amber-400">@Qarshigame_bot [query]</code> in any chat:</p>
             <div id="inlineQueryContent" class="bg-slate-950 p-3 rounded-xl border border-slate-800 font-mono text-xs text-amber-300 space-y-2">
             </div>
             <button onclick="copyInlineQueryOutput()" class="w-full py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs">Copy Inline Card Text</button>
@@ -439,16 +439,6 @@
                     </div>
                     <p id="tplDeposit" class="text-[11px] text-slate-300 font-mono bg-slate-900 p-2 rounded">
                         Hello! Your Telebirr deposit has been verified & approved. We have credited your Qarshi Store account with your requested amount plus your 20% bonus! Happy gaming & shopping! 🇪🇹
-                    </p>
-                </div>
-
-                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1.5">
-                    <div class="flex justify-between items-center font-bold text-sky-400">
-                        <span><i class="fa-solid fa-box-archive mr-1"></i> Store Order & Download Link</span>
-                        <button onclick="copyTemplate('order')" class="bg-slate-800 hover:bg-slate-700 text-white px-2 py-1 rounded text-[10px]">Copy</button>
-                    </div>
-                    <p id="tplOrder" class="text-[11px] text-slate-300 font-mono bg-slate-900 p-2 rounded">
-                        Hello! Thank you for purchasing from Qarshi Store. Your payment has been confirmed. Here is your secure Google Drive download link: [INSERT_DRIVE_LINK]. Enjoy your asset!
                     </p>
                 </div>
             </div>
@@ -727,19 +717,21 @@
                 saveDB();
             }
 
-            if (Object.keys(usersDB).length < 12) {
-                for (let i = 1; i <= 15; i++) {
+            // Seed mock test users for pagination & directory demonstration
+            if (Object.keys(usersDB).length < 15) {
+                for (let i = 1; i <= 18; i++) {
                     let mockId = '900' + i;
                     usersDB[mockId] = {
                         id: mockId,
-                        fullName: `Customer Name ${i}`,
-                        username: `customer_${i}`,
-                        balance: 100.00 + (i * 25),
+                        fullName: `Customer User ${i}`,
+                        username: `customer_user_${i}`,
+                        balance: 100.00 + (i * 35),
                         phone: `+25191${i}3624`,
                         refCount: i % 3,
                         refEarnings: (i % 3) * 10,
                         history: [
-                            { title: 'Deposit Request', desc: `Requested ${50*i} ETB via Telebirr [Ref: TX${i}]`, amount: 0, time: '10:00 AM' }
+                            { title: 'Deposit Approved', desc: `Credited ${50*i} ETB via Telebirr`, amount: 50*i, time: '10:00 AM' },
+                            { title: 'Slot Win', desc: `Won ${25*i} ETB on 3x3 Matrix`, amount: 25*i, time: '10:15 AM' }
                         ]
                     };
                 }
@@ -980,38 +972,22 @@
         }
 
         function copyTemplate(type) {
-            let elId = type === 'deposit' ? 'tplDeposit' : 'tplOrder';
-            let text = document.getElementById(elId).textContent.trim();
+            let text = document.getElementById('tplDeposit').textContent.trim();
             navigator.clipboard.writeText(text);
             alert("Quick-reply template copied to clipboard!");
             playSound('click');
         }
 
-        // --- SIMULATE INLINE QUERY BOT COMMANDS ---
         function simulateInlineQuery(queryType) {
-            let outputHtml = '';
-            if (queryType === 'deposit') {
-                outputHtml = `
-                    <div><strong>💳 Qarshi Store Deposit Guide</strong></div>
-                    <div>Transfer ETB to Telebirr: <strong>+251917393624 (Wondu)</strong></div>
-                    <div>🎁 Get instant +20% Bonus on all approved deposits!</div>
-                    <div>👉 <a href="https://t.me/Qarshigame_bot/qarshito" target="_blank" class="underline text-sky-400">Open Mini App to Deposit</a></div>
-                `;
-            } else {
-                outputHtml = `
-                    <div><strong>📚 Qarshi Digital Shop Catalog</strong></div>
-                    <div>• Python Telegram Bot Architecture (150 ETB)</div>
-                    <div>• Modern Dark UI Kit for Mobile Mini Apps (200 ETB)</div>
-                    <div>👉 <a href="https://t.me/Qarshigame_bot/qarshito" target="_blank" class="underline text-sky-400">Open Mini App to Buy</a></div>
-                `;
-            }
+            let outputHtml = queryType === 'deposit' 
+                ? `<div><strong>💳 Qarshi Store Deposit Guide</strong></div><div>Transfer ETB to Telebirr: <strong>+251917393624 (Wondu)</strong></div><div>🎁 Get instant +20% Bonus!</div>`
+                : `<div><strong>📚 Qarshi Digital Store Catalog</strong></div><div>• Python Telegram Bot Architecture (150 ETB)</div><div>• Modern Dark UI Kit (200 ETB)</div>`;
             document.getElementById('inlineQueryContent').innerHTML = outputHtml;
             openModal('inlineQueryModal');
         }
 
         function copyInlineQueryOutput() {
-            const text = document.getElementById('inlineQueryContent').innerText;
-            navigator.clipboard.writeText(text);
+            navigator.clipboard.writeText(document.getElementById('inlineQueryContent').innerText);
             alert("Inline query card text copied to clipboard!");
             closeModal('inlineQueryModal');
         }
@@ -1230,7 +1206,7 @@
             alert("CSV exported successfully!");
         }
 
-        // --- ADMIN PANEL ---
+        // --- SUPER ADMIN PANEL WITH PAGINATED CUSTOMER DIRECTORY (10/page) ---
         let customerCurrentPage = 1;
         let pendingCurrentPage = 1;
         const ITEMS_PER_PAGE = 10;
@@ -1296,22 +1272,66 @@
 
         function renderAdminUserManagement(filterQuery) {
             const listEl = document.getElementById('adminUserList');
-            const filtered = Object.entries(usersDB).filter(([id, u]) => u.fullName.toLowerCase().includes(filterQuery.toLowerCase()) || u.username.toLowerCase().includes(filterQuery.toLowerCase()));
+            const filtered = Object.entries(usersDB).filter(([id, u]) => 
+                (u.fullName && u.fullName.toLowerCase().includes(filterQuery.toLowerCase())) ||
+                u.username.toLowerCase().includes(filterQuery.toLowerCase()) || 
+                id.includes(filterQuery)
+            );
+
             const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1;
+            if (customerCurrentPage > totalPages) customerCurrentPage = totalPages;
+            if (customerCurrentPage < 1) customerCurrentPage = 1;
 
             document.getElementById('customerPageIndicator').textContent = `Page ${customerCurrentPage}/${totalPages}`;
-            document.getElementById('customerPageNumText').textContent = `Page ${customerCurrentPage} of ${totalPages}`;
+            document.getElementById('customerPageNumText').textContent = `Page ${customerCurrentPage} of ${totalPages} (${filtered.length} total)`;
 
-            const sliceUsers = filtered.slice((customerCurrentPage - 1) * ITEMS_PER_PAGE, customerCurrentPage * ITEMS_PER_PAGE);
-            listEl.innerHTML = sliceUsers.map(([id, u]) => `
-                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs space-y-1">
-                    <div class="flex justify-between font-bold">
-                        <span class="text-white">${u.fullName} (@${u.username})</span>
-                        <span class="text-amber-400">${u.balance.toFixed(2)} ETB</span>
+            if (filtered.length === 0) {
+                listEl.innerHTML = `<div class="text-center text-xs text-slate-500 py-4 bg-slate-950 rounded-xl">No matching customers found.</div>`;
+                return;
+            }
+
+            const startIdx = (customerCurrentPage - 1) * ITEMS_PER_PAGE;
+            const sliceUsers = filtered.slice(startIdx, startIdx + ITEMS_PER_PAGE);
+
+            listEl.innerHTML = sliceUsers.map(([id, u]) => {
+                const tgLink = `https://t.me/${u.username}`;
+                
+                let activityListHtml = '';
+                if (u.history && u.history.length > 0) {
+                    activityListHtml = u.history.slice(0, 3).map(h => `
+                        <div class="text-[10px] bg-slate-900 p-1.5 rounded mt-1 flex justify-between items-center text-slate-300">
+                            <div><strong class="text-amber-300">${h.title}:</strong> ${h.desc}</div>
+                            <span class="text-[9px] text-slate-500 shrink-0 ml-1">${h.time}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    activityListHtml = `<div class="text-[10px] text-slate-500 mt-1">No recorded activities yet.</div>`;
+                }
+
+                return `
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <strong class="text-white text-sm block">${u.fullName || 'User'}</strong>
+                                <a href="${tgLink}" target="_blank" class="text-sky-400 font-bold hover:underline flex items-center gap-1 mt-0.5">
+                                    <i class="fa-brands fa-telegram"></i> @${u.username}
+                                </a>
+                                <span class="text-[10px] text-slate-400 block mt-0.5">Phone: <strong>${u.phone || 'N/A'}</strong> | ID: ${id}</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-amber-400 font-extrabold text-sm block">${u.balance.toFixed(2)} ETB</span>
+                                <a href="${tgLink}" target="_blank" class="mt-1 inline-block bg-sky-500/20 text-sky-300 border border-sky-500/40 px-2 py-0.5 rounded text-[10px] font-bold hover:bg-sky-500/30">
+                                    Open Chat
+                                </a>
+                            </div>
+                        </div>
+                        <div class="border-t border-slate-900 pt-1.5">
+                            <span class="text-[10px] font-semibold text-purple-300 block mb-0.5">Recent Activity Logs:</span>
+                            ${activityListHtml}
+                        </div>
                     </div>
-                    <div class="text-[10px] text-slate-400">Phone: ${u.phone || 'N/A'} | ID: ${id}</div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function changeCustomerPage(dir) {
