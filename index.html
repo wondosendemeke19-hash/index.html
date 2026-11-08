@@ -415,10 +415,10 @@
                 <button onclick="closeModal('adminPasscodeModal')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <p class="text-xs text-slate-300">Super Admin verification required (@WDemeke1). Enter your 4-digit passcode (Default PIN: <strong class="text-amber-400">1234</strong>):</p>
+            <p class="text-xs text-slate-300">Super Admin verification required (@WDemeke1). Enter your security passcode:</p>
 
             <div class="space-y-1">
-                <input type="password" id="adminPasscodeInput" maxlength="6" placeholder="Enter PIN..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-center text-xl text-amber-400 font-mono tracking-widest focus:outline-none focus:border-purple-500">
+                <input type="password" id="adminPasscodeInput" placeholder="Enter password..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-center text-sm text-amber-400 font-mono tracking-wider focus:outline-none focus:border-purple-500">
             </div>
 
             <button onclick="verifyAdminPasscode()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-extrabold text-sm shadow-neon-purple active:scale-98 transition">
@@ -808,9 +808,9 @@
         }
 
         function verifyAdminPasscode() {
-            const pin = document.getElementById('adminPasscodeInput').value.trim();
-            // Default Admin Passcode is set to "1234" (You can change this PIN below)
-            const SUPER_ADMIN_PIN = "1234";
+            const pin = document.getElementById('adminPasscodeInputTheInput' in document ? '' : 'adminPasscodeInput').value.trim();
+            // Updated Admin Passcode
+            const SUPER_ADMIN_PIN = "Jesus0905158371@$wd";
 
             if (pin === SUPER_ADMIN_PIN) {
                 closeModal('adminPasscodeModal');
